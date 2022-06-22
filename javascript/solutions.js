@@ -136,3 +136,39 @@ var kthDistinct = function(arr, k) {
 	return "";
 };
 
+var targetIndices = function(nums, target) {
+  nums.sort((a,b) => a-b);
+	const ans = [];
+	nums.forEach((item, index) => {
+		if(item === target) ans.push(index);
+	})
+	return ans;
+};
+
+var reversePrefix = function(word, ch) {
+	let rev = [];
+	let isFirst = false;
+	for(let i=0; i< word.length; i++) {
+		rev.push(word.charAt(i));
+		if(!isFirst && word.charAt(i) == ch) {
+			isFirst = true;
+			rev = rev.reverse();
+		}
+	}
+	return rev.join("");
+};
+
+
+var findGCD = function(nums) {
+	nums.sort((a,b) => a-b);
+	const small = nums[0];
+	const large = nums[nums.length-1];
+	for(let i=small; i>0; i--) {
+		let lr = large%i;
+		let sr = small%i;
+		if(lr === 0 && sr === 0) return i;
+	}
+};
+
+
+
