@@ -170,5 +170,40 @@ var findGCD = function(nums) {
 	}
 };
 
+var checkString = function(s) {
+  let hasB = false;
+	for(let i=0; i<s.length; i++) {
+		if(s.charAt(i) == "b") hasB = true;
+		if(hasB && s.charAt(i)=="a") return false;
+	}
+	return true;
+};
+
+//https://leetcode.com/problems/check-if-number-has-equal-digit-count-and-digit-value/
+var digitCount = function(num) {
+	for(let i=0; i<num.length; i++) {
+		let count = 0;
+		for(let j=0; j<num.length; j++) {
+			if(Number(num.charAt(j)) == i) count++;
+			if(count > Number(num.charAt(i))) return false;
+		}
+		if(count != Number(num.charAt(i))) return false;
+	}
+	return true;
+};
+
+//https://leetcode.com/problems/remove-all-adjacent-duplicates-in-string/
+var removeDuplicates = function(s) {
+	let stack = [];
+	for(let i=0; i<s.length; i++) {
+		if(stack[stack.length-1] === s[i]){
+			stack.pop();
+		} else {
+			stack.push(s[i]);
+		}
+	}
+	return stack.join("");
+};
+
 
 
