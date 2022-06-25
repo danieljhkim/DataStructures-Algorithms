@@ -205,5 +205,33 @@ var removeDuplicates = function(s) {
 	return stack.join("");
 };
 
+//https://leetcode.com/problems/next-greater-element-i/
+var nextGreaterElement = function(nums1, nums2) {
+	const ans = [];
+  nums1.forEach((num) => {
+		let j = nums2.indexOf(num);
+		let found = false;
+		for(let i=j+1; i<nums2.length; i++) {
+			if(nums2[i] > num) {
+				found = true
+				ans.push(nums2[i]);
+				break;
+			}
+		}
+		!found ? ans.push(-1) : false;
+	})
+	return ans;
+};
 
-
+//https://leetcode.com/problems/greatest-english-letter-in-upper-and-lower-case/
+var greatestLetter = function(s) {
+	const arr = s.split("");
+	arr.sort();
+  arr.reverse();
+	for(let i=0; i<arr.length; i++) {
+		let index = arr.lastIndexOf(arr[i].toUpperCase());
+    if(arr[i] === arr[i].toUpperCase()) return "";
+		if(index >= 0) return arr[i].toUpperCase();
+	}
+	return "";
+};
