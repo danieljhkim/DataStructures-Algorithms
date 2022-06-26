@@ -235,3 +235,95 @@ var greatestLetter = function(s) {
 	}
 	return "";
 };
+
+//https://leetcode.com/problems/fibonacci-number/
+var fib = function(n) {
+	if(n === 0 || n === 1) return n;
+  let a = 0;
+	let b = 1;
+	for(let i=2; i<n; i++) {
+		let c = a + b;
+		a = b;
+		b = c;
+	}
+	return a + b;
+};
+
+//https://leetcode.com/problems/count-common-words-with-one-occurrence/
+var countWords = function(words1, words2) {
+  let count = 0;
+	const isUnique = (arr, word) => {
+		if(arr.lastIndexOf(word) === arr.indexOf(word)) return true;
+		return false;
+	}
+	for(let i=0; i<words1.length; i++) {
+		let word = words1[i]
+		if(words2.includes(word)) {
+			if(isUnique(words1, word) && isUnique(words2, word)){
+				count++;
+			}
+		}
+	}
+	return count;
+};
+
+//https://leetcode.com/problems/intersection-of-multiple-arrays/
+var intersection = function(nums) {
+	//this solution accounts for duplicates
+  nums = nums.map(arr => {
+		return arr.filter(num => {
+			return arr.lastIndexOf(num) === arr.indexOf(num);
+		})
+	});
+	let ans = [];
+	LOOP1: for(let j=0; j<nums[0].length; j++) {
+		for(let i=1; i<nums.length; i++) {
+			if(!nums[i].includes(nums[0][j])) {
+				continue LOOP1;
+			}
+		}
+		ans.push(nums[0][j])
+	}
+	return ans.sort((a,b) => a-b);
+};
+
+//https://leetcode.com/problems/two-furthest-houses-with-different-colors/
+var maxDistance = function(colors) {
+	let max = 0;
+  for(let i=0; i<colors.length; i++) {
+		for(let j=i+1; j<colors.length; j++) {
+			if(colors[i] != colors[j]) {
+				let dif = j-i;
+				if(dif > max) max = dif;
+			}
+		}
+	}
+	return max;
+};
+
+	// y 0 1 1 0 
+	// y 1 1 1 1 
+	// y 1 1 0 0
+	//   x x x x
+//https://leetcode.com/problems/island-perimeter/
+var islandPerimeter = function(grid) {
+	const max_x = grid[0].length-1;
+	const max_y = grid.length-1;
+	let count = 0;
+	const calc = (x,y) => {
+		if(x < max_x && grid[y][x+1] == 0) count++;
+		if(x > 0 && grid[y][x-1] == 0) count++;
+		if(y > 0 && grid[y-1][x] == 0) count++;
+		if(y < max_y && grid[y+1][x] == 0) count++;
+		if(y === max_y) count++;
+		if(y === 0) count++;
+		if(x === max_x) count++;
+		if(x === 0) count++;
+	}
+	for(let y=0; y<grid.length; y++){
+		for(let x=0; x<grid[y].length; x++) {
+			if(grid[y][x] == 1) calc(x,y);
+		}
+	}
+	return count;
+};
