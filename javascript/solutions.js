@@ -327,3 +327,45 @@ var islandPerimeter = function(grid) {
 	}
 	return count;
 };
+
+//https://leetcode.com/problems/relative-sort-array/
+var relativeSortArray = function(arr1, arr2) {
+  let ans = [];
+	for(let num2 of arr2) {
+		for(let i=0; i<arr1.length; i++) {
+			if(arr1[i] === num2) {
+				ans.push(num2);
+				arr1[i] = -1;
+			}
+		}
+	}
+	arr1.sort((a,b) => a-b);
+	ans = [...ans, ...arr1.slice(arr1.lastIndexOf(-1)+1)]
+	return ans;
+};
+
+//https://leetcode.com/problems/find-the-difference-of-two-arrays/
+var findDifference = function(nums1, nums2) {
+  const ans = [[],[]];
+	for(let num1 of nums1) {
+		if(!nums2.includes(num1)) {
+			if(!ans[0].includes(num1)) {
+				ans[0].push(num1);
+			}
+		}
+	}
+	for(let num2 of nums2) {
+		if(!nums1.includes(num2)) {
+			if(!ans[1].includes(num2)) {
+				ans[1].push(num2);
+			}
+		}
+	}
+	return ans;
+};
+
+var findDifference2 = function(nums1, nums2) {
+	const nums11 = [...new Set(nums1.filter(n => !nums2.includes(n)))];
+	const nums22 = [...new Set(nums2.filter(n => !nums1.includes(n)))];
+  return [nums11, nums22];
+};
