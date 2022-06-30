@@ -369,3 +369,52 @@ var findDifference2 = function(nums1, nums2) {
 	const nums22 = [...new Set(nums2.filter(n => !nums1.includes(n)))];
   return [nums11, nums22];
 };
+
+//https://leetcode.com/problems/remove-palindromic-subsequences/submissions/
+var removePalindromeSub = function(s) {
+  if(s.split("").reverse().join("") === s) return 1;
+	return 2;
+};
+
+//https://leetcode.com/problems/rings-and-rods/
+var countPoints = function(rings) {
+	const arr3 = [];
+	const obj = {};
+	for(let i=1; i<rings.length; i+=2) {
+		let key = rings.charAt(i);
+		if(!arr3.includes(key)) {
+			if(key in obj) {
+				obj[key].push(rings.charAt(i-1));
+				if(obj[key].includes("R") && obj[key].includes("B") && obj[key].includes("G")) {
+					arr3.push(key);
+				}
+			} else {
+				obj[key] = [rings.charAt(i-1)];
+			}
+		}
+	}
+	return arr3.length;
+};
+
+//https://leetcode.com/problems/find-first-palindromic-string-in-the-array/
+var firstPalindrome = function(words) {
+  for(let word of words) {
+		let rev = word.split("").reverse().join("");
+		if(rev === word) return rev;
+	}
+	return "";
+};
+
+//https://leetcode.com/problems/count-asterisks/
+var countAsterisks = function(s) {
+	let between = false;
+	let count = 0;
+	for(let i=0; i<s.length; i++) {
+		if(s.charAt(i) === "|") {
+			between = !between;
+			continue;
+		}
+		if(!between && s.charAt(i) === "*") count++;
+	}
+	return count;
+};
