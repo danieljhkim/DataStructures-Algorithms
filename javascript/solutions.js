@@ -418,3 +418,78 @@ var countAsterisks = function(s) {
 	}
 	return count;
 };
+
+//https://leetcode.com/problems/sqrtx/
+var mySqrt = function(x) {
+	let hi = x;
+	let lo = 0;
+	let mid = 0;
+	while(lo <= hi) {
+		mid = Math.floor((hi-lo)/2) + lo;
+		let target = mid * mid;
+		if(target < x) {
+			lo = mid + 1;
+		} else if(target > x) {
+			hi = mid - 1;
+		} else {
+			return mid;
+		}
+	}
+	return hi;
+};
+
+//https://leetcode.com/problems/running-sum-of-1d-array/
+var runningSum = function(nums) {
+  for(let i=1; i<nums.length; i++) {
+		nums[i] += nums[i-1];
+	}
+	return nums;
+};
+
+//https://leetcode.com/problems/find-pivot-index/solution/
+var pivotIndex = function(nums) {
+	const findSum = (left1) => {
+		let sum = 0;
+		for(let i=nums.length-1; i>left1; i--) {
+			sum += nums[i];
+		}
+		return sum;
+	}
+	if(findSum(0) === 0) return 0;
+	let left = 1;
+	let leftSum = nums[0];
+	while(left < nums.length) {
+		if(leftSum === findSum(left)) {
+			return left;
+		} else {
+			left++;
+			leftSum += nums[left-1];
+		}
+	}
+	return -1;
+};
+
+
+//https://leetcode.com/problems/watering-plants/
+var wateringPlants = function(plants, capacity) {
+	let steps = 0;
+	let water = capacity
+	for(let i=0; i<plants.length;) {
+		if(plants[i] === 0) {
+			i++;
+			steps++;
+			continue;
+		}
+		if(plants[i] > water) {
+			water = capacity;
+			steps += i;
+			i = 0;
+		} else {
+			water -= plants[i];
+			plants[i] = 0;
+			i++;
+			steps++;
+		}
+	}
+	return steps;
+};
