@@ -493,3 +493,60 @@ var wateringPlants = function(plants, capacity) {
 	}
 	return steps;
 };
+
+//https://leetcode.com/problems/shortest-distance-to-a-character/
+var shortestToChar = function(s, c) {
+	const findDist = (index) => {
+		let r_dist = Number.MAX_VALUE;
+		let l_dist = Number.MAX_VALUE;
+		for(i=index; i<s.length; i++) {
+			if(s.charAt(i) === c) {
+				r_dist = i - index;
+				if(r_dist === 0) return 0;
+				break;
+			}
+		}
+		for(i=index; i>=0; i--) {
+			if(s.charAt(i) === c) {
+				l_dist = index - i;
+				if(l_dist === 0) return 0;
+				break;
+			}
+		}
+		return Math.min(r_dist, l_dist);
+	}
+	const ans = [];
+  for(let i=0; i<s.length; i++) {
+		ans.push(findDist(i));
+	}
+	return ans;
+};
+
+
+//https://leetcode.com/problems/minimize-maximum-pair-sum-in-array/
+var minPairSum = function(nums) {
+  nums.sort((a,b) => a-b);
+  let max = 0;
+  for(let s=0, b=nums.length-1; s<nums.length/2; s++, b--) {
+    if(max <= nums[s] + nums[b]) max = nums[s] + nums[b];
+  }
+  return max;
+};
+
+//https://leetcode.com/problems/arithmetic-subarrays/
+var checkArithmeticSubarrays = function(nums, l, r) {
+  const ans = [];
+  const calDif = (arr) => {
+    let dif = arr[0] - arr[1];
+    for(let i=1; i<arr.length-1; i++) {
+      if(dif !== arr[i] - arr[i+1]) return false;
+    }
+    return true;
+  }
+  for(let i=0; i<l.length; i++) {
+    let ar = nums.slice(l[i], r[i]+1);
+    ar.sort((a,b) => a-b);
+    ans.push(calDif(ar));
+  }
+	return ans;
+};

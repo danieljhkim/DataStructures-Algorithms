@@ -22,3 +22,21 @@
   }
   return head;
 };
+
+//https://leetcode.com/problems/remove-linked-list-elements/
+var removeElements = function(head, val) {
+  let node = head;
+  while(node && node.next !== null) {
+    if(!node.next.next && node.next.val === val) {
+      node.next = null;
+      break;
+    }
+    if(node.val === val) {
+      node.val = node.next.val;
+      node.next = node.next.next;
+    } else {
+      node = node.next;
+    }
+  }
+  return head.val===val?head.next:head;
+};
