@@ -550,3 +550,22 @@ var checkArithmeticSubarrays = function(nums, l, r) {
   }
 	return ans;
 };
+
+//https://leetcode.com/problems/minimum-absolute-difference/
+var minimumAbsDifference = function(arr) {
+  arr.sort((a,b) => a-b);
+	let min = Number.MAX_VALUE;
+	for(let i=0; i<arr.length-1; i++) {
+		let dif = arr[i+1] - arr[i];
+		if(min >= dif) min = dif;
+	}
+	const ans = [];
+	for(let i=0; i<arr.length-1; i++) {
+		let dif = arr[i+1] - arr[i];
+		if(min === dif) {
+			ans.push([arr[i], arr[i+1]]);
+		}
+	}
+	return ans;
+};
+
