@@ -569,3 +569,30 @@ var minimumAbsDifference = function(arr) {
 	return ans;
 };
 
+//https://leetcode.com/problems/substrings-of-size-three-with-distinct-characters/
+var countGoodSubstrings = function(s) {
+	const isUnique = (word) => {
+		return word.charAt(0) !== word.charAt(1) && word.charAt(0) !== word.charAt(2) && word.chartAt(1) !== word.charAt(2);
+	}
+	let ans = 0;
+	for(let i=0; i<s.length-2; i++) {
+		if(isUnique(s.slice(i, i+3))) ans++;
+	}
+	return ans;
+};
+
+//https://leetcode.com/problems/sort-array-by-increasing-frequency/
+var frequencySort = function(nums) {
+	nums.sort((a,b) => b-a);
+	const ans = [];
+	const dist = new Set(nums);
+	for(let n of dist) {
+		ans.push(nums.filter(num => num === n));
+	}
+	ans.sort((a,b) => a.length - b.length);
+	const a = [];
+	for(let aa of ans) {
+		a.push(...aa);
+	}
+	return a;
+};
