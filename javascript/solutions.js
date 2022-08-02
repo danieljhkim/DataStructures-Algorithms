@@ -596,3 +596,27 @@ var frequencySort = function(nums) {
 	}
 	return a;
 };
+
+//https://leetcode.com/problems/number-of-students-unable-to-eat-lunch/
+var countStudents = function(students, sandwiches) {
+	const checkBack = (index) => {
+		for(let i=index+1; i<students.length; i++) {
+			if(students[index] !== students[i]) return false;
+		}
+		return true;
+	}
+	let i = 0;
+	while(students.length > 0) {
+		if(students[i] === sandwiches[i]) {
+			students.shift();
+			sandwiches.shift();
+		} else {
+			const st = students.shift();
+			students.push(st);
+			if(st === students[0] && checkBack(i)) {
+				return students.length;
+			}
+		}
+		if(students.length === 0) return 0;
+	}
+}
