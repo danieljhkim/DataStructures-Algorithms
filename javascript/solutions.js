@@ -311,10 +311,10 @@ var islandPerimeter = function(grid) {
 	const max_y = grid.length-1;
 	let count = 0;
 	const calc = (x,y) => {
-		if(x < max_x && grid[y][x+1] == 0) count++;
-		if(x > 0 && grid[y][x-1] == 0) count++;
-		if(y > 0 && grid[y-1][x] == 0) count++;
-		if(y < max_y && grid[y+1][x] == 0) count++;
+		if(x < max_x && grid[y][x+1] === 0) count++;
+		if(x > 0 && grid[y][x-1] === 0) count++;
+		if(y > 0 && grid[y-1][x] === 0) count++;
+		if(y < max_y && grid[y+1][x] === 0) count++;
 		if(y === max_y) count++;
 		if(y === 0) count++;
 		if(x === max_x) count++;
@@ -620,3 +620,43 @@ var countStudents = function(students, sandwiches) {
 		if(students.length === 0) return 0;
 	}
 }
+
+//https://leetcode.com/problems/a-number-after-a-double-reversal/
+var isSameAfterReversals = function(num) {
+  const reverse = (n) => {
+		let ans = 0;
+		while(n > 0) {
+			const r = n % 10;
+			ans *= 10
+			ans += r 
+			n = Math.floor(n /= 10);
+		}
+		return ans;
+	}
+	const revnum1 = reverse(num);
+	const revnum2 = reverse(revnum1);
+	return num === revnum2;
+};
+
+//https://leetcode.com/problems/find-words-that-can-be-formed-by-characters/
+var countCharacters = function(words, chars) {
+  const checkword = (word) => {
+		const charArr = chars.split('');
+		for(let i=0; i<word.length; i++) {
+			const chindex = charArr.indexOf(word.charAt(i));
+			if(chindex > -1) {
+				charArr[chindex] = null;
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
+	let ans = 0;
+	for(let w of words) {
+		if(checkword(w)) {
+			ans += w.length;
+		}
+	}
+	return ans;
+};
