@@ -660,3 +660,27 @@ var countCharacters = function(words, chars) {
 	}
 	return ans;
 };
+
+//https://leetcode.com/problems/find-the-middle-index-in-array/
+var findMiddleIndex = function(nums) {
+	const findSumRight = (index) => {
+		let sum = 0;
+		for(let i=index+1; i<nums.length; i++) {
+			sum += nums[i];
+		}
+		return sum;
+	}
+	const findSumLeft = (index) => {
+		let sum = 0;
+		for(let i=index-1; i>=0; i--) {
+			sum += nums[i];
+		}
+		return sum;
+	}
+	for(let i=0; i<nums.length; i++) {
+		if(findSumRight(i) === findSumLeft(i)) {
+			return i;
+		}
+	}
+	return -1;
+};
