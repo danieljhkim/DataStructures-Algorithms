@@ -684,3 +684,22 @@ var findMiddleIndex = function(nums) {
 	}
 	return -1;
 };
+
+//https://leetcode.com/problems/count-integers-with-even-digit-sum/
+var countEven = function(num) {
+  const isEven = (n) => {
+		let sum = 0;
+		while(n > 0) {
+			const digit = n % 10;
+			sum += digit;
+			n = Math.floor(n/10);
+		}
+		if(sum%2 === 0) return true;
+		return false;
+	}
+	let ans = 0;
+	for(let i=2; i<=num; i++){
+		if(isEven(i)) ans++;
+	}
+	return ans;
+}
