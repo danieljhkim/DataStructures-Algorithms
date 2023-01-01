@@ -703,3 +703,33 @@ var countEven = function(num) {
 	}
 	return ans;
 }
+
+//https://leetcode.com/problems/smallest-even-multiple/description/
+var smallestEvenMultiple = function(n) {
+	const _isEven = (num) => {
+		return num % 2 === 0;
+	}
+	if(_isEven(n)) return n;
+	return n * 2;
+};
+
+//https://leetcode.com/problems/add-two-integers/
+var sum = function(num1, num2) {
+  return num1 + num2;
+};
+
+//https://leetcode.com/problems/delete-greatest-value-in-each-row/
+var deleteGreatestValue = function(grid) {
+	let ans = 0;
+  for(let i = 0; i < grid.length; i++) {
+		grid[i].sort((a, b) => a-b);
+	}
+	for(let i = 0; i < grid[0].length; i++) {
+		let max = 0;
+		for(let j = 0; j < grid.length; j++) {
+			if(grid[j][i] > max) max = grid[j][i];
+		}
+		ans += max;
+	}
+	return ans;
+};
