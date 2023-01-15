@@ -733,3 +733,30 @@ var deleteGreatestValue = function(grid) {
 	}
 	return ans;
 };
+
+//https://leetcode.com/problems/convert-the-temperature/
+var convertTemperature = function(celsius) {
+	const kelvin = celsius + 273.15;
+	const fah = celsius * 1.8 + 32;
+	return [kelvin, fah];
+};
+
+//https://leetcode.com/problems/difference-between-element-sum-and-digit-sum-of-an-array/
+var differenceOfSum = function(nums) {
+	let digitSum = 0;
+	let elemSum = 0;
+	const _findDigitSum = (n) => {
+		let sum = 0;
+		while(n > 0) {
+			let digit = n % 10;
+			sum += digit
+			n = Math.floor(n / 10);
+		}
+		return sum;
+	}
+	nums.forEach(n => {
+		elemSum += n;
+		digitSum += _findDigitSum(n);
+	});
+	return Math.abs(digitSum - elemSum);
+};
