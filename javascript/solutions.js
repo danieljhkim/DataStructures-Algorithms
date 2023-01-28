@@ -760,3 +760,46 @@ var differenceOfSum = function(nums) {
 	});
 	return Math.abs(digitSum - elemSum);
 };
+
+//https://leetcode.com/problems/first-bad-version/
+var solution = function(isBadVersion) {
+	/**
+	 * @param {integer} n Total versions
+	 * @return {integer} The first bad version
+	 */
+	const _bSearch = (n) => {
+		let low = 0;
+		let high = n;
+		let mid = 0;
+		while(low <= high) {
+			mid = Math.ceil(low + (high-low)/2);
+			if(isBadVersion(mid) && !isBadVersion(mid-1)) return mid;
+			if(!isBadVersion(mid)) {
+				low = mid;
+			} else {
+				high = mid;
+			}
+		}
+		return mid;
+	}
+	return function(n) {
+		return _bSearch(n)
+	};
+};
+
+//https://leetcode.com/problems/repeated-substring-pattern/
+var repeatedSubstringPattern = function(s) {
+	const halfLen = Math.floor(s.length/2);
+	for(let i=2; i<=halfLen; i++) {
+		let subStr = s.substring(0,i);
+    console.log("sub1: "+ subStr)
+		if(s.length % i !== 0) continue;
+		for(let j=i; j<s.length; j+i) {
+			let subStr2 = s.substring(j,j+i);
+      console.log("sub2: "+ subStr2)
+			if(subStr !== subStr2) break;
+			if(j+1 === s.length) return true;
+		}
+	}
+	return false;
+};
