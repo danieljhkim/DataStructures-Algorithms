@@ -83,3 +83,24 @@ var isPrefixOfWord = function(sentence, searchWord) {
   }
   return -1;
 };
+
+var findDuplicate = function(nums) {
+  let slow = nums[0];
+  let fast = nums[nums[0]];
+
+  while (slow !== fast) {
+    slow = nums[slow];
+    fast = nums[nums[fast]];
+    console.log("slow", slow)
+    console.log("fast", fast)
+  }
+
+  slow = 0;
+  while(slow !== fast) {
+    slow = nums[slow];
+    fast = nums[fast];
+    console.log("slowss", slow)
+    console.log("fastss", fast)
+  }
+  return slow;
+};
