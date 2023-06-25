@@ -87,20 +87,58 @@ var isPrefixOfWord = function(sentence, searchWord) {
 var findDuplicate = function(nums) {
   let slow = nums[0];
   let fast = nums[nums[0]];
-
   while (slow !== fast) {
     slow = nums[slow];
     fast = nums[nums[fast]];
-    console.log("slow", slow)
-    console.log("fast", fast)
   }
-
   slow = 0;
   while(slow !== fast) {
     slow = nums[slow];
     fast = nums[fast];
-    console.log("slowss", slow)
-    console.log("fastss", fast)
   }
   return slow;
+};
+
+var topKFrequent = function(nums, k) {
+  let hmap = {};
+  for(let i=0; i<nums.length; i++) {
+    hmap[nums[i]] = (hmap[nums[i]] || 0) + 1;
+  }
+  let freqArr = Array.from(Object.entries(hmap));
+  freqArr.sort((a,b) => b[1]-a[1]);
+  const ans = [];
+  for(let i=0; i<k; i++) {
+    ans.push(freqArr[i][0]);
+  }
+  return ans;
+};
+
+var groupAnagrams = function(strs) {
+  const groups = [[strs[0]]];
+  const checkAna = (word, ana) => {
+    if(word.length !== ana.length) return false;
+    let wordAr = word.split("");
+    for(let i=0; i<ana.length; i++) {
+      const idx = wordAr.indexOf(ana[i]);
+      if(idx === -1) {
+        return false;
+      } else {
+        wordAr.splice(idx, 1);
+      }
+    }
+    return true;
+  }
+  for(let i=1; i<strs.length; i++) {
+    const gCopy = [...groups];
+    for(let j=0; j<gCopy.length; j++) {
+      const isAna = checkAna(strs[i], gCopy[j][0]);
+      if(isAna) {
+        groups[j].push(strs[i]);
+      }
+      if(j === gCopy.length-1) {
+        groups.push([strs[i]]);
+      }
+    }
+  }
+  return groups;
 };
