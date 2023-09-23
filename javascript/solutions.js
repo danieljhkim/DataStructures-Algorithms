@@ -803,3 +803,37 @@ var repeatedSubstringPattern = function(s) {
 	}
 	return false;
 };
+
+var distinctDifferenceArray = function(nums) {
+	const _distinct = (numAr) => {
+		const numSet = [...new Set(numAr)];
+		return numSet.length;
+	}
+
+	const ans = [];
+	for(let i=0; i<nums.length; i++) {
+		ans[i] =_distinct(nums.slice(0,i+1)) - _distinct(nums.slice(i+1));
+	}
+	return ans;
+};
+
+var merge = function(nums1, m, nums2, n) {
+	let j = 0;
+	for (let i = nums1.length - 1; i >= m; i--) {
+		nums1[i] = nums2[j++];
+	}
+	nums1.sort((a, b) => a - b);
+};
+
+var canConstruct = function(ransomNote, magazine) {
+	magazine = magazine.split('');
+	for (let n of ransomNote) {
+		let index = magazine.findIndex((m) => m === n);
+		if (index !== -1) {
+			magazine.splice(index, 1);
+		} else {
+			return false;
+		}
+	}
+	return true;
+};
