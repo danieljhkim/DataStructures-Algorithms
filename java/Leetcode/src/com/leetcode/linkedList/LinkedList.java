@@ -1,12 +1,10 @@
-public class ListNode {
-	int val;
-	ListNode next;
-	ListNode() {}
-	ListNode(int val) { this.val = val; }
-	ListNode(int val, ListNode next) { this.val = val; this.next = next;}
-}
+package com.leetcode.linkedList;
 
-class Solution {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class LinkedList {
 	public int getDecimalValue(ListNode head) {
 		List<Integer> li = new ArrayList<>();
 		while(head != null) {
@@ -21,7 +19,7 @@ class Solution {
 		return ans;
 	}
 
-	public ListNode reverse(head ListNode) {
+	public ListNode reverse(ListNode head, ListNode node) {
 		ListNode prev = null;
 		ListNode next = null;
 		ListNode curr = head;
