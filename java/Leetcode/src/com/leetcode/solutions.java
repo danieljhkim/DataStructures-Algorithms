@@ -36,14 +36,11 @@ class Solution {
     	StringBuilder str = new StringBuilder();
     	for (char c : s.toCharArray()) {
     		if (Character.isLetterOrDigit(c)) {
-    			System.out.println(c);
     			str.append(c);
     		}
     	}
     	String notRev = str.toString().toLowerCase();
     	String rev = str.reverse().toString().toLowerCase();
-    	System.out.println(rev);
-    	System.out.println(notRev);
     	if (rev.equals(notRev)) {
     		return true;
     	}
