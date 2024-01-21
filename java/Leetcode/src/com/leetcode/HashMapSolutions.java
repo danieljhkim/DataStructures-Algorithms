@@ -1,6 +1,7 @@
 package com.leetcode;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class HashMapSolutions {
 	
@@ -55,7 +56,22 @@ public class HashMapSolutions {
         	map2[t.charAt(i)] = i + 1;
         }
         return true;
-        
+    }
+    
+    //https://leetcode.com/problems/two-sum/submissions/1152947535/?envType=study-plan-v2&envId=top-interview-150
+    public int[] twoSum(int[] nums, int target) {
+        Map<Integer, Integer> hmap = new HashMap<>();
+        for (int i=0; i<nums.length; i++) {
+        	hmap.put(nums[i], i);
+        }
+        for (int i=0; i<nums.length; i++) {
+        	int comp = target - nums[i];
+        	if (hmap.containsKey(comp) && hmap.get(comp) != i) {
+        		int[] ans = new int[] {i, hmap.get(comp)};
+        		return ans;
+        	}
+        }
+        return new int[] {};
     }
     
     

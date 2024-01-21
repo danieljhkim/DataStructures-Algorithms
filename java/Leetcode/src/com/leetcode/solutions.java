@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Solution {
+	
+    public static void main(String[] args) {
+        isPalindrome("race a car");
+    }
 
 	public int numberOfBeams(String[] bank) {
 		int sum = 0;
@@ -26,4 +30,23 @@ class Solution {
 		}
 		return sum;
 	}
+	
+	
+    public static boolean isPalindrome(String s) {
+    	StringBuilder str = new StringBuilder();
+    	for (char c : s.toCharArray()) {
+    		if (Character.isLetterOrDigit(c)) {
+    			System.out.println(c);
+    			str.append(c);
+    		}
+    	}
+    	String notRev = str.toString().toLowerCase();
+    	String rev = str.reverse().toString().toLowerCase();
+    	System.out.println(rev);
+    	System.out.println(notRev);
+    	if (rev.equals(notRev)) {
+    		return true;
+    	}
+    	return false;
+    }
 }
