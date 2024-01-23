@@ -46,4 +46,29 @@ class Solution {
     	}
     	return false;
     }
+    
+    public List<Integer> findWordsContaining(String[] words, char x) {
+    	List<Integer> ans = new ArrayList<>();
+        for (int i=0; i<words.length; i++) {
+        	for (char c : words[i].toCharArray()) {
+        		if (c == x) {
+        			ans.add(i);
+        			break;
+        		}
+        	}
+        }
+        return ans;
+    }
+    
+    public int numberOfEmployeesWhoMetTarget(int[] hours, int target) {
+        int ans = 0;
+        for (int h : hours) {
+        	if (h >= target) {
+        		ans++;
+        	}
+        }
+        return ans;
+    }
+    
+    
 }
