@@ -89,5 +89,74 @@ class Solution {
         return num1-num2;
     }
     
+    //https://leetcode.com/problems/count-pairs-whose-sum-is-less-than-target/
+    public int countPairs(List<Integer> nums, int target) {
+        int ans = 0;
+        for (int i=0; i<nums.size()-1; i++) {
+        	int ii = nums.get(i);
+        	for (int j=i+1; j<nums.size(); j++) {
+        		if ((ii + nums.get(j)) < target) {
+        			ans++;
+        		}
+        	}
+        }
+        return ans;
+    }
+    
+    //https://leetcode.com/problems/left-and-right-sum-differences/
+    public int[] leftRightDifference(int[] nums) {
+    	int len = nums.length;
+    	int lsum = nums[0];
+    	int rsum = nums[len-1];
+    	int[] left = new int[len];
+    	int[] right = new int[len];
+    	int[] ans = new int[len];
+    	left[0] = 0;
+    	right[len-1] = 0;
+    	for (int i=1; i<len; i++) {
+    		left[i] = lsum;
+    		lsum += nums[i];
+    	}
+    	for (int i=len-2; i>=0; i--) {
+    		right[i] = rsum;
+    		rsum += nums[i];
+    	}
+    	for (int i=0; i<len; i++) {
+    		ans[i] = Math.abs(left[i] - right[i]);
+    	}
+    	return ans;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 }
