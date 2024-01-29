@@ -1,6 +1,8 @@
 package com.leetcode;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 class Solution {
@@ -125,6 +127,21 @@ class Solution {
     		ans[i] = Math.abs(left[i] - right[i]);
     	}
     	return ans;
+    }
+    
+    // https://leetcode.com/problems/find-all-numbers-disappeared-in-an-array/
+    public List<Integer> findDisappearedNumbers(int[] nums) {
+        HashSet<Integer> hs = new HashSet<>();
+        for(int val : nums)
+          hs.add(val);
+      
+        List<Integer> al = new ArrayList<>();
+        int n = nums.length;
+        for(int i=1; i<=n; i++) {
+            if(hs.contains(i) == false)
+                al.add(i);
+        }
+        return al;
     }
     
     
