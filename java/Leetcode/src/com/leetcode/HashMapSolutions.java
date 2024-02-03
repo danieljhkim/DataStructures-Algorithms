@@ -1,6 +1,8 @@
 package com.leetcode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HashMapSolutions {
@@ -75,7 +77,34 @@ public class HashMapSolutions {
     }
     
     
-    
+    public List<String> letterCombinations(String digits) {
+        List<String> ans = new ArrayList<>();
+    	if (digits.length() == 0) {
+    		return ans;
+    	}
+        ans.add("");
+        Map<Character, String> dMap = new HashMap<>();
+        dMap.put('2', "abc");
+        dMap.put('3', "def");
+        dMap.put('4', "ghi");
+        dMap.put('5', "jkl");
+        dMap.put('6', "mno");
+        dMap.put('7', "pqrs");
+        dMap.put('8', "tuv");
+        dMap.put('9', "wxyz");
+        for (char c : digits.toCharArray()) {
+        	String s = dMap.get(c);
+        	List<String> comb = new ArrayList<>();
+        	for (int i=0; i<ans.size(); i++) {
+        		String comStr = ans.get(i);
+        		for (char cc : s.toCharArray()) {
+        			comb.add(comStr + cc);
+        		}
+        	}
+        	ans = comb;
+        }
+        return ans;
+    }
     
     
     
