@@ -1,6 +1,12 @@
 
 from ast import List
+from typing import Optional
 
+class TreeNode:
+  def __init__(self, val=0, left=None, right=None):
+    self.val = val
+    self.left = left
+    self.right = right
 
 class Solution:
 
@@ -63,3 +69,38 @@ class Solution:
       bigger = max(dfs(root.left, depth+1), dfs(root.right, depth+1))
       return bigger
     return dfs(root, 0)
+  
+  def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
+    def isSame(root_p, root_q):
+      if root_p is None and root_q is None:
+        return True
+      if root_p is None or root_q is None:
+        return False
+      if root_p.val != root_q.val:
+        return False
+      left = isSame(root_p.left, root_q.left)
+      right = isSame(root_p.right, root_q.right)
+      return left and right
+    return isSame(p, q)
+      
+  def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+    if root is None:
+      return root
+    root.left, root.right = root.right, root.left
+    self.inverTree(root.left)
+    self.inverTree(root.right)
+    return root
+
+  def isSymmetric(self, root: Optional[TreeNode]) -> bool:
+    def isMirror(root_left, root_right):
+      if root_left is None and root_right is None:
+        return True
+      if root_right is None or root_left is None:
+        return False
+      same_val = root_right.val == root_left.val
+      left = isMirror(root_left.left, root_right.right)
+      right = isMirror(root_left.right, root_right.left)
+      return same_val and left and right
+    if not root:
+      return True
+    return isMirror(root.left, root.right)
