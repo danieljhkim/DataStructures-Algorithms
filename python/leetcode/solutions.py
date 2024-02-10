@@ -104,3 +104,35 @@ class Solution:
     if not root:
       return True
     return isMirror(root.left, root.right)
+
+  def isBalanced(self, root: Optional[TreeNode]) -> bool:
+    def getHeight(root) -> int:
+      if root is None:
+        return 0
+      left_depth = getHeight(root.left)
+      right_depth = getHeight(root.right)
+      return max(left_depth, right_depth) + 1
+    if root is None:
+      return True
+    left_depth = getHeight(root.left)
+    right_depth = getHeight(root.right)
+    height_diff = abs(left_depth - right_depth)
+    if height_diff < 2 and self.isBalanced(root.left) and self.isBalanced(root.right):
+      return True
+    return False
+  
+  def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
+    total = len(nums)
+    if not total:
+      return None
+    mid = total // 2
+    return TreeNode(nums[mid], self.sortedArrayToBST(nums[:mid]), self.sortedArrayToBST(nums[mid+1:]))
+  
+  def countNodes(self, root: Optional[TreeNode]) -> int:
+    if root is None:
+      return 0
+    return 1 + self.countNodes(root.left) + self.countNodes(root.right)
+
+
+
+
