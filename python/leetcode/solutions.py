@@ -134,5 +134,15 @@ class Solution:
     return 1 + self.countNodes(root.left) + self.countNodes(root.right)
 
 
-
-
+  def minDepth(self, root: Optional[TreeNode]) -> int:
+    if root is None:
+      return 0
+    if root.left is None and root.right is None:
+      return 1
+    leftDepth = self.minDepth(root.left)
+    rightDepth = self.minDepth(root.right)
+    if root.left is None:
+      return rightDepth + 1
+    if root.right is None:
+      return leftDepth + 1
+    return min(rightDepth, leftDepth) + 1
