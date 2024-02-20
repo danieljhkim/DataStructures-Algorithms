@@ -144,6 +144,32 @@ class Solution {
         return al;
     }
     
+    // https://leetcode.com/problems/can-place-flowers/?envType=study-plan-v2&envId=leetcode-75
+    public boolean canPlaceFlowers(int[] flowerbed, int n) {
+    	int len = flowerbed.length;
+    	int i = 0;
+    	while (i < len) {
+    		if (flowerbed[i] == 0) {
+        		int next = 0;
+    			if (i < len -1) {
+    				next = flowerbed[i+1];
+    			}
+        		if (next == 0) {
+        			n -= 1;
+        			i += 2;
+        		} else {
+        			i += 1;
+        		}
+        		if (n == 0) {
+        			return true;
+        		}
+    		} else {
+    			i += 2;
+    		}
+    	}
+    	return n <= 0;
+    }
+    
 
     
     

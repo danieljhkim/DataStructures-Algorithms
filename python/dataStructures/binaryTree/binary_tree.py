@@ -6,16 +6,24 @@ class Node:
     self.right = None
     self.val = key
 
-'''
+''' ordered 
          1
      2       3
    4   5   6   7
   
 '''
 
+''' left is smaller and right is bigger
+         4
+     2       5
+   1   3   6   7
+  
+'''
+
 def inorderTraversal(root):
   # tranverses nodes in non-decreasing order
   # 4 2 5 1 6 3 7  
+  # 1 2 3 4 5 6 7
   if root:
     inorderTraversal(root.left)
     print(root.val)

@@ -146,3 +146,42 @@ class Solution:
     if root.right is None:
       return leftDepth + 1
     return min(rightDepth, leftDepth) + 1
+  
+
+  def canPlaceFlowers(self, flowerbed: List[int], n: int) -> bool:
+    length = len(flowerbed)
+    i = 0
+    while i < length:
+      if flowerbed[i] == 0:
+        _next = flowerbed[i + 1] if i < length - 1 else 0
+        if _next == 0:
+          i += 2
+          n -= 1
+        else:
+          i += 1
+        if n == 0:
+          return True
+      else:
+        i += 1
+
+    return i <= 0
+  
+
+  def searchBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
+    # def postorder(root, val: int):
+    #   if not root:
+    #       return None
+    #   return postorder(root.left, val)
+    #   return postorder(root.right, val)
+    #   if root.val == val:
+    #       return root
+    if not root:
+      return None
+    if root.val == val:
+      return root
+    elif root.val > val:
+      return self.searchBST(root.left, val)
+    elif root.val < val:
+      return self.searchBST(root.right, val)
+    
+    
