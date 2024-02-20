@@ -9,19 +9,13 @@ def permutation(a_list):
     return a_list
   if len(a_list) == 1:
     return [a_list]
-  
   all_perms = []
   for i in range(len(a_list)):
     element = a_list[i]
     rem_list = a_list[:i] + a_list[i+1:]
-
     perm = permutation(rem_list)
-
-    print(perm)
     for p in perm:
       all_perms.append([element] + p)
-    print(all_perms)
-  print("return: ", all_perms)
   return all_perms
 
 
