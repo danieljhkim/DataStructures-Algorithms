@@ -226,10 +226,36 @@ class Solution:
         right -= 1
       else:
         return [sorted_nums[left][0], sorted_nums[right][0]]
-
-
     
+  def threeSum_brute_force(self, nums: List[int]) -> List[List[int]]:
+    n = len(nums)
+    ans = set()
+    nums.sort()
+    for i in range(0, n-2):
+      for j in range(i+1, n-1):
+        for k in range(j+1, n):
+          total = nums[i] + nums[j] + nums[k]
+          if total == 0:
+            ans.add((nums[i], nums[j], nums[k]))
+    return ans
 
-      
+  def threeSum(self, nums: List[int]) -> List[List[int]]: # optimized
+    n = len(nums)
+    ans = set()
+    nums.sort()
+    for l in range(n-2):
+      m = l + 1
+      r = n - 1
+      while m < r:
+        total = nums[l] + nums[r] + nums[m]
+        if total == 0:
+          ans.add((nums[l], nums[m], nums[r]))
+          m += 1
+        elif total > 0:
+          r -= 1
+        else:
+          m += 1
+    return ans
+
         
     
