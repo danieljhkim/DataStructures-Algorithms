@@ -184,4 +184,52 @@ class Solution:
     elif root.val < val:
       return self.searchBST(root.right, val)
     
+  def twoSum(self, nums: List[int], target: int) -> List[int]:
+    def _merge_sort(arr):
+      if len(arr) == 1:
+        return arr
+      mid = len(arr) // 2
+      left = _merge_sort(arr[:mid])
+      right = _merge_sort(arr[mid:])
+      l = r = k = 0
+      while l < len(left) and r < len(right):
+        if left[l][1] <= right[r][1]:
+          arr[k] = left[l]
+          k += 1
+          l += 1
+        else:
+          arr[k] = right[r]
+          r += 1
+          k += 1
+      while l < len(left):
+        arr[k] = left[l]
+        k += 1
+        l += 1
+      while r < len(right):
+        arr[k] = right[r]
+        r += 1
+        k += 1
+      return arr
+    
+    nums_dict = [(i, nums[i]) for i in range(0, len(nums))]
+    sorted_nums = _merge_sort(nums_dict)
+    left = 0
+    right = len(nums) - 1
+
+    while left < right:
+      l_value = sorted_nums[left][1]
+      r_value = sorted_nums[right][1]
+      total = l_value + r_value
+      if total < target:
+        left += 1
+      elif total > target:
+        right -= 1
+      else:
+        return [sorted_nums[left][0], sorted_nums[right][0]]
+
+
+    
+
+      
+        
     

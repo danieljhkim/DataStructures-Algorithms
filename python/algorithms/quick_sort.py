@@ -17,3 +17,19 @@ def quick_sort(arr, low, high):
 
     quick_sort(arr, low, partition-1)
     quick_sort(arr, partition+1, high)
+
+
+"""
+45837
+
+j=4      
+i=4
+
+j=5
+i=5
+
+j=8
+i=5
+48537
+
+"""
