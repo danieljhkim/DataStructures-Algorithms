@@ -256,6 +256,87 @@ class Solution:
         else:
           m += 1
     return ans
+  
+  
+  def isValidSudoku(self, board: List[List[str]]) -> bool:
+    #check horizontal for duplicates
+    for row in board:
+      hmap = {}
+      for col in row:
+        if col != ".":
+          if hmap.get(col) is None:
+            hmap[col] = 1
+          else:
+            return False
+    
+    #check verticle
+    for i in range(9):
+      rmap = {}
+      for row in board:
+        if row[i] != ".":
+          if rmap.get(row[i]) is None:
+            rmap[row[i]] = 1
+          else:
+            return False
+    
+    #check 3X3
+    for r in range(0, 9, 3):
+      for c in range(0, 9, 3):
+        cmap = {}
+        for i in range(c, c+3):
+          for j in range(r, r+3):
+            rnum = board[j][i]
+            if rnum != ".":
+              if cmap.get(rnum) is None:
+                cmap[rnum] = 1
+              else:
+                return False
+    return True
+
+  def longestConsecutive(self, nums: List[int]) -> int:
+    numSet = set(nums)
+    ans = 0
+    for n in numSet:
+      if n-1 not in numSet:
+        length = 1
+        while n+length in numSet:
+          length += 1
+        ans = max(length, ans)
+    return ans
+
+  def permute(self, nums: List[int]) -> List[List[int]]:
+    all_perms = []
+    def _permute(a_list, pos):
+      length = len(a_list)
+      if length == pos:
+        all_perms.append(a_list[:])
+      else:
+        for i in range(pos, length):
+          a_list[pos], a_list[i] = a_list[i], a_list[pos]
+          _permute(a_list, pos+1)
+          a_list[pos], a_list[i] = a_list[i], a_list[pos] # backtrack
+    _permute(nums, 0)
+    return all_perms
+
+
+  def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+    all_perms = []
+    hmap = {}
+    def _permute(a_list, pos):
+      length = len(a_list)
+      if length == pos:
+        key = "".join(str(i) for i in a_list)
+        if not hmap.get(key, False):
+          all_perms.append(a_list[:])
+          hmap[key] = True
+      else:
+        for i in range(pos, length):
+          a_list[i], a_list[pos] = a_list[pos], a_list[i]
+          _permute(a_list, pos+1)
+          a_list[i], a_list[pos] = a_list[pos], a_list[i] 
+    _permute(nums, 0)
+    return all_perms
+
 
         
     
