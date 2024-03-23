@@ -337,6 +337,67 @@ class Solution:
     _permute(nums, 0)
     return all_perms
 
-
-        
+  def rotate(self, nums: List[int], k: int) -> None:
+    """
+    Do not return anything, modify nums in-place instead.
+    """
+    if k == 0:
+      return
+    elif k < len(nums):
+      nums[:] = nums[-k:] + nums[:len(nums) - k]
+    else:
+      for i in range(k):
+        num = nums.pop()
+        nums.insert(0, num)
     
+  def maxProfit(self, prices: List[int]) -> int:
+    profit = 0
+    
+    for i in range(0, len(prices)-1):
+      cur_price = prices[0]
+      tmw_price = prices[i+1]
+      if cur_price < tmw_price:
+        profit += tmw_price - cur_price
+    return profit
+  
+  def canJump(self, nums: List[int]) -> bool:
+    if len(nums) == 1:
+      return True
+    index = 0
+    while index < len(nums):
+      max_step = nums[index]
+      if max_step == 0:
+        return False
+      if (max_step + index + 1) >= len(nums):
+        return True
+      for i in range(index+1, index+max_step+1):
+        if (max_step - (i-index)) <= nums[i]:
+          index = i
+          break
+    return True
+
+  def jump(self, nums: List[int]) -> int:
+    jumps = 0
+    if len(nums) == 1:
+      return 0
+    index = 0
+    while index < len(nums)-1:
+      max_step = nums[index]
+      if (max_step + index + 1) >= len(nums):
+        return jumps+1
+      for i in range(index+1, index+max_step+1):
+        if (max_step - (i-index)) <= nums[i]:
+          max_step = nums[i]
+          index = i
+      jumps += 1
+    return jumps
+
+  def hIndex(self, citations: List[int]) -> int:
+    citations.sort()
+    max_index = len(citations)
+    for i in citations:
+      if i < max_index:
+        max_index -= 1
+      else:
+        return max_index
+    return max_index
