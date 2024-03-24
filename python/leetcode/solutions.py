@@ -401,3 +401,62 @@ class Solution:
       else:
         return max_index
     return max_index
+  
+  def intToRoman(self, num: int) -> str:
+    num_map = {
+        1: "I",
+        5: "V",    4: "IV",
+        10: "X",   9: "IX",
+        50: "L",   40: "XL",
+        100: "C",  90: "XC",
+        500: "D",  400: "CD",
+        1000: "M", 900: "CM",
+    }
+    result = ""
+    for n in [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]:
+      while n <= num:
+        result += num_map[n]
+        num -= n
+    return result
+  
+  def reverseWords(self, s: str) -> str:
+    s = s.strip()
+    words = s.split()
+    words.reverse()
+    return " ".join(words)
+
+  def reverseWords2(self, s: str) -> str:
+    s = s.split()
+    left = 0
+    right = len(s) - 1
+    while left < right:
+      s[left], s[right] = s[right], s[left]
+      left += 1
+      right -= 1
+    return " ".join(s)
+
+  def hasPathSum(self, root: Optional[TreeNode], targetSum: int) -> bool:
+    if not root:
+      return False
+    if not root.left and not root.right:
+      return targetSum == root.val
+    leftSum = self.hasPathSum(root.left, targetSum - root.val)
+    rightSum = self.hasPathSum(root.right, targetSum - root.val)
+    return leftSum or rightSum
+  
+  def combine(self, n: int, k: int) -> List[List[int]]:
+    def backtrack(first, curr):
+      if len(curr) == k:
+        output.append(curr[:])
+        return
+      for i in range(first, n + 1):
+        curr.append(i)
+        backtrack(i + 1, curr)
+        curr.pop()
+    output = []
+    backtrack(1, [])
+    return output
+  
+      
+ 
+    

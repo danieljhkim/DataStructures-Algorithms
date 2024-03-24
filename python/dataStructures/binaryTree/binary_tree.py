@@ -15,8 +15,8 @@ class Node:
 
 ''' left is smaller and right is bigger
          4
-     2       5
-   1   3   6   7
+     2       6
+   1   3   5   7
   
 '''
 
@@ -30,7 +30,7 @@ def inorderTraversal(root):
     inorderTraversal(root.right)
 
 def preorderTraversal(root):
-  # used to create a copy of the tree
+  # used to create a copy/mirror of the tree
   # used to get prefix expressions of an expression tree
   # 1 2 4 5 3 6 7 
   if root:
