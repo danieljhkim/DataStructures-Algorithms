@@ -457,6 +457,34 @@ class Solution:
     backtrack(1, [])
     return output
   
+  def minSubArrayLen(self, target: int, nums: List[int]) -> int:
+    left = 0
+    sum_arr = 0
+    min_len = float('inf')
+
+    for right in range(len(nums)):
+      sum_arr += nums[right]
+      while sum_arr >= target:
+        min_len = min(min_len, right - left + 1)
+        sum_arr -= nums[left]
+        left += 1
+    if min_len == float('inf'):
+      return 0
+    return min_len
+  
+  def summaryRanges(self, nums: List[int]) -> List[str]:
+    ans = []
+    prev = nums[0]
+    for i in range(1, len(nums)):
+      diff = prev - nums[i]
+      if diff > -1:
+        ans.append(str(prev))
+        prev = nums[i-1]
+      elif diff == 0:
+        ans.append(str(prev))
+        i += 1
+      
+
       
  
     

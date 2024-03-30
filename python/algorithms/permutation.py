@@ -18,7 +18,7 @@ def permutation(a_list):
       all_perms.append([element] + p)
   return all_perms
 
-
+ 
 # backtracking solution
 all_perms = []
 a_list = ["1", "2", "3"]
@@ -26,14 +26,11 @@ def permute(a_list, pos):
   length = len(a_list)
   if length == pos:
     all_perms.append(a_list)
-    print("final: ", ", ".join(a_list) +  " | pos: " + str(pos))
   else:
     for i in range(pos, length):
       a_list[pos], a_list[i] = a_list[i], a_list[pos]
-      print("permute: " + ", ".join(a_list) +  " | pos: " + str(pos) + " | i: " + str(i))
       permute(a_list, pos+1)
       a_list[pos], a_list[i] = a_list[i], a_list[pos] # backtrack
-      print("backtrack: " + ", ".join(a_list) +  " | pos: " + str(pos) + " | i: " + str(i))
 
 permute(a_list, 0)
 
