@@ -588,3 +588,19 @@ class Solution:
     postorder(root)
     return total[0]
   
+  def binaryTreePaths(self, root: Optional[TreeNode]) -> List[str]:
+    ans = []
+    def traverse(node, path):
+      if not node:
+        return
+      path += "->" + str(node.val)
+      if not node.left and not node.right:
+        ans.append(path)
+      else:
+        traverse(node.left, path)
+        traverse(node.right, path)
+    if not root.right and not root.left:
+      return [str(root.val)]
+    traverse(root.left, str(root.val))
+    traverse(root.right, str(root.val))
+    return ans
