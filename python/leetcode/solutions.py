@@ -7,6 +7,10 @@ class TreeNode:
     self.val = val
     self.left = left
     self.right = right
+class Node:
+    def __init__(self, val=None, children=None):
+        self.val = val
+        self.children = children
 
 class Solution:
 
@@ -485,6 +489,102 @@ class Solution:
         i += 1
       
 
-      
- 
+  def averageOfLevels(self, root: Optional[TreeNode]) -> List[float]:
+      levels = {}
+      def levelOrder(node, level):
+          if not node:
+              return
+          if level in levels:
+              levels[level][0] += node.val
+              levels[level][1] += 1
+          else:
+              levels[level] = [node.val, 1]
+          level += 1
+          levelOrder(node.left, level)
+          levelOrder(node.right, level)
+
+      levelOrder(root, 0)
+      res = []
+      for v in levels.values():
+          res.append(v[0]/v[1])
+      return res
+  
+  def sumOfLeftLeaves(self, root: Optional[TreeNode]) -> int:
+    ans = {"total": 0}
+    def sumLeft(node, isLeft):
+      if not node:
+        return
+      if not node.left and not node.right and isLeft:
+        ans["total"] += node.val
+        return
+      if node.left:
+        sumLeft(node.left, True)
+      if node.right:
+        sumLeft(node.right, False)
+    sumLeft(root, False)
+
+    return ans["total"]
+  
+  def findMode(self, root: Optional[TreeNode]) -> List[int]:
+    num_map = {}
+    def find(node):
+      if not node:
+        return
+      if node.val in num_map:
+        num_map[node.val] += 1
+      else:
+        num_map[node.val] = 1
+      find(node.left)
+      find(node.right)
+    find(root)
+    sorted_nums = sorted(num_map.items(), key=lambda x: x[1], reverse=True)
+    biggest = sorted_nums[0][1]
+    ans = []
+    for num in sorted_nums:
+      if num[1] >= biggest:
+        ans.append(num[0])
+      else:
+        break
+    return ans
+
+  def preorder(self, root: 'Node') -> List[int]:
+    ans = []
+    def traverse(node):
+      if not node:
+        return
+      ans.append(node.val)
+      for chil in node.children:
+        traverse(chil)
+
+    traverse(root)
+    return ans
+
+  def postorder(self, root: 'Node') -> List[int]:
+    ans = []
+    def traverse(node):
+      if not node:
+        return
+      for chil in node.children:
+        traverse(chil)
+      ans.append(node.val)
     
+    traverse(root)
+    return ans
+  
+  def rangeSumBST(self, root: Optional[TreeNode], low: int, high: int) -> int:
+    total = [0]
+    def postorder(node):
+      if not node:
+        return
+      if node.val > high:
+        postorder(node.left)
+      elif node.val < low:
+        postorder(node.right)
+      else:
+        total[0] += node.val
+        postorder(node.left)
+        postorder(node.right)
+
+    postorder(root)
+    return total[0]
+  
