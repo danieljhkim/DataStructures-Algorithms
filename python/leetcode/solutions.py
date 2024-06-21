@@ -604,3 +604,84 @@ class Solution:
     traverse(root.left, str(root.val))
     traverse(root.right, str(root.val))
     return ans
+
+  def getTargetCopy(self, original: TreeNode, cloned: TreeNode, target: TreeNode) -> TreeNode:
+    if not original or target == original:
+      return cloned
+    left = self.getTargetCopy(original.left, cloned.left, target)
+    right = self.getTargetCopy(original.right, cloned.right, target)
+    return left or right
+  
+  def sumRootToLeaf(self, root: Optional[TreeNode]) -> int:
+    answer = 0
+    if not root: 
+      return 0
+    
+    def dfs(node, slate):
+      nonlocal answer
+      if not node.left and not node.right:
+        slate.append(str(node.val))
+        answer += int("".join(slate), 2)
+      if node.left: 
+        dfs(node.left, slate + [str(node.val)])
+      if node.right:
+        dfs(node.right, slate + [str(node.val)])
+    dfs(root, [])
+    return answer
+  
+  def isUnivalTree(self, root: Optional[TreeNode]) -> bool:
+    uni_val = root.val
+    state = True
+    def dfs(node):
+      nonlocal state
+      if not node:
+        return
+      if node.val != uni_val:
+        state = False
+        return 
+      dfs(node.left)
+      dfs(node.right)
+    dfs(root)
+    return state
+
+  def getMinimumDifference(self, root: Optional[TreeNode]) -> int:
+    ans = float("inf")
+    val_list = []
+    def dfs(node):
+      if not node:
+        return
+      dfs(node.left)
+      val_list.append(node.val)
+      dfs(node.right)
+      
+    dfs(root)
+    for i in range(0, len(val_list)-1):
+      ans = min(abs(val_list[i] - val_list[i+1]))
+    return ans
+    
+
+  def mergeTrees(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> Optional[TreeNode]:
+    if root1 and root2:
+      new_root = TreeNode(root1.val + root2.val)
+      new_root.left = self.mergeTrees(root1.left, root2.left)
+      new_root.right = self.mergeTrees(root1.right, root2.right)
+      return new_root
+    else:
+      return root1 or root2
+
+  def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:
+    maxDiameter = 0
+    def _diameter(root):
+      if not root:
+        return 0
+      nonlocal maxDiameter
+      left = _diameter(root.left)
+      right = _diameter(root.right)
+      maxDiameter = max(maxDiameter, left + right)
+      return 1 + max(left, right)
+    _diameter(root)
+    return maxDiameter
+
+
+    
+
