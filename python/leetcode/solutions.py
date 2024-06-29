@@ -683,5 +683,37 @@ class Solution:
     return maxDiameter
 
 
-    
+  def twoSum(self, nums: List[int], target: int) -> List[int]:
+    size = len(nums)
+    numMap = {}
+    for i in range(size):
+      numMap[nums[i]] = i
+    for i in range(size):
+      diff = target - nums[i]
+      if diff in numMap and numMap[diff] != i:
+        return [i, numMap[diff]]
+    return []
 
+
+  def isPowerOfFour(self, n: int) -> bool:
+    if n <= 0:
+      return False
+    if n == 1:
+      return True
+    while n > 1:
+      if n % 4 != 0:
+        return False
+      n //= 4
+    return True
+
+
+  def isPowerOfThree(self, n: int) -> bool:
+    if n <= 0:
+      return False
+    if n == 1:
+      return True
+    while n > 1:
+      if n % 3 != 0:
+        return False
+      n //= 3
+    return True
