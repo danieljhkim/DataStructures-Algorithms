@@ -717,3 +717,34 @@ class Solution:
         return False
       n //= 3
     return True
+  
+  
+  def rotate(self, matrix: List[List[int]]) -> None:
+    """
+    Do not return anything, modify matrix in-place instead.
+    """
+    size = len(matrix)
+    for row in range(0, int(size/2)):
+      for col in range(row, size-1-row):
+        matrix[row][col], matrix[col][size-1-row] = matrix[col][size-1-row], matrix[row][col]
+
+        matrix[row][col], matrix[size-1-row][size-1-col] =  matrix[size-1-row][size-1-col], matrix[row][col]
+
+        matrix[row][col], matrix[size-1-col][row] =  matrix[size-1-col][row], matrix[row][col]
+
+    
+
+  def rotate2(self, matrix: List[List[int]]) -> None:
+    n = len(matrix)
+    for row in range(n):
+        for col in range(row, n):
+            matrix[row][col], matrix[col][row] = matrix[col][row], matrix[row][col]
+    h = len(matrix)
+    w = len(matrix[0])
+    for row in range(h):
+      for col in range(w//2):
+        matrix[row][col], matrix[row][w-col-1] = matrix[row][w-col-1], matrix[row][col]
+
+
+
+
