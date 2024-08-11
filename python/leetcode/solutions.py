@@ -12,6 +12,11 @@ class Node:
         self.val = val
         self.children = children
 
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
 class Solution:
 
   # https://leetcode.com/problems/count-pairs-whose-sum-is-less-than-target/
@@ -747,4 +752,19 @@ class Solution:
 
 
 
+  def insertGreatestCommonDivisors(self, head: Optional[ListNode]) -> Optional[ListNode]:
+    # O(nlogm)
+    def find_gcd(num1, num2):
+      # O(logn)
+      while num2:
+        num1, num2 = num2, num1 % num2
+      return num1
+    current = head
+    while current.next: # O(n)
+      current.next = ListNode(find_gcd(current.val,  current.next.val), current.next)
+      current = current.next.next
+    return head
 
+
+    
+    
