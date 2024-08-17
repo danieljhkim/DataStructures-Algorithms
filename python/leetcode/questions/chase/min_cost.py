@@ -27,7 +27,7 @@ def min_cost(num):
 
 
 def min_cost2(num):
-    # Time complexity: O(n^2 logn) = O(n^2)
+    # Time complexity: O(n^2 nlogn) = O(n^2)
     if len(num) <= 1:
         return 0
     num.sort(reverse=True)
