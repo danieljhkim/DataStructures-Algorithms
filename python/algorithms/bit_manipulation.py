@@ -1,5 +1,4 @@
 
-
 """
 Converting integer to binary. 
 
@@ -22,4 +21,5 @@ def int_to_bin(num):
     num = num // 2
     binary = str(remainder) + binary
   return binary
+
 

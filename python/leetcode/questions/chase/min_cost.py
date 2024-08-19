@@ -9,6 +9,7 @@ given an array num, find the minimum cost of the array, following the rules belo
 """
 
 import heapq
+import time
 
 def min_cost(num):
     # Time complexity: o(n) + O(nlogn) = O(nlogn)
@@ -17,7 +18,7 @@ def min_cost(num):
     # Convert the array into a min-heap
     heapq.heapify(num) # O(n)
     cost = 0
-    while len(num) > 1:
+    while len(num) > 1: # O(n)
         first = heapq.heappop(num) # O(logn)
         second = heapq.heappop(num) # O(logn)
         total = first + second
@@ -27,17 +28,59 @@ def min_cost(num):
 
 
 def min_cost2(num):
-    # Time complexity: O(n^2 nlogn) = O(n^2)
+    # Time complexity: O(nlogn) + O(n^2 nlogn) = O(n^2)
     if len(num) <= 1:
         return 0
     num.sort(reverse=True)
     cost = 0
-    while len(num) > 1:
+    while len(num) > 1: # O(n)
         first = num.pop()
         second = num.pop()
         total = first + second
         cost += total
         num.append(total) 
-        num.sort() # O(nlogn)
+        num.sort(reverse=True) # O(nlogn)
     return cost
 
+def min_cost3(num):
+    # Time complexity: O(nLogn) + O(n^2)
+    
+    def sort_num(num, total): # O(n)
+        n = len(num)
+        i = 0
+        while i < n - 1:
+            if num[i] <= total:
+                break
+            i += 1
+        num.insert(i, total)
+        return num
+    
+    if len(num) <= 1:
+        return 0
+    num.sort(reverse=True) # O(nlogn)
+    cost = 0
+    while len(num) > 1: # O(n)
+        first = num.pop()
+        second = num.pop()
+        total = first + second
+        cost += total
+        num = sort_num(num, total) # O(n)
+    return cost
+
+
+num = [1, 2, 3, 4, 5]
+start = time.time()
+print(min_cost(num.copy()))
+end = time.time()
+print(end - start)
+start = time.time()
+print(min_cost2(num.copy()))
+end = time.time()
+print(end - start)
+start = time.time()
+print(min_cost3(num.copy()))
+end = time.time()
+print(end - start)
+        
+                    
+            
