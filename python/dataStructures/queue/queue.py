@@ -1,7 +1,8 @@
-from ..linkedList.linked_list import LinkedList 
+from ..linkedList.linked_list import LinkedList
+
 
 class Queue:
-    def __init__(self, size = 0):
+    def __init__(self, size=0):
         self.list = LinkedList()
         self.size = size
 
@@ -10,6 +11,6 @@ class Queue:
 
     def dequeue(self):
         return self.list.remove_first()
-    
+
     def is_empty(self):
         return self.list.head == None

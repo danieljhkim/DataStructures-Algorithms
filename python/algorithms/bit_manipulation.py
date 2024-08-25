@@ -1,4 +1,3 @@
-
 """
 Converting integer to binary. 
 
@@ -14,12 +13,11 @@ Converting integer to binary.
   binary = 1100
 """
 
+
 def int_to_bin(num):
-  binary = ''
-  while num > 0:
-    remainder = num % 2
-    num = num // 2
-    binary = str(remainder) + binary
-  return binary
-
-
+    binary = ""
+    while num > 0:
+        remainder = num % 2
+        num = num // 2
+        binary = str(remainder) + binary
+    return binary

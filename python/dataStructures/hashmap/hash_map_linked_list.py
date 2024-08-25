@@ -10,11 +10,13 @@ void remove(key) removes the key and its corresponding value if the map contains
 
 """
 
+
 class ListNode:
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next = None
+
 
 class HashMapLinkedList:
 
@@ -24,7 +26,6 @@ class HashMapLinkedList:
 
     def _index(self, key: int) -> int:
         return key % self.size
-    
 
     def put(self, key: int, value: int) -> None:
         idx = self._index(key)
@@ -40,8 +41,7 @@ class HashMapLinkedList:
                     current.next = ListNode(key, value)
                     return
                 current = current.next
-        
-        
+
     def get(self, key: int) -> int:
         idx = self._index(key)
         current = self.table[idx]
@@ -50,7 +50,6 @@ class HashMapLinkedList:
                 return current.value
             current = current.next
         return -1
-        
 
     def remove(self, key: int) -> None:
         idx = self._index(key)

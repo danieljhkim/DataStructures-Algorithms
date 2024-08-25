@@ -6,48 +6,49 @@ class TreeNode(object):
         self.right = None
 
 
-
-''' ordered 
+""" ordered 
          1
      2       3
    4   5   6   7
   
-'''
+"""
 
-''' left is smaller and right is bigger
+""" left is smaller and right is bigger
          4
      2       6
    1   3   5   7
   
-'''
+"""
+
 
 def inorderTraversal(root):
-  # tranverses nodes in non-decreasing order
-  # 4 2 5 1 6 3 7  
-  # 1 2 3 4 5 6 7
-  if root:
-    inorderTraversal(root.left)
-    print(root.val)
-    inorderTraversal(root.right)
+    # tranverses nodes in non-decreasing order
+    # 4 2 5 1 6 3 7
+    # 1 2 3 4 5 6 7
+    if root:
+        inorderTraversal(root.left)
+        print(root.val)
+        inorderTraversal(root.right)
+
 
 def preorderTraversal(root):
-  # used to create a copy/mirror of the tree
-  # used to get prefix expressions of an expression tree
-  # 1 2 4 5 3 6 7 
-  if root:
-    print(root.val)
-    preorderTraversal(root.left)
-    preorderTraversal(root.right)
+    # used to create a copy/mirror of the tree
+    # used to get prefix expressions of an expression tree
+    # 1 2 4 5 3 6 7
+    if root:
+        print(root.val)
+        preorderTraversal(root.left)
+        preorderTraversal(root.right)
+
 
 def postorderTraversal(root):
-  # used to delete a tree
-  # useful for getting postrix expression 
-  # 4 5 2 6 7 3 1
-  if root:
-    postorderTraversal(root.left)
-    postorderTraversal(root.right)
-    print(root.val)
-
+    # used to delete a tree
+    # useful for getting postrix expression
+    # 4 5 2 6 7 3 1
+    if root:
+        postorderTraversal(root.left)
+        postorderTraversal(root.right)
+        print(root.val)
 
 
 def BFS(root):
