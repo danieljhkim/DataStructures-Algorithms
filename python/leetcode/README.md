@@ -1,4 +1,8 @@
-# Table of Contents
+# Leetcode Patterns
+
+---
+
+## Table of Contents
 
 1. [Prefix Sum](#prefix-sum)
 2. [Two Pointers](#two-pointers)
@@ -27,7 +31,11 @@ def prefix_sum(arr):
         total = sums[i-1] + arr[i] 
         sums.append(total)
     return sums
+```
 
+- Sum in place
+
+```python
 def prefix_sum(arr):
     for i in range(1, len(arr)):
         arr[i] += arr[i-1]
@@ -346,6 +354,8 @@ def fn(arr):
     memo = {}
     return dp(STATE_FOR_WHOLE_INPUT)
 ```
+
+---
 
 ## Build a trie
 
