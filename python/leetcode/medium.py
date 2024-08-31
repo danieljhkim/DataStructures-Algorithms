@@ -162,3 +162,48 @@ class Solution:
             find_it(True, False, degree_map.copy()),
             find_it(False, True, degree_map.copy()),
         )
+
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        """
+        start: 1, 2, 8  ,15
+        end:   3, 6, 10, 18
+        """
+        has_changed = False
+
+        while not has_changed:
+            i = 0
+            has_changed = False
+            while i < len(intervals):
+                start = intervals[i][0]
+                end = intervals[i][1]
+                s_min = start
+                e_max = end
+                j = i + 1
+                while j < len(intervals):
+                    j_start = intervals[j][0]
+                    j_end = intervals[j][1]
+                    if e_max >= j_start:
+                        s_min = min(s_min, j_start)
+                        e_max = max(j_end, e_max)
+                        intervals.pop(j)
+                    j += 1
+                    intervals[i] = [s_min, e_max]
+                    has_changed = True
+                i += 1
+        return intervals
+
+    def minLength(self, s: str) -> int:
+        ar = list(s)
+        i = 0
+        while i < len(ar) - 1:
+            if (ar[i] == "A" and ar[i + 1] == "B") or (
+                ar[i] == "C" and ar[i + 1] == "D"
+            ):
+                del ar[i : i + 2]
+                if i >= len(ar):
+                    return len(ar)
+                i = i - 1 if i > 0 else 0
+                break
+            else:
+                i += 1
+        return len(ar)

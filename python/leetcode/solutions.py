@@ -814,3 +814,18 @@ class Solution:
             )
             current = current.next.next
         return head
+
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        nums = [(i, nums[i]) for i in range(len(nums))]
+        nums.sort(key=lambda x: x[1])
+        l = 0
+        r = len(nums) - 1
+        while l < r:
+            total = nums[l][1] + nums[r][1]
+            if total == target:
+                return [nums[l][0], nums[r][0]]
+            elif total < target:
+                l += 1
+            else:
+                r -= 1
+        return []

@@ -4,7 +4,7 @@
 
 Window:
 - py -3 -m venv venv
-- venv\Scripts\activate OR . venv/Scripts/activate
+- venv\Scripts\activate OR 
 - pip install <packages>
 
 Mac:

@@ -27,6 +27,10 @@ class HashMapLinkedList:
     def _index(self, key: int) -> int:
         return key % self.size
 
+    def _index_str(self, key: str) -> int:
+        # for string keys
+        return hash(key) % self.size
+
     def put(self, key: int, value: int) -> None:
         idx = self._index(key)
         if not self.table[idx]:

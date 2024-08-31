@@ -11,22 +11,24 @@
 - Enumeration problem: find all feasible solutions
 
 ### Pseudocode
+
 '''
 void FIND_SOLUTIONS( parameters):
 
-  if (valid solution):
-    store the solution
-    Return
+if (valid solution):
+store the solution
+Return
 
-  for (all choice):
-    if (valid choice):
-      APPLY (choice)
-      FIND_SOLUTIONS (parameters)
-      BACKTRACK (remove choice)
+for (all choice):
+if (valid choice):
+APPLY (choice)
+FIND_SOLUTIONS (parameters)
+BACKTRACK (remove choice)
 
-  Return
+Return
 '''
 
 ### complexity
+
 - exponential O(k^N)
 - Factorial O(N!)

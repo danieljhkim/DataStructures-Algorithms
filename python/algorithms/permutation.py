@@ -34,7 +34,57 @@ def permute(a_list, pos):
             a_list[pos], a_list[i] = a_list[i], a_list[pos]  # backtrack
 
 
-permute(a_list, 0)
+def permute_stack(a_list):
+    stack = [(a_list, 0)]  # Stack contains tuples of (current list, current index)
+    perms = []
+
+    while stack:
+        print(stack)
+        curr_list, index = stack.pop()
+
+        if index == len(curr_list):
+            perms.append(curr_list.copy())
+        else:
+            for i in range(index, len(curr_list)):
+                # Swap elements at index and i
+                curr_list[index], curr_list[i] = curr_list[i], curr_list[index]
+                # Push the new permutation with the next index onto the stack
+                stack.append((curr_list.copy(), index + 1))
+                # Swap back to restore the original list
+                curr_list[index], curr_list[i] = curr_list[i], curr_list[index]
+
+    return perms
+
+
+def permute_iterative(a_list):
+    n = len(a_list)
+    perms = []
+    indices = list(range(n))
+    cycles = list(range(n, 0, -1))
+
+    perms.append(a_list.copy())
+
+    while n:
+        for i in reversed(range(n)):
+            cycles[i] -= 1
+            if cycles[i] == 0:
+                indices[i:] = indices[i + 1 :] + indices[i : i + 1]
+                cycles[i] = n - i
+            else:
+                j = cycles[i]
+                indices[i], indices[-j] = indices[-j], indices[i]
+                perms.append([a_list[k] for k in indices])
+                break
+        else:
+            return perms
+
+
+# Example usage:
+# a_list = [1, 2, 3]
+# permutations = permute_stack(a_list)
+# for perm in permutations:
+#     print(perm)
+
 
 """
 permute: 1, 2, 3 | pos: 0 | i: 0

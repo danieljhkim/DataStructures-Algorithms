@@ -29,3 +29,16 @@ class LinkedList:
             self.head = self.head.next
             self.length -= 1
             return value
+
+
+def reverse(head):
+    """
+    1 <- 2 <- 3 <- 4
+    """
+    curr = head
+    prev = None
+    while curr:
+        curr_next = curr.next
+        curr.next = prev
+        prev = curr
+        curr = curr_next
