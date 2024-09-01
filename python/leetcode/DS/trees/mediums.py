@@ -58,3 +58,41 @@ class Solution:
             if k == 0:
                 return root.val
             root = root.right
+
+    # 98. Validate Binary Search Tree
+    def isValidBST(self, root: Optional[TreeNode]) -> bool:
+        stack = []
+        prev_val = float("-inf")
+        while root or stack:
+            while root:
+                stack.append(root)
+                root = root.left
+            root = stack.pop()
+            if root.val <= prev_val:
+                return False
+            prev_val = root.val
+            root = root.right
+        return True
+
+    # 114. Flatten Binary Tree to Linked List
+    def flatten(self, root: Optional[TreeNode]) -> None:
+        """
+        Do not return anything, modify root in-place instead.
+        pre-order traversal
+        """
+        queue = []
+
+        def pre_order(root):
+            if not root:
+                return
+            queue.append(root)
+            pre_order(root.left)
+            pre_order(root.right)
+
+        pre_order(root)
+        if queue:
+            curr = queue.pop(0)
+        while queue:
+            curr.left = None
+            curr.right = queue.pop(0)
+            curr = curr.right
