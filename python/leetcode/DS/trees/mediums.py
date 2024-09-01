@@ -96,3 +96,26 @@ class Solution:
             curr.left = None
             curr.right = queue.pop(0)
             curr = curr.right
+
+    # 102. Binary Tree Level Order Traversal
+    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        def bfs(root):
+            if not root:
+                return
+            level = 1
+            queue = [(root, level)]
+            levels = []
+            while queue:
+                node, level = queue.pop(0)
+                if len(levels) < level:
+                    n = level - len(levels)
+                    for _ in range(n):
+                        levels.append([])
+                levels[level - 1].append(node.val)
+                if node.left:
+                    queue.append((node.left, level + 1))
+                if node.right:
+                    queue.append((node.right, level + 1))
+            return levels
+
+        return bfs(root)
