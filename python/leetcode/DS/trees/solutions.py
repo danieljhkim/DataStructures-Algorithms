@@ -119,3 +119,83 @@ class Solution:
             return levels
 
         return bfs(root)
+
+    """
+            0
+        1       2
+      2  3    4  5
+    
+    """
+
+    def reverseOddLevels(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        queu = [(root, 0)]
+        levels = {}
+        while queu:
+            curr, level = queu.pop(0)
+            if level not in levels:
+                levels[level] = []
+            levels[level].append(curr)
+            if curr.right:
+                queu.append((curr.right, level + 1))
+            if curr.left:
+                queu.append((curr.left, level + 1))
+
+        for level in levels:
+            if level % 2 == 1:
+                nodes = levels[level]
+                vals = [node.val for node in nodes]
+                j = 0
+                for i in range(len(vals) - 1, -1, -1):
+                    nodes[i].val = vals[j]
+                    j += 1
+        return root
+
+    # 199. Binary Tree Right Side View
+    def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
+        levels = []
+        ans = []
+
+        def bfs(root):
+            if not root:
+                return
+            queue = [(root, 0)]
+            while queue:
+                node, level = queue.pop(0)
+                if len(levels) < level + 1:
+                    levels.append([])
+                levels[level].append(node.val)
+                if (len(queue) > 0 and queue[0][1] > level) or not queue:
+                    ans.append(node.val)
+                if node.left:
+                    queue.append((node.left, level + 1))
+                if node.right:
+                    queue.append((node.right, level + 1))
+
+        bfs(root)
+        return ans
+
+    # 236. Lowest Common Ancestor of a Binary Tree
+    def lowestCommonAncestor(
+        self, root: "TreeNode", p: "TreeNode", q: "TreeNode"
+    ) -> "TreeNode":
+        queue = [(root, [root])]
+        first = None
+        second = None
+        while queue:
+            node, anc = queue.pop(0)
+            anc = anc.copy()
+            anc.append(node)
+            if node.val == p.val or node.val == q.val:
+                if not first:
+                    first = (node, anc)
+                else:
+                    second = (node, anc)
+                    break
+            if node.left:
+                queue.append((node.left, anc))
+            if node.right:
+                queue.append((node.right, anc))
+        for i in range(len(first[1]) - 1, -1, -1):
+            for j in range(len(second[1]) - 1, -1, -1):
+                if first[1][i].val == second[1][j].val:
+                    return first[1][i]

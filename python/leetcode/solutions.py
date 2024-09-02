@@ -829,3 +829,23 @@ class Solution:
             else:
                 r -= 1
         return []
+
+    # 3274. Check if Two Chessboard Squares Have the Same Color
+    def checkTwoChessboards(self, coordinate1: str, coordinate2: str) -> bool:
+        def is_white(coord):
+            x = ord(coord[0])
+            y = int(coord[1])
+            if x % 2 == 0:
+                if y % 2 == 0:
+                    return False
+                else:
+                    return True
+            else:
+                if y % 2 == 0:
+                    return True
+                else:
+                    return False
+
+        c1 = is_white(coordinate1)
+        c2 = is_white(coordinate2)
+        return c1 == c2

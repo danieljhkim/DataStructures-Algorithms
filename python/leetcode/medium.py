@@ -60,57 +60,6 @@ class Solution:
             return "0"
         return total
 
-    def addTwoNumbers(
-        self, l1: Optional[ListNode], l2: Optional[ListNode]
-    ) -> Optional[ListNode]:
-        num1 = ""
-        num2 = ""
-        head1 = l1
-        head2 = l2
-        while head1:
-            num1 += str(head1.val) + num1
-            head1 = head1.next
-        while head2:
-            num2 += str(head2.val) + num2
-            head2 = head2.next
-        total = str(int(num1) + int(num2))
-        ans = ListNode(int(total[-1]))
-        head3 = ans
-        for i in range(len(total) - 2, -1, -1):
-            head3.next = ListNode(int(total[i]))
-            head3 = head3.next
-        return ans
-
-    """
-            0
-        1       2
-      2  3    4  5
-    
-    """
-
-    def reverseOddLevels(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
-        queu = [(root, 0)]
-        levels = {}
-        while queu:
-            curr, level = queu.pop(0)
-            if level not in levels:
-                levels[level] = []
-            levels[level].append(curr)
-            if curr.right:
-                queu.append((curr.right, level + 1))
-            if curr.left:
-                queu.append((curr.left, level + 1))
-
-        for level in levels:
-            if level % 2 == 1:
-                nodes = levels[level]
-                vals = [node.val for node in nodes]
-                j = 0
-                for i in range(len(vals) - 1, -1, -1):
-                    nodes[i].val = vals[j]
-                    j += 1
-        return root
-
     def findShortestSubArray(self, nums: List[int]) -> int:
         degree_map = {}
         degree = 0

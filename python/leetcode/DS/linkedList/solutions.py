@@ -48,3 +48,24 @@ class Solutions:
         if curr:
             curr.next = right_node
         return dummy.next
+
+    def addTwoNumbers(
+        self, l1: Optional[ListNode], l2: Optional[ListNode]
+    ) -> Optional[ListNode]:
+        num1 = ""
+        num2 = ""
+        head1 = l1
+        head2 = l2
+        while head1:
+            num1 += str(head1.val) + num1
+            head1 = head1.next
+        while head2:
+            num2 += str(head2.val) + num2
+            head2 = head2.next
+        total = str(int(num1) + int(num2))
+        ans = ListNode(int(total[-1]))
+        head3 = ans
+        for i in range(len(total) - 2, -1, -1):
+            head3.next = ListNode(int(total[i]))
+            head3 = head3.next
+        return ans
