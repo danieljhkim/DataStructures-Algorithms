@@ -9,6 +9,12 @@ class TreeNode:
         self.right = right
 
 
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
 class Solution:
 
     # 230. Kth Smallest Element in a BST
@@ -199,3 +205,27 @@ class Solution:
             for j in range(len(second[1]) - 1, -1, -1):
                 if first[1][i].val == second[1][j].val:
                     return first[1][i]
+
+    # 1367. Linked List in Binary Tree
+    def isSubPath(self, head: Optional[ListNode], root: Optional[TreeNode]) -> bool:
+        curr_node = head
+        ans = False
+
+        def inorder(root, curr_node, prev):
+            nonlocal ans
+            if not curr_node or ans:
+                ans = True
+                return
+            if not root:
+                curr_node = head if not prev else prev
+                return
+            if curr_node.val != root.val:
+                curr_node = head if not prev else prev
+            else:
+                prev = curr_node
+                curr_node = curr_node.next
+            inorder(root.left, curr_node, prev)
+            inorder(root.right, curr_node, prev)
+
+        inorder(root, curr_node, curr_node)
+        return ans or False

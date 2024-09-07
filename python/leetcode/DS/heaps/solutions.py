@@ -3,6 +3,13 @@ from typing import Optional, Tuple
 import heapq
 
 
+class ListNode:
+    def __init__(self, val=0, next=None, prev=None):
+        self.val = val
+        self.next = next
+        self.prev = prev
+
+
 class Solution:
 
     def findKthLargest(self, nums: List[int], k: int) -> int:
