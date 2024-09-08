@@ -69,3 +69,36 @@ class Solutions:
             head3.next = ListNode(int(total[i]))
             head3 = head3.next
         return ans
+
+    # 725. Split Linked List in Parts
+    def splitListToParts(
+        self, head: Optional[ListNode], k: int
+    ) -> List[Optional[ListNode]]:
+        ans = []
+        size = 0
+        curr = head
+        while curr:
+            size += 1
+            curr = curr.next
+
+        split_size = size // k
+        remainder = size % k
+        curr = head
+
+        while k > 0:
+            cur_size = split_size
+            if remainder > 0:
+                cur_size += 1
+                remainder -= 1
+            node = curr
+            head_node = node
+            while cur_size > 1:
+                if node:
+                    node = node.next
+                cur_size -= 1
+            if node:
+                curr = node.next
+                node.next = None
+            ans.append(head_node)
+            k -= 1
+        return ans
