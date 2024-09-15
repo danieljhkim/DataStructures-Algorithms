@@ -37,3 +37,42 @@ class Solution:
 
         backtrack(nums, 0)
         return perms
+
+    # 52. N-Queens II
+    def totalNQueens(self, n: int) -> int:
+        cols = set()
+        diags1 = set()
+        diags2 = set()
+        ans = 0
+
+        def is_safe(col, row):
+            if col in cols:
+                return False
+            diag1 = row + col
+            diag2 = row - col
+            if diag1 in diags1 or diag2 in diags2:
+                return False
+            return True
+
+        def backtrack(row):
+            if row == n:
+                nonlocal ans
+                ans += 1
+                return
+
+            for col in range(n):
+
+                if not is_safe(col, row):
+                    continue
+                cols.add(col)
+                diags1.add(row + col)
+                diags2.add(row - col)
+
+                backtrack(row + 1)
+
+                cols.remove(col)
+                diags1.remove(row + col)
+                diags2.remove(row - col)
+
+        backtrack(0)
+        return ans
