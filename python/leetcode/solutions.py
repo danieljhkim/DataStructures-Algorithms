@@ -849,3 +849,19 @@ class Solution:
         c1 = is_white(coordinate1)
         c2 = is_white(coordinate2)
         return c1 == c2
+
+    def backspaceCompare(self, s: str, t: str) -> bool:
+        def calculate(st):
+            ar = []
+            for i in range(len(st)):
+
+                if st[i] == "#":
+                    if len(ar) > 0:
+                        ar.pop()
+                else:
+                    ar.append(st[i])
+            return "".join(ar)
+
+        s = calculate(s)
+        t = calculate(t)
+        return s == t

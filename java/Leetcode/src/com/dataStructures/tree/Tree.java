@@ -1,4 +1,4 @@
-package Leetcode.src.com.dataStructures.tree;
+package leetcode.src.com.dataStructures.tree;
 
 
 public class Tree {

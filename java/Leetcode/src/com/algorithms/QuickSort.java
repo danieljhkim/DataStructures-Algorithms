@@ -1,4 +1,4 @@
-package com.algorithms;
+package leetcode.src.com.algorithms;
 
 public class QuickSort {
 	// worse case: O(N^2)

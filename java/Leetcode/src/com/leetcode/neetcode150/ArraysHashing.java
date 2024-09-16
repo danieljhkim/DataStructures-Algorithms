@@ -1,8 +1,9 @@
-package Leetcode.src.com.leetcode.neetcode150;
+package leetcode.src.com.leetcode.neetcode150;
+
 import java.util.*;
 
 public class ArraysHashing {
-    
+
     // 217. Contains Duplicate
     public boolean containsDuplicate(int[] nums) {
         Set<Integer> nset = new HashSet<>();
@@ -17,7 +18,8 @@ public class ArraysHashing {
 
     // 242. Valid Anagram
     public boolean isAnagram(String s, String t) {
-        if (s.length() != t.length()) return false;
+        if (s.length() != t.length())
+            return false;
         Map<Character, Integer> smap = new HashMap<>();
         for (int i = 0; i < s.length(); i++) {
             char ss = s.charAt(i);
@@ -54,7 +56,7 @@ public class ArraysHashing {
         for (String ss : strs) {
             Arrays.fill(count, 0);
             for (int i = 0; i < ss.length(); i++) {
-                count[ss.charAt(i)-'a']++;
+                count[ss.charAt(i) - 'a']++;
             }
             StringBuilder sb = new StringBuilder("");
             for (int i = 0; i < 26; i++) {
@@ -72,14 +74,15 @@ public class ArraysHashing {
 
 
     public int longestConsecutive(int[] nums) {
-        if (nums.length == 0) return 0;
+        if (nums.length == 0)
+            return 0;
         Set<Integer> set = new HashSet<>();
         int ans = 1;
         for (int num : nums) {
             set.add(num);
         }
         for (int num : set) {
-            if (!set.contains(num-1)) {
+            if (!set.contains(num - 1)) {
                 int len = 1;
                 int next = num + 1;
                 while (set.contains(next)) {

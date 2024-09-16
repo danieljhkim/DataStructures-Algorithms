@@ -1,4 +1,4 @@
-package Leetcode.src.com.leetcode.neetcode150;
+package leetcode.src.com.leetcode.neetcode150;
 
 public class TwoPointers {
 

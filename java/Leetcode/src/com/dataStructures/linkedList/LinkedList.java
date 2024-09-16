@@ -1,4 +1,4 @@
-package Leetcode.src.com.dataStructures.linkedList;
+package leetcode.src.com.dataStructures.linkedList;
 
 import java.util.ArrayList;
 import java.util.Collections;

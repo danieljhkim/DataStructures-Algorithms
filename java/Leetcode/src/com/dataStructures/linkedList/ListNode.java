@@ -1,4 +1,4 @@
-package Leetcode.src.com.dataStructures.linkedList;
+package leetcode.src.com.dataStructures.linkedList;
 
 public class ListNode {
 	int val;

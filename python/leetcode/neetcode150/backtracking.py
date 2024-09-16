@@ -1,5 +1,6 @@
 from ast import List
 from typing import Optional
+from typing import List
 
 
 class Solution:
@@ -58,3 +59,68 @@ class Solution:
             backtrack([], 0, size)
 
         return ans
+
+    # 39. Combination Sum
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        ans = []
+
+        def backtrack(arr, idx):
+            total = sum(arr)
+            if total == target:
+                ans.append(arr[:])
+                return
+            elif total > target:
+                return
+
+            for i in range(idx, len(candidates)):
+                arr.append(candidates[i])
+                backtrack(arr, i)
+                arr.pop()
+
+        backtrack([], 0)
+        return ans
+
+    # 46. Permutations
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        ans = []
+
+        def backtrack(arr, pos):
+            if pos == len(arr):
+                ans.append(arr[:])
+                return
+            for i in range(pos, len(nums)):
+                arr[pos], arr[i] = arr[i], arr[pos]
+                backtrack(arr, pos + 1)
+                arr[pos], arr[i] = arr[i], arr[pos]
+
+        backtrack(nums, 0)
+        return ans
+
+    # 90. Subsets II
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        num_set = set()
+        ans = []
+
+        def backtrack(arr, idx, size):
+            if size == idx and tuple(sorted(arr)) not in num_set:
+                num_set.add(tuple(sorted(arr)))
+                ans.append(arr[:])
+                return
+            for i in range(idx, len(nums)):
+                arr.append(nums[i])
+                backtrack(arr, i + 1, size)
+                arr.pop()
+
+        for i in range(len(nums) + 1):
+            backtrack([], 0, i)
+        return ans
+
+
+def test_solution():
+    s = Solution()
+    a = [1, 2, 3]
+    print(s.permute(a))
+
+
+if __name__ == "__main__":
+    test_solution()
