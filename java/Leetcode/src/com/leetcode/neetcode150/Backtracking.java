@@ -124,6 +124,7 @@ public class Backtracking {
     private class PermuteEntry {
         public Set<Integer> set;
         public List<Integer> arr;
+
         PermuteEntry(List<Integer> arr, Set<Integer> set) {
             this.arr = arr;
             this.set = set;
@@ -135,7 +136,7 @@ public class Backtracking {
         // iterative approach
         Stack<PermuteEntry> stack = new Stack<>();
         List<List<Integer>> ans = new ArrayList<>();
-        stack.push(new PermuteEntry(new ArrayList<>(),  new HashSet<>()));
+        stack.push(new PermuteEntry(new ArrayList<>(), new HashSet<>()));
 
         while (!stack.isEmpty()) {
             PermuteEntry entry = stack.pop();
@@ -164,14 +165,14 @@ public class Backtracking {
     }
 
     public void permuteBacktrack(int[] arr, List<List<Integer>> ans, int pos) {
-        
+
         if (pos == arr.length) {
             ans.add(Arrays.stream(arr).boxed().toList());
             return;
         }
         for (int i = pos; i < arr.length; i++) {
             swap(arr, pos, i);
-            permuteBacktrack(arr, ans, pos+1);
+            permuteBacktrack(arr, ans, pos + 1);
             swap(arr, pos, i);
         }
     }
@@ -180,6 +181,128 @@ public class Backtracking {
         List<List<Integer>> ans = new ArrayList<>();
         permuteBacktrack(nums, ans, 0);
         return ans;
-    } 
+    }
+
+
+    // 79. Word Search
+    char[][] board;
+    int COL;
+    int ROW;
+    String WORD;
+
+    public boolean exist(char[][] board, String word) {
+        this.COL = board[0].length;
+        this.ROW = board.length;
+        this.board = board;
+        this.WORD = word;
+        for (int r = 0; r < this.ROW; r++) {
+            for (int c = 0; c < this.COL; c++) {
+                if (board[r][c] == word.charAt(0)) {
+                    boolean found = this.existBacktrack(r, c, 0);
+                    if (found)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    boolean existBacktrack(int row, int col, int index) {
+        if (index == this.WORD.length()) {
+            return true;
+        }
+        if (row == this.ROW || row < 0 || col == this.COL || col < 0
+                || this.board[row][col] != this.WORD.charAt(index)) {
+            return false;
+        }
+        this.board[row][col] = '#';
+        int[] rowMoves = {0, 1, 0, -1};
+        int[] colMoves = {1, 0, -1, 0};
+        for (int i = 0; i < 4; i++) {
+            boolean check = existBacktrack(row + rowMoves[i], col + colMoves[i], index + 1);
+            if (check)
+                return true;
+        }
+        this.board[row][col] = this.WORD.charAt(index);
+        return false;
+    }
+
+    // 131. Palindrome Partitioning
+    List<List<String>> ans_131 = new ArrayList<>();
+
+    public List<List<String>> partition(String s) {
+        int start = 0;
+        List<String> arr = new ArrayList<>();
+        backtrack_131(arr, start, s);
+        return ans_131;
+    }
+
+    void backtrack_131(List<String> arr, int start, String s) {
+        if (start >= s.length()) {
+            this.ans_131.add(new ArrayList<>(arr));
+        }
+        for (int end = start; end < s.length(); end++) {
+            if (isPalindrome(s, start, end)) {
+                arr.add(s.substring(start, end + 1));
+                backtrack_131(arr, end + 1, s);
+                arr.remove(arr.size() - 1);
+            }
+        }
+    }
+
+    boolean isPalindrome(String w, int s, int e) {
+        while (s < e) {
+            if (w.charAt(e--) != w.charAt(s++)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // 17. letter combinations of a phone number
+    Map<Character, String> dmap = Map.of('2', "abc", '3', "def", '4', "ghi", '5', "jkl", '6', "mno",
+            '7', "pqrs", '8', "tuv", '9', "wxyz");
+    List<String> ans_17 = new ArrayList<>();
+
+    public List<String> letterCombinations(String digits) {
+        // backtracking solution
+        if (digits.length() == 0)
+            return ans_17;
+        StringBuilder sb = new StringBuilder();
+        backtrack_17(sb, digits, 0);
+        return ans_17;
+    }
+
+    void backtrack_17(StringBuilder sb, String digits, int index) {
+        if (index >= digits.length()) {
+            this.ans_17.add(sb.toString());
+            return;
+        }
+        String digitCombs = dmap.get(digits.charAt(index));
+        for (int i = 0; i < digitCombs.length(); i++) {
+            sb.append(digitCombs.charAt(i));
+            backtrack_17(sb, digits, index + 1);
+            sb.deleteCharAt(sb.length() - 1);
+        }
+    }
+
+    public List<String> letterCombinations2(String digits) {
+        // interative solution
+        if (digits.length() == 0)
+            return new ArrayList<>();
+        List<String> ans = new ArrayList<>(List.of(""));
+        for (int i = 0; i < digits.length(); i++) {
+            String digitCombo = dmap.get(digits.charAt(i));
+            List<String> comb = new ArrayList<>();
+
+            for (String s : ans) {
+                for (char c : digitCombo.toCharArray()) {
+                    comb.add(s + c);
+                }
+            }
+            ans = comb;
+        }
+        return ans;
+    }
 
 }

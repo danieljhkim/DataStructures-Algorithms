@@ -13,6 +13,18 @@ def binary_search(arr, target):
     return -1
 
 
+def binary_search_insert_position(arr, target):
+    # useful for when inserting
+    low, high = 0, len(arr)
+    while low < high:
+        mid = (low + high) // 2
+        if arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid
+    return low
+
+
 def recursive_search(arr, target, low, high):
 
     if low <= high:
