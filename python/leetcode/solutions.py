@@ -865,3 +865,25 @@ class Solution:
         s = calculate(s)
         t = calculate(t)
         return s == t
+    
+    def validWordAbbreviation(self, word: str, abbr: str) -> bool:
+
+        abbr_idx = 0
+        word_idx = 0
+        
+        while abbr_idx < len(abbr) and word_idx < len(word):
+            if abbr[abbr_idx].isdigit():
+                if abbr[abbr_idx] == '0':
+                    return False  
+                num = ""
+                while abbr_idx < len(abbr) and abbr[abbr_idx].isdigit():
+                    num += abbr[abbr_idx]
+                    abbr_idx += 1
+                word_idx += int(num)
+            else:
+                if word_idx >= len(word) - 1 or word[word_idx] != abbr[abbr_idx]:
+                    return False
+                abbr_idx += 1
+                word_idx += 1
+        return word_idx == len(word) and abbr_idx == len(abbr)
+        

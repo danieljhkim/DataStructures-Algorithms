@@ -1,4 +1,4 @@
-package leetcode.src.com.dataStructures.tree;
+package leetcode.src.com.dataStructures.tree.binaryTree;
 
 public class TreeNode {
 	int val;

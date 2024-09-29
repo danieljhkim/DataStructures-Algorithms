@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class LinkedList {
+	
 	public int getDecimalValue(ListNode head) {
 		List<Integer> li = new ArrayList<>();
 		while (head != null) {

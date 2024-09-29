@@ -1,8 +1,6 @@
-from ast import List
 from math import inf
-from typing import Optional
 from collections import defaultdict
-from typing import List
+from typing import List, Tuple, Optional
 import heapq
 
 
@@ -26,14 +24,66 @@ class ListNode:
 
 
 class Solution:
-    """
-    given a p array of integers and q array of integers, for each element in q,
-    return an array with the sum of absolute difference between each q element with p array
-    i.e.
-    p = [1,2,3]
-    q = [5, 0]
-    return [(|5-1| + |5-2| + |5-3|), (|0-1| + |0-2| + |0-3|)
-    """
+    pass
+
+    def reportSpam(self, message: List[str], bannedWords: List[str]) -> bool:
+        count = 0
+        hset = set(bannedWords)
+        for m in message:
+            if m in hset:
+                count += 1
+            if count == 2:
+                return True
+        return False
+
+    def minNumberOfSeconds(self, mountainHeight: int, workerTimes: List[int]) -> int:
+        """_summary_
+        2 1 1
+        2
+        """
+
+        s = 1
+        hmap = defaultdict(int)
+        top = 0
+        for i in range(len(workerTimes)):
+            hmap[workerTimes[i]] += 1
+            top = max(workerTimes[i], top)
+        while mountainHeight:
+            for i in range(top):
+                mountainHeight -= hmap[i] * s
+
+    def validSubstringCount(self, word1: str, word2: str) -> int:
+        if len(word1) < len(word2):
+            return 0
+
+        def is_valid(word):
+            nMap2 = nMap.copy()
+            nonlocal word2
+            for c in range(len((word))):
+                nMap2[word[c]] += 1
+            for i in range(len(word2)):
+                if nMap2[word2[i]] > 0:
+                    nMap2[word2[i]] -= 1
+                else:
+                    return False
+            return True
+
+        ans = 0
+
+        for size in range(len(word2), len(word1)):
+            start = 0
+            end = size
+            nMap = defaultdict(int)
+            for c in range(size):
+                nMap[word1[c]] += 1
+            while end <= len(word1):
+                if is_valid(word1[start:end]):
+                    ans += 1
+                nMap[word1[end]] += 1
+                nMap[word1[start]] -= 1
+                start += 1
+                end += 1
+        return ans
 
 
 def test_solution():
