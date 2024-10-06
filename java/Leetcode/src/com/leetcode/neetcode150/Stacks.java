@@ -31,4 +31,36 @@ public class Stacks {
         }
         return ans;
     }
+
+    // 20. Valid Parentheses
+    public boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '(') {
+                stack.add(')');
+            } else if (c == '[') {
+                stack.add(']');
+            } else if (c == '{') {
+                stack.add('}');
+            } else if (stack.isEmpty() || stack.pop() != c) {
+                return false;
+            }
+        }
+        return stack.isEmpty();
+    }
+
+    // 739. Daily Temperatures
+    public int[] dailyTemperatures(int[] temperatures) {
+        Stack<Integer> stack = new Stack<>();
+        int[] ans = new int[temperatures.length];
+        for (int i = 0; i < temperatures.length; i++) {
+            while (!stack.isEmpty() && temperatures[stack.peek()] < temperatures[i]) {
+                int idx = stack.pop();
+                ans[idx] = i - idx;
+            }
+            stack.push(i);
+        }
+        return ans;
+    }
 }

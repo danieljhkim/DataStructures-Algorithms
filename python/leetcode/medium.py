@@ -156,3 +156,21 @@ class Solution:
             else:
                 i += 1
         return len(ar)
+
+    # 560. Subarray Sum Equals K
+    # wrong - redo
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        if k == 0 and len(nums) == 1 and nums[0] == 0:
+            return 0
+        right = 0
+        ans = 0
+        cur_sum = 0
+        n = len(nums)
+        for left in range(n):
+            while cur_sum < k and right < n:
+                cur_sum += nums[right]
+                right += 1
+            if cur_sum == k:
+                ans += 1
+            cur_sum -= nums[left]
+        return ans

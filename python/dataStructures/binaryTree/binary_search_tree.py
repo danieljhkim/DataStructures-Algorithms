@@ -1,4 +1,14 @@
-# Definition for a binary tree node.
+"""
+                16
+         /              \
+       8                24
+     /   \            /    \
+   4      12       20      28
+  / \    /  \     /  \    /  \
+ 2   6  10  14  18   22  26   30
+"""
+
+
 class TreeNode(object):
     def __init__(self, x):
         self.val = x
@@ -31,6 +41,41 @@ class BinarySearchTree:
                         break
                 else:
                     break
+
+        def get_min_node(self, node: TreeNode):
+            cur = node
+            while cur.left:
+                cur = cur.left
+            return cur
+
+        def get_max_node(self, node: TreeNode):
+            cur = node
+            while cur.right:
+                cur = cur.right
+            return cur
+
+        def delete(self, node: TreeNode, val):
+            """
+            1. when its a leaf node
+            2. when it has one child - replace the node with the child
+            3. when it has 2 children - find predecessor and replace the node's val with the predecessor and delete the predecessor
+            """
+            if not node:
+                return node
+            if node.val > val:
+                node.left = self.delete(node.left, val)
+            elif node.val < val:
+                node.right = self.delete(node.right, val)
+            else:
+                if not node.left:
+                    return node.right
+                elif not node.right:
+                    return node.left
+
+                node_max_of_left = self.get_max_node(node.left)
+                node.val = node_max_of_left.val
+                node.left = self.delete(node.left, node.val)
+            return node
 
 
 ################################### helpers #################################

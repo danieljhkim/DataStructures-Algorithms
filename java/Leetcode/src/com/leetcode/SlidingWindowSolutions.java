@@ -8,8 +8,4 @@ public class SlidingWindowSolutions {
 
     }
 
-    public long validSubstringCount(String word1, String word2) {
-        int ans = 0;
-    }
-
 }

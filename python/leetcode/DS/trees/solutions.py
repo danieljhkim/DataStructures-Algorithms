@@ -229,3 +229,28 @@ class Solution:
 
         inorder(root, curr_node, curr_node)
         return ans or False
+
+    # 450. Delete Node in a BST
+    def deleteNode(self, root: Optional[TreeNode], key: int) -> Optional[TreeNode]:
+
+        def find_max_node(node):
+            cur = node
+            while cur.right:
+                cur = cur.right
+            return cur
+
+        if not root:
+            return root
+        if root.val > key:
+            root.left = self.deleteNode(root.left, key)
+        elif root.val < key:
+            root.right = self.deleteNode(root.right, key)
+        else:
+            if not root.left:
+                return root.right
+            elif not root.right:
+                return root.left
+            max_left_node = find_max_node(root.left)
+            root.val = max_left_node.val
+            root.left = self.deleteNode(root.left, root.val)
+        return root

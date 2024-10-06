@@ -1,4 +1,3 @@
-from ast import List
 from typing import Optional
 from typing import List
 

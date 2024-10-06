@@ -1,3 +1,34 @@
+"""
+    low <= high:
+        - Typical Use Case: 
+            when searching for a specific target value in a sorted array.
+        
+    low < high:
+        - Typical Use Case: 
+            where you are looking for a boundary or a specific condition rather than a specific value. 
+            i.e., finding the smallest or largest index that satisfies a certain condition.
+
+
+    high = mid
+    low = mid + 1
+        - when you are looking for a boundary condition, 
+        - i.e. finding the smallest element that is greater than or equal to the target.
+        - i.e. finding the first occurence
+        - In this case, you do not want to exclude the middle element from the search range because it might be the boundary you are looking for.
+        
+    low = mid
+    high = mid - 1
+        - when you are looking for a boundary condition, 
+        - i.e. finding the largest element that is less than or equal to the target
+        - i.e. finding the last occurence
+        - In this case, you do not want to exclude the middle element from the search range because it might be the boundary you are looking for.
+    
+    
+    math.ceil(n)
+        - low + (high - low + 1) // 2
+"""
+
+
 def binary_search(arr, target):
     low = 0
     high = len(arr) - 1
@@ -11,6 +42,28 @@ def binary_search(arr, target):
         else:
             return mid
     return -1
+
+
+def find_first_occurrence(nums, target):
+    low, high = 0, len(nums) - 1
+    while low < high:
+        mid = low + (high - low) // 2
+        if nums[mid] < target:
+            low = mid + 1
+        else:
+            high = mid
+    return low if low < len(nums) and nums[low] == target else -1
+
+
+def find_largest_less_than_or_equal(nums, target):
+    low, high = 0, len(nums) - 1
+    while low < high:
+        mid = (high - low + 1) // 2 + low  # Use (high - low + 1) to avoid infinite loop
+        if nums[mid] <= target:
+            low = mid
+        else:
+            high = mid - 1
+    return low if nums[low] <= target else -1
 
 
 def binary_search_insert_position(arr, target):

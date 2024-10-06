@@ -33,6 +33,3 @@ def mergeSort(arr):
 ar = [5, 3, 2, 9, 7]
 
 a = mergeSort(ar)
-
-for aa in a:
-    print(aa)

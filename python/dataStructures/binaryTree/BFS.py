@@ -1,4 +1,4 @@
-from binary_tree import TreeNode
+from python.dataStructures.binaryTree.binary_search_tree import TreeNode
 
 ################################### BFS #################################
 
