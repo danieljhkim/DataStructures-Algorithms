@@ -1,4 +1,5 @@
 package leetcode.src.com.leetcode.neetcode150;
+import java.util.*;
 
 public class ListNode {
     int val;
@@ -68,6 +69,53 @@ public class LinkedList {
                 head = temp;
             }
             return prev;
+        }
+
+        // 143. Reorder List
+        public void reorderList(ListNode head) {
+            if (head.next == null) return;
+            Stack<ListNode> stack = new Stack<>();
+            ListNode fast = head;
+            ListNode slow = head;
+            while (fast != null && fast.next != null) {
+                fast = fast.next.next;
+                slow = slow.next;
+            }
+
+            ListNode mid = slow;
+            slow = slow.next;
+            mid.next = null; // Break the list into two halves
+
+            while (slow != null) {
+                stack.push(slow);
+                slow = slow.next;
+            }
+            ListNode cur = head;
+            while (!stack.isEmpty()) {
+                ListNode tail = stack.pop();
+                ListNode next = cur.next;
+                cur.next = tail;
+                tail.next = next;
+                cur = next;
+            }
+        }
+
+        // 287. Find the Duplicate Number
+        public int findDuplicate(int[] nums) {
+            // 3 4 1 4 2
+            int slow = nums[0];
+            int fast = nums[0];
+            while (true) {
+                slow = nums[slow];
+                fast = nums[nums[fast]];
+                if (slow == fast) break; 
+            }
+            slow = nums[0];
+            while (slow != fast) {
+                slow = nums[slow];
+                fast = nums[fast];
+            }
+            return slow;
         }
 
 }
