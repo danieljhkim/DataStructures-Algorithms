@@ -112,10 +112,40 @@ class Solution:
             ans = max(bnum, ans, cnum)
         return ans
 
-    # for nn in nmap[s]:
-    #     if nn not in sus:
-    #         sus.add(nn)
-    #         changed = True
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+        ans = [[]]
+
+        def backtrack(arr, idx):
+            if idx == len(nums):
+                return
+            for i in range(idx, len(arr)):
+                arr.append(nums[i])
+                ans.append(arr[:])
+                backtrack(arr, i + 1)
+                arr.pop()
+
+        backtrack([], 0)
+        return ans
+
+    def subsetsWithDup(self, nums: List[int]) -> List[List[int]]:
+        ans = [[]]
+
+        def backtrack(arr, idx):
+            if idx == len(nums):
+                return
+            hset = set()
+            for i in range(idx, len(nums)):
+                num = nums[i]
+                if num not in hset:
+                    hset.add(num)
+                    arr.append(num)
+                    ans.append(arr[:])
+                    backtrack(arr, i + 1)
+                    arr.pop()
+
+        nums.sort()
+        backtrack([], 0)
+        return ans
 
 
 def test_solution():

@@ -887,3 +887,57 @@ class Solution:
                 word_idx += 1
         return word_idx == len(word) and abbr_idx == len(abbr)
         
+    
+    def validPalindrome(self, s: str) -> bool:
+        def check(s, left, right):
+            while left < right:
+                if s[left] != s[right]:
+                    return False
+                left += 1
+                right -= 1
+            return True
+        
+        left = 0
+        right = len(s) - 1
+        while left < right:
+            if s[left] != s[right]:
+                one = check(s, left, right - 1)
+                two = check (s, left + 1, right)
+                return one or two
+            left += 1
+            right -= 1
+        return True
+    
+    
+    def simplifyPath(self, path: str) -> str:
+        paths = path.split("/")
+        ans = []
+        for p in paths:
+            if not p or p == ".":
+                continue
+            if p == "..":
+                if len(ans) > 0:
+                    ans.pop()
+            else:
+                ans.append(p)
+        return "/" + "/".join(ans)
+    
+    
+    def addBinary(self, a: str, b: str) -> str:
+        def bin_to_int(binary):
+            ans = 0
+            for i in binary:
+                ans *= 2
+                ans += int(i)
+            return ans
+        def int_to_bin(num):
+            ans = ""
+            while num:
+                r = num % 2
+                num //= 2
+                ans = str(r) + ans
+            return ans or "0"
+
+        num_a = bin_to_int(a)
+        num_b = bin_to_int(b)
+        return int_to_bin(num_a + num_b)

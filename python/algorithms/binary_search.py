@@ -18,6 +18,8 @@
         
     low = mid
     high = mid - 1
+        - if target <= mid: low = mid
+            - in case when low and high are adjacent, and mid is calculated as low
         - when you are looking for a boundary condition, 
         - i.e. finding the largest element that is less than or equal to the target
         - i.e. finding the last occurence

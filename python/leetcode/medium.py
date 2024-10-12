@@ -1,5 +1,8 @@
 from ast import List
+from curses.ascii import FF
 from typing import Optional
+import random
+from collections import deque
 
 
 class TreeNode:
@@ -174,3 +177,145 @@ class Solution:
                 ans += 1
             cur_sum -= nums[left]
         return ans
+
+    # 50
+    def myPow(self, x: float, n: int) -> float:
+        if n == 0:
+            return 1
+        if x == 0:
+            return 0
+
+        if n < 0:
+            x = 1 / x
+            n = -n
+
+        result = 1
+        current_product = x
+
+        while n > 0:
+            if n % 2 == 1:
+                result *= current_product
+            current_product *= current_product
+            n //= 2
+
+        return result
+
+    # 921
+    def minAddToMakeValid(self, s: str) -> int:
+        left = 0
+        right = 0
+        for p in s:
+            if p == "(":
+                left += 1
+            else:
+                if left < 1:
+                    right += 1
+                else:
+                    left -= 1
+        return left + right
+
+    # 227
+    def calculate(self, s: str) -> int:
+        stack = []
+        num = 0
+        prev_op = "+"
+        s += "."
+        for i in range(len(s)):
+            ch = s[i]
+            if ch.isdigit():
+                num = num * 10 + int(ch)
+            elif ch != " ":
+                if prev_op == "-":
+                    stack.append(-num)
+                elif prev_op == "+":
+                    stack.append(num)
+                elif prev_op == "*":
+                    stack.append(stack.pop() * num)
+                elif prev_op == "/":
+                    stack.append(int(stack.pop() / num))
+                prev_op = ch
+                num = 0
+        ans = 0
+        while stack:
+            ans += stack.pop()
+        return ans
+
+    # 162
+    def findPeakElement(self, nums: List[int]) -> int:
+        low = 0
+        high = len(nums) - 1
+        while low < high:
+            mid = (low + high) // 2
+            if nums[mid] > nums[mid + 1]:
+                high = mid
+            else:
+                low = mid + 1
+        return low
+
+    def shortestPathBinaryMatrix(self, grid: List[List[int]]) -> int:
+        max_row = len(grid) - 1
+        max_col = len(grid[0]) - 1
+        if grid[0][0] != 0 or grid[max_row][max_col] != 0:
+            return -1
+        directions = [
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),
+            (0, -1),
+            (0, 1),
+            (1, -1),
+            (1, 0),
+            (1, 1),
+        ]
+
+        def get_paths(row, col):
+            paths = []
+            for d in directions:
+                new_row = d[0] + row
+                new_col = d[1] + col
+                if not 0 <= new_row <= max_row:
+                    continue
+                if not 0 <= new_col <= max_col:
+                    continue
+                if grid[new_row][new_col] != 0:
+                    continue
+                paths.append((new_row, new_col))
+            return paths
+
+        que = deque()
+        que.append((0, 0))
+        grid[0][0] = 1
+        while que:
+            row, col = que.popleft()
+            dist = grid[row][col]
+            if (row, col) == (max_row, max_col):
+                return dist
+            paths = get_paths(row, col)
+            for path in paths:
+                que.append(path)
+                grid[path[0]][path[1]] += dist + 1
+        return -1
+
+
+# 528
+class Solution:
+
+    def __init__(self, w: List[int]):
+        self.prefix_sum = []
+        self.total = 0
+        for i in w:
+            self.total += i
+            self.prefix_sum.append(self.total)
+
+    def pickIndex(self) -> int:
+        target = random.random() * self.total
+        left = 0
+        right = len(self.prefix_sum)
+        while left < right:
+            mid = (left + right) // 2
+            val = self.prefix_sum[mid]
+            if val < target:
+                left = mid + 1
+            else:
+                right = mid
+        return left

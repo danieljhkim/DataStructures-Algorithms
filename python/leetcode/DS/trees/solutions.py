@@ -2,6 +2,14 @@ from ast import List
 from typing import Optional
 
 
+class Node:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+        self.parent = None
+
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
@@ -254,3 +262,7 @@ class Solution:
             root.val = max_left_node.val
             root.left = self.deleteNode(root.left, root.val)
         return root
+
+    # 1650
+    def lowestCommonAncestor(self, p: "Node", q: "Node") -> "Node":
+        pass
