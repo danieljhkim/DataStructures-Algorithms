@@ -263,6 +263,41 @@ class Solution:
             root.left = self.deleteNode(root.left, root.val)
         return root
 
+    def kthLargestPerfectSubtree(self, root: Optional[TreeNode], k: int) -> int:
+        freq = []
+
+        def dfs(node):
+            if not node:
+                return 0
+            l = dfs(node.left)
+            r = dfs(node.right)
+            if l == r and l != -1:
+                freq.append(l + r + 1)
+                return l + r + 1
+            return -1
+
+        dfs(root)
+        freq.sort(reverse=True)
+        return -1 if len(freq) < k else freq[k - 1]
+
     # 1650
     def lowestCommonAncestor(self, p: "Node", q: "Node") -> "Node":
-        pass
+        def find_depth(node):
+            level = 0
+            while node:
+                node = node.parent
+                level += 1
+            return level
+
+        p_level = find_depth(p)
+        q_level = find_depth(q)
+
+        for _ in range(p_level - q_level):
+            p = p.parent
+        for _ in range(q_level - p_level):
+            q = q.parent
+
+        while p != q:
+            p = p.parent
+            q = q.parent
+        return p

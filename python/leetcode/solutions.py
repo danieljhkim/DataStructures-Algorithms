@@ -1,5 +1,6 @@
-from ast import List
-from typing import Optional
+import heapq
+from collections import defaultdict
+from typing import List, Optional
 
 
 class TreeNode:
@@ -865,16 +866,16 @@ class Solution:
         s = calculate(s)
         t = calculate(t)
         return s == t
-    
+
     def validWordAbbreviation(self, word: str, abbr: str) -> bool:
 
         abbr_idx = 0
         word_idx = 0
-        
+
         while abbr_idx < len(abbr) and word_idx < len(word):
             if abbr[abbr_idx].isdigit():
-                if abbr[abbr_idx] == '0':
-                    return False  
+                if abbr[abbr_idx] == "0":
+                    return False
                 num = ""
                 while abbr_idx < len(abbr) and abbr[abbr_idx].isdigit():
                     num += abbr[abbr_idx]
@@ -886,8 +887,7 @@ class Solution:
                 abbr_idx += 1
                 word_idx += 1
         return word_idx == len(word) and abbr_idx == len(abbr)
-        
-    
+
     def validPalindrome(self, s: str) -> bool:
         def check(s, left, right):
             while left < right:
@@ -896,19 +896,18 @@ class Solution:
                 left += 1
                 right -= 1
             return True
-        
+
         left = 0
         right = len(s) - 1
         while left < right:
             if s[left] != s[right]:
                 one = check(s, left, right - 1)
-                two = check (s, left + 1, right)
+                two = check(s, left + 1, right)
                 return one or two
             left += 1
             right -= 1
         return True
-    
-    
+
     def simplifyPath(self, path: str) -> str:
         paths = path.split("/")
         ans = []
@@ -921,8 +920,7 @@ class Solution:
             else:
                 ans.append(p)
         return "/" + "/".join(ans)
-    
-    
+
     def addBinary(self, a: str, b: str) -> str:
         def bin_to_int(binary):
             ans = 0
@@ -930,6 +928,7 @@ class Solution:
                 ans *= 2
                 ans += int(i)
             return ans
+
         def int_to_bin(num):
             ans = ""
             while num:
@@ -941,3 +940,46 @@ class Solution:
         num_a = bin_to_int(a)
         num_b = bin_to_int(b)
         return int_to_bin(num_a + num_b)
+
+    def findXSum(self, nums: List[int], k: int, x: int) -> List[int]:
+        dmap = defaultdict(int)
+        ans = []
+        for i in range(k):
+            dmap[nums[i]] += 1
+
+        def cal():
+            heap = []
+            for key, value in dmap.items():
+                heapq.heappush(heap, (value, key))
+                if len(heap) > x:
+                    heapq.heappop(heap)
+
+            total = sum(value * key for value, key in heap)
+            ans.append(total)
+
+        cal()
+        left = 0
+        for right in range(k, len(nums)):
+            dmap[nums[left]] -= 1
+            if dmap[nums[left]] == 0:
+                del dmap[nums[left]]
+            left += 1
+            dmap[nums[right]] += 1
+            cal()
+
+        return ans
+
+    def findKthPositive(self, arr: List[int], k: int) -> int:
+        if arr[0] > 1:
+            if k < arr[0]:
+                return k
+            else:
+                k = k - arr[0] + 1
+        for i in range(1, len(arr)):
+            diff = arr[i] - arr[i - 1]
+            if diff > 1:
+                if k >= diff:
+                    k -= diff - 1
+                else:
+                    return arr[i - 1] + k
+        return arr[-1] + k

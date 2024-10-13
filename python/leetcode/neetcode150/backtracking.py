@@ -1,3 +1,4 @@
+from turtle import back
 from typing import Optional
 from typing import List
 
@@ -112,6 +113,28 @@ class Solution:
 
         for i in range(len(nums) + 1):
             backtrack([], 0, i)
+        return ans
+
+    # 40
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        ans = []
+
+        def backtrack(arr, csum, idx):
+            if csum == target:
+                ans.append(arr[:])
+                return
+            elif csum > target or idx >= len(candidates):
+                return
+            for i in range(idx, len(candidates)):
+                cur = candidates[i]
+                if i != idx and candidates[i - 1] == cur:
+                    continue
+                arr.append(candidates[i])
+                backtrack(arr, csum + candidates[i], i + 1)
+                arr.pop()
+
+        candidates.sort()
+        backtrack([], 0, 0)
         return ans
 
 

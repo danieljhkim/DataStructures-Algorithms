@@ -296,6 +296,70 @@ class Solution:
                 grid[path[0]][path[1]] += dist + 1
         return -1
 
+    def findBuildings(self, heights: List[int]) -> List[int]:
+        mx_h = 0
+        n = len(heights) - 1
+        ans = []
+        for i in range(n, -1, -1):
+            if heights[i] > mx_h:
+                ans.append(i)
+            mx_h = max(mx_h, heights[i])
+        return ans.reverse()
+
+    def longestOnes(self, nums: List[int], k: int) -> int:
+        left = 0
+        n = len(nums)
+        flip = 0
+        ans = 0
+        for right in range(n):
+            if nums[right] == 0:
+                flip += 1
+                if flip > k:
+                    while left <= right and flip > k:
+                        flip -= 1 - nums[left]
+                        left += 1
+            ans = max(right - left + 1, ans)
+        return ans
+
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        coins.sort(reverse=True)
+        ans = 0
+        for coin in coins:
+            ans += amount // coin
+            amount = amount % coin
+        if amount > 0:
+            return -1
+        return ans
+
+    def numIslands(self, grid: List[List[str]]) -> int:
+        def dfs(r, c):
+            if (
+                r >= max_row
+                or r < 0
+                or c >= max_col
+                or c < 0
+                or visited[r][c] == True
+                or grid[r][c] == "0"
+            ):
+                return
+            visited[r][c] = True
+            dfs(r - 1, c)
+            dfs(r + 1, c)
+            dfs(r, c - 1)
+            dfs(r, c + 1)
+
+        ans = 0
+        max_row = len(grid)
+        max_col = len(grid[0])
+        visited = [[False] * max_col for _ in range(max_row)]
+
+        for r in range(max_row):
+            for c in range(max_col):
+                if grid[r][c] == "1" and not visited:
+                    ans += 1
+                    dfs(r, c)
+        return ans
+
 
 # 528
 class Solution:
