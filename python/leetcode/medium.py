@@ -383,3 +383,19 @@ class Solution:
             else:
                 right = mid
         return left
+
+    def rob(self, nums: List[int]) -> int:
+        memo = {}
+
+        def recursion(i):
+            if i >= len(nums):
+                return 0
+            if i in memo:
+                return memo[i]
+            cur = nums[i] + recursion(i + 2)
+            skip = recursion(i + 1)
+            chosen = max(cur, skip)
+            memo[i] = chosen
+            return chosen
+
+        return recursion(0)

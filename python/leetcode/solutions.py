@@ -983,3 +983,39 @@ class Solution:
                 else:
                     return arr[i - 1] + k
         return arr[-1] + k
+
+    def maxSubsequence(self, nums: List[int], k: int) -> List[int]:
+        heap = []
+        ans = []
+        for i, v in enumerate(nums):
+            if len(heap) < k:
+                heapq.heappush(heap, (v, i))
+            else:
+                if heap[0] < v:
+                    heapq.heappop(heap)
+                    heapq.heappush(heap, (v, i))
+                    
+                    
+        heap.sort(key=lambda x : x[1])
+        for i in heap:
+            ans.append(i)
+        return ans
+
+
+    def minimumRightShifts(self, nums: List[int]) -> int:
+        found = False
+        shift = 0
+        for i in range(1, len(nums)):
+            if nums[i] < nums[i-1]:
+                if found:
+                    return -1
+                found = True
+                shift = i
+
+        if shift == 0:
+            return 0
+        if nums[0] < nums[-1]:
+            return -1
+        return len(nums) - shift
+    
+    
