@@ -1,4 +1,5 @@
 from ast import List
+from collections import defaultdict
 from typing import Optional
 
 
@@ -301,3 +302,53 @@ class Solution:
             p = p.parent
             q = q.parent
         return p
+
+    def closestValue(self, root: Optional[TreeNode], target: float) -> int:
+
+        ans = root.val
+        while root:
+            dif = abs(root.val - target)
+            if dif < abs(ans - target):
+                ans = root.val
+            elif dif == abs(ans - target):
+                ans = min(root.val, ans)
+            if root.val < target:
+                root = root.right
+            else:
+                root = root.left
+        return ans
+
+    def sumNumbers(self, root: Optional[TreeNode]) -> int:
+        ans = []
+
+        def dfs(node, num):
+            num += str(node.val)
+            if not node.left and not node.right:
+                ans.append(int(num))
+            else:
+                if node.left:
+                    dfs(node.left, num)
+                if node.right:
+                    dfs(node.right, num)
+
+        dfs(root, "")
+        return sum(ans)
+
+    def exclusiveTime(self, n: int, logs: List[str]) -> List[int]:
+        stack = []
+        ans = [0] * n
+        prev = 0
+        for log in logs:
+            f_id, call, time = log.split(":")
+            time = int(time)
+            f_id = int(f_id)
+            if call == "start":
+                if stack:
+                    ans[stack[-1]] += time - prev
+                prev = time
+                stack.append(f_id)
+            else:
+                s_fid = stack.pop()
+                ans[s_fid] += time - prev + 1
+                prev = time + 1
+        return ans

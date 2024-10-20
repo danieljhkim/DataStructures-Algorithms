@@ -1,8 +1,11 @@
 from ast import List
 from curses.ascii import FF
+import heapq
+from re import L
 from typing import Optional
 import random
-from collections import deque
+from collections import deque, defaultdict
+import math
 
 
 class TreeNode:
@@ -399,3 +402,263 @@ class Solution:
             return chosen
 
         return recursion(0)
+
+    def maxScore(self, cardPoints: List[int], k: int) -> int:
+        total = sum(cardPoints[:k])
+        max_score = total
+
+        for i in range(1, k + 1):
+            total = total - cardPoints[k - i] + cardPoints[-i]
+            max_score = max(max_score, total)
+
+        return max_score
+
+    def maxKelements(self, nums: List[int], k: int) -> int:
+        heap = [-num for num in nums]
+        heapq.heapify(heap)
+        ans = 0
+        while k:
+            num = -heapq.heappop(heap)
+            ans += num
+            num = math.ceil(num / 3)
+            heapq.heappush(heap, -num)
+            k -= 1
+        return ans
+
+    def maximumSwap(self, num: int) -> int:
+        if num < 10:
+            return num
+        snum = list(str(num))
+        nmap = {}
+        for i in range(len(snum)):
+            nmap[int(snum[i])] = i
+        for s in range(len(snum)):
+            for i in range(9, int(snum[s]), -1):
+                if i in nmap and nmap[i] > s:
+                    snum[s], snum[nmap[i]] = snum[nmap[i]], snum[s]
+                    return int("".join(snum))
+        return num
+
+    def removeDuplicates(self, s: str) -> str:
+        head = ListNode("0")
+        cur = head
+        for i in s:
+            cur.next = ListNode(i)
+            cur = cur.next
+        cur = head
+        changed = True
+        while changed:
+            changed = False
+            while cur and cur.next and cur.next.next:
+                if cur.next.val == cur.next.next.val:
+                    cur.next = cur.next.next.next
+                    changed = True
+                cur = cur.next
+            cur = head
+        ans = ""
+        cur = head.next
+        while cur:
+            ans += cur.val
+            cur = cur.next
+        return ans
+
+    def removeDuplicates(self, s: str) -> str:
+        arr = list(s)
+
+        def helper(left, right):
+            if right < len(s) and left >= 0:
+                if arr[right] == 0 or arr[left] == 0:
+                    if arr[right] == 0:
+                        right += 1
+                    if arr[left] == 0:
+                        left -= 1
+                    helper(left, right)
+
+                elif arr[right] == arr[left]:
+                    arr[left] = 0
+                    arr[right] = 0
+                    helper(left - 1, right + 1)
+
+        for i in range(len(s) - 1):
+            helper(i, i + 1)
+        ans = ""
+        for letter in arr:
+            if letter != 0:
+                ans += letter
+        return ans
+
+    def removeDuplicates(self, s: str) -> str:
+        stack = []
+        for ch in s:
+            if stack and stack[-1] == ch:
+                stack.pop()
+            else:
+                stack.append(ch)
+        return "".join(stack)
+
+    def findMissingRanges(
+        self, nums: List[int], lower: int, upper: int
+    ) -> List[List[int]]:
+        if len(nums) == 0:
+            return [lower, upper]
+        ans = []
+        if lower < nums[0]:
+            ans.append([lower, nums[0] - 1])
+        for i in range(len(nums) - 1):
+            if (nums[i + 1] - nums[i]) > 1:
+                ans.append([nums[i] + 1, nums[i + 1] - 1])
+        if upper > nums[-1]:
+            ans.append([nums[-1] + 1, upper])
+        return ans
+
+    def verticalOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        if not root:
+            return []
+        col_map = defaultdict(list)
+        queue = deque()
+        queue.append((root, 0))
+        max_col = min_col = 0
+        while queue:
+            node, col = queue.popleft()
+            col_map[col].append(node.val)
+            if node.left:
+                min_col = min(col - 1, min_col)
+                queue.append((node.left, col - 1))
+            if node.right:
+                max_col = max(col + 1, max_col)
+                queue.append((node.right, col + 1))
+        ans = []
+        for i in range(min_col, max_col + 1):
+            ans.append(col_map[i])
+        return ans
+
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        intervals.sort(key=lambda x: x[0])
+        stack = [intervals[0]]
+        idx = 1
+        while idx < len(intervals):
+            cur = stack.pop()
+            second = intervals[idx]
+            if cur[1] >= second[0]:
+                cur[1] = max(second[1], cur[1])
+                stack.append(cur)
+            else:
+                stack.append(cur)
+                stack.append(second)
+            idx += 1
+        return stack
+
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        n = len(nums)
+        ans = 0
+        for i in range(n):
+            total = 0
+            for j in range(i, n):
+                total += nums[j]
+                if total == k:
+                    ans += 1
+
+        return ans
+
+    def findDiagonalOrder(self, mat: List[List[int]]) -> List[int]:
+        nmap = defaultdict(list)
+        for r in range(len(mat)):
+            for c in range(len(mat[0])):
+                diag = r + c
+                nmap[diag].append(mat[r][c])
+        ans = []
+        for i, v in nmap.items():
+            if i % 2 == 0:
+                ans.extend(v[::-1])
+            else:
+                ans.extend(v)
+        return ans
+
+    def kClosest(self, points: List[List[int]], k: int) -> List[List[int]]:
+        ans = []
+        heap = []
+        for i in range(len(points)):
+            dis = (points[i][0] ** 2 + points[i][1] ** 2) ** (0.5)
+            if len(heap) < k:
+                heapq.heappush(heap, (-dis, points[i]))
+            else:
+                if -heap[0][0] > dis:
+                    heapq.heappop(heap)
+                    heapq.heappush(heap, (-dis, points[i]))
+        for p in heap:
+            ans.append(p[1])
+        return ans
+
+    def kClosest(self, points: List[List[int]], k: int) -> List[List[int]]:
+        def helper(mid, remain, dists):
+            closer = []
+            fars = []
+            for i in remain:
+                if dists[i] <= mid:
+                    closer.append(i)
+                else:
+                    fars.append(i)
+            return closer, fars
+
+        ans = []
+        dists = [p[0] ** 2 + p[1] ** 2 for p in points]
+        remain = [i for i in range(len(points))]
+        high = max(dists)
+        low = 0
+        closest = []
+        while k > 0:
+            mid = (high + low) / 2
+            closer, fars = helper(mid, remain, dists)
+            if len(closer) <= k:
+                closest.extend(closer)
+                remain = fars
+                k -= len(closer)
+                low = mid
+            else:
+                remain = closer
+                high = mid
+        for idx in closest:
+            ans.append(points[idx])
+        return ans
+
+    def depthSum(self, nestedList: List["NestedInteger"]) -> int:
+        def find_sum(arr, depth):
+            total = 0
+            for a in arr:
+                if a.isInteger():
+                    total += a.getInteger() * depth
+                else:
+                    total += find_sum(a.getList(), depth + 1)
+            return total
+
+        ans = find_sum(nestedList, 1)
+        return ans
+
+    def nextPermutation(self, nums: List[int]) -> None:
+        def find_closest(num, idx):
+            n = len(nums)
+            ans = float("inf")
+            jdx = -1
+            for i in range(idx, n):
+                if nums[i] > num:
+                    dif = nums[i] - num
+                    if dif < ans:
+                        ans = dif
+                        jdx = i
+            return jdx
+
+        right = len(nums) - 1
+        start = -1
+        while right > 0:
+            if nums[right] > nums[right - 1]:
+                start = right - 1
+                break
+            right -= 1
+
+        if start == -1:
+            nums.reverse()
+            return
+
+        closest = find_closest(nums[start], start + 1)
+        nums[start], nums[closest] = nums[closest], nums[start]
+        nums[start + 1 :] = nums[start + 1 :][::-1]

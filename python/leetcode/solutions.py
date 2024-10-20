@@ -1,6 +1,7 @@
 import heapq
 from collections import defaultdict
 from typing import List, Optional
+from collections import deque, defaultdict
 
 
 class TreeNode:
@@ -994,19 +995,17 @@ class Solution:
                 if heap[0] < v:
                     heapq.heappop(heap)
                     heapq.heappush(heap, (v, i))
-                    
-                    
-        heap.sort(key=lambda x : x[1])
+
+        heap.sort(key=lambda x: x[1])
         for i in heap:
             ans.append(i)
         return ans
-
 
     def minimumRightShifts(self, nums: List[int]) -> int:
         found = False
         shift = 0
         for i in range(1, len(nums)):
-            if nums[i] < nums[i-1]:
+            if nums[i] < nums[i - 1]:
                 if found:
                     return -1
                 found = True
@@ -1017,5 +1016,29 @@ class Solution:
         if nums[0] < nums[-1]:
             return -1
         return len(nums) - shift
-    
-    
+
+    def isToeplitzMatrix(self, matrix: List[List[int]]) -> bool:
+        rn = len(matrix)
+        cn = len(matrix[0])
+        for r in range(1, rn):
+            for c in range(1, cn):
+                num = matrix[r - 1][c - 1]
+                check = matrix[r][c]
+                if num != check:
+                    return False
+        return True
+
+
+class MovingAverage:
+
+    def __init__(self, size: int):
+        self.size = size
+        self.queue = deque()
+        self.current_sum = 0
+
+    def next(self, val: int) -> float:
+        self.queue.append(val)
+        self.current_sum += val
+        if len(self.queue) > self.size:
+            self.current_sum -= self.queue.popleft()
+        return self.current_sum / len(self.queue)
