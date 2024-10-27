@@ -13,5 +13,4 @@ def test_solution():
 
 if __name__ == "__main__":
     test_solution()
-    for i in range(-1):
-        print(i)
+    print(0 % 26)

@@ -1,8 +1,5 @@
-from ast import List
-from curses.ascii import FF
 import heapq
-from re import L
-from typing import Optional
+from typing import Optional, List
 import random
 from collections import deque, defaultdict
 import math
@@ -662,3 +659,187 @@ class Solution:
         closest = find_closest(nums[start], start + 1)
         nums[start], nums[closest] = nums[closest], nums[start]
         nums[start + 1 :] = nums[start + 1 :][::-1]
+
+    def intervalIntersection(
+        self, firstList: List[List[int]], secondList: List[List[int]]
+    ) -> List[List[int]]:
+        f = 0
+        s = 0
+        ans = []
+        while f < len(firstList) and s < len(secondList):
+            low = max(firstList[f][0], secondList[s][0])
+            high = min(firstList[f][1], secondList[s][1])
+            if low <= high:
+                ans.append([low, high])
+            if firstList[f][1] > secondList[s][1]:
+                s += 1
+            else:
+                f += 1
+        return ans
+
+    def groupStrings(self, strings: List[str]) -> List[List[str]]:
+        def shift_string(s: str) -> str:
+            shift = ord(s[0]) - ord("a")
+            shifted = []
+            for char in s:
+                sft = ord(char) - ord("a")
+                if sft <= shift:
+                    shifted_char = chr(ord("a") + sft - shift + 26)
+                else:
+                    shifted_char = chr(ord("a") + sft - shift)
+                shifted.append(shifted_char)
+            return "".join(shifted)
+
+        groups = defaultdict(list)
+
+        for s in strings:
+            shifted = shift_string(s)
+            groups[shifted].append(s)
+
+        return list(groups.values())
+
+    def isAlienSorted(self, words: List[str], order: str) -> bool:
+        map = {}
+        for i, w in enumerate(order):
+            map[w] = i
+        for i in range(len(words) - 1):
+            fw = words[i]
+            sw = words[i + 1]
+            for fx in range(max(len(fw), len(sw))):
+                second = map[sw[fx]] if fx < len(sw) else 0
+                first = map[fw[fx]] if fx < len(fw) else 0
+                if first < second:
+                    break
+                elif second == first:
+                    continue
+                else:
+                    return False
+        return True
+
+    def compress(self, chars: List[str]) -> int:
+        idx = 0
+        i = 0
+        while i < len(chars):
+            cur = chars[i]
+            j = i
+            while j < len(chars) and chars[j] == cur:
+                j += 1
+            chars[idx] = cur
+            idx += 1
+            if j - i > 1:
+                for s in str(j - i):
+                    chars[idx] = s
+                    idx += 1
+            i = j
+        return idx
+
+    def cloneGraph(self, node: Optional["Node"]) -> Optional["Node"]:
+        if not node:
+            return node
+        clones = {}
+
+        def dfs(node):
+            if node in clones:
+                return clones[node]
+            cloned = Node(node.val, [])
+            clones[node] = cloned
+            if node.neighbors:
+                cloned.neighbors = [dfs(n) for n in node.neighbors]
+            return cloned
+
+        return dfs(node)
+
+    def insert(
+        self, intervals: List[List[int]], newInterval: List[int]
+    ) -> List[List[int]]:
+        if not intervals:
+            return [newInterval]
+        ans = []
+        found = False
+        for i, v in enumerate(intervals):
+            if found:
+                prev = ans[-1]
+                if prev[1] >= v[0]:
+                    prev[1] = max(v[1], prev[1])
+                else:
+                    ans.append(v)
+            else:
+                if newInterval[0] >= v[0] and newInterval[0] <= v[1]:
+                    found = True
+                    v[1] = max(newInterval[1], v[1])
+                    ans.append(v)
+                elif newInterval[0] <= v[0] and newInterval[1] >= v[0]:
+                    v[0] = newInterval[0]
+                    v[1] = max(newInterval[1], v[1])
+                    while len(ans) > 0 and v[0] <= ans[-1][1]:
+                        prev = ans.pop()
+                        v[0] = min(prev[0], v[0])
+                        v[1] = max(prev[1], v[1])
+                    found = True
+                    ans.append(v)
+                elif newInterval[1] < v[0]:
+                    found = True
+                    ans.append(newInterval)
+                    ans.append(v)
+                else:
+                    ans.append(v)
+        if not found:
+            ans.append(newInterval)
+        return ans
+
+    def searchRange(self, nums: List[int], target: int) -> List[int]:
+        if len(nums) == 0:
+            return [-1, -1]
+
+        low = 0
+        high = len(nums) - 1
+        if target > nums[high] or target < nums[low]:
+            return [-1, -1]
+
+        while low <= high:
+            mid = (high + low) // 2
+            midVal = nums[mid]
+            if midVal < target:
+                low = mid + 1
+            else:
+                high = mid - 1
+
+        if nums[low] != target:
+            return [-1, -1]
+        if low < len(nums) - 1 and nums[low + 1] != target:
+            return [low, low]
+
+        high = len(nums) - 1
+        lo = low
+        while lo <= high:
+            mid = (high + lo) // 2
+            if nums[mid] <= target:
+                lo = mid + 1
+            else:
+                high = mid - 1
+        if nums[high] == target:
+            return [low, high]
+
+        return [-1, -1]
+
+    def search(self, nums: List[int], target: int) -> int:
+        shift = 0
+        n = len(nums)
+        for i in range(n - 1):
+            if nums[i] > nums[i + 1]:
+                shift = i + 1
+                break
+
+        low = 0
+        high = n - 1
+        while low <= high:
+            mid = (low + high) // 2
+            new_mid = (mid + shift) % n
+            mid_num = nums[new_mid]
+            if mid_num < target:
+                low = mid + 1
+            elif mid_num > target:
+                high = mid - 1
+            else:
+                return new_mid
+        return -1

@@ -1,5 +1,5 @@
 from ast import List
-from collections import defaultdict
+from collections import defaultdict, deque
 from typing import Optional
 
 
@@ -352,3 +352,67 @@ class Solution:
                 ans[s_fid] += time - prev + 1
                 prev = time + 1
         return ans
+
+    def replaceValueInTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        levels = defaultdict(dict)
+        queue = deque()
+        queue.append((0, root, Node(0)))
+        while queue:
+            level, node, parent = queue.popleft()
+            if parent not in levels[level]:
+                levels[level][parent] = 0
+            levels[level][parent] += node.val
+            if node.left:
+                queue.append((level + 1, node.left, node))
+            if node.right:
+                queue.append((level + 1, node.right, node))
+
+        for levelMap in levels.values():
+            levelTotal = sum(levelMap.values())
+            for parent, total in levelMap.items():
+                newVal = levelTotal - total
+                if parent.left:
+                    parent.left.val = newVal
+                if parent.right:
+                    parent.right.val = newVal
+        root.val = 0
+        return root
+
+    def flipEquiv(self, root1: Optional[TreeNode], root2: Optional[TreeNode]) -> bool:
+
+        def isSame(node1, node2):
+            if not node1 and not node2:
+                return True
+            if not node1 or not node2:
+                return False
+            return node1.val == node2.val
+
+        if not root1 and not root2:
+            return True
+        if not root1 or not root2:
+            return False
+        if root1.val != root2.val:
+            return False
+
+        queue = deque()
+        queue.append((root1, root2))
+
+        while queue:
+            node1, node2 = queue.popleft()
+            if not node1 and not node2:
+                continue
+            if not node1 or not node2:
+                return False
+            if node1.val != node2.val:
+                return False
+
+            if isSame(node1.left, node2.left) and isSame(node1.right, node2.right):
+                queue.append((node1.left, node2.left))
+                queue.append((node1.right, node2.right))
+            elif isSame(node1.left, node2.right) and isSame(node1.right, node2.left):
+                queue.append((node1.left, node2.right))
+                queue.append((node1.right, node2.left))
+            else:
+                return False
+
+        return True

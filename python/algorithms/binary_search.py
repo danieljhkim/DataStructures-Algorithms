@@ -1,30 +1,4 @@
 """
-    low <= high:
-        - Typical Use Case: 
-            when searching for a specific target value in a sorted array.
-        
-    low < high:
-        - Typical Use Case: 
-            where you are looking for a boundary or a specific condition rather than a specific value. 
-            i.e., finding the smallest or largest index that satisfies a certain condition.
-
-
-    high = mid
-    low = mid + 1
-        - when you are looking for a boundary condition, 
-        - i.e. finding the smallest element that is greater than or equal to the target.
-        - i.e. finding the first occurence
-        - In this case, you do not want to exclude the middle element from the search range because it might be the boundary you are looking for.
-        
-    low = mid
-    high = mid - 1
-        - if target <= mid: low = mid
-            - in case when low and high are adjacent, and mid is calculated as low
-        - when you are looking for a boundary condition, 
-        - i.e. finding the largest element that is less than or equal to the target
-        - i.e. finding the last occurence
-        - In this case, you do not want to exclude the middle element from the search range because it might be the boundary you are looking for.
-    
     
     math.ceil(n)
         - low + (high - low + 1) // 2
@@ -88,6 +62,19 @@ def find_smallest_greater_than_target(nums, target):
         else:
             high = mid - 1
     return low if low < len(nums) and nums[low] > target else -1
+
+
+def find_smallest_greater_or_equal(nums, target):
+    low, high = 0, len(nums) - 1
+    while low <= high:
+        mid = (high - low) // 2 + low
+        if nums[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    # also could return high + 1
+    # high would be the largest element less than the target
+    return low if low < len(nums) and nums[low] >= target else -1
 
 
 def binary_search_insert_position(arr, target):
