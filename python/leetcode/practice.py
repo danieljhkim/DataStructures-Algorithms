@@ -419,6 +419,475 @@ class Solution:
             dic[runningSum] += 1
         return count
 
+    def minDepth(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+
+        def dfs(node, count):
+            if not node:
+                return float("inf")
+            if not node.left and not node.right:
+                return count + 1
+            left = dfs(node.left, count + 1)
+            right = dfs(node.right, count + 1)
+            return min(left, right)
+
+        result = dfs(root, 0)
+        return result if result != float("inf") else 0
+
+
+class Solution:
+
+    def __init__(self, nums: List[int]):
+        self.table = defaultdict(list)
+        for i, n in enumerate(nums):
+            self.table[n].append(i)
+
+    def pick(self, target: int) -> int:
+        choices = self.table[target]
+        n = len(choices)
+        chosen = math.floor(n * random.random())
+        return choices[chosen]
+
+    def simplifyPath(self, path: str) -> str:
+        stack = []
+        paths = path.split("/")
+        for p in paths:
+            if p == "..":
+                if stack:
+                    stack.pop()
+            elif p == " " or p == "" or p == ".":
+                continue
+            else:
+                stack.append("/" + p)
+        result = "".join(stack)
+        return result or "/"
+
+    def closestValue(self, root: Optional[TreeNode], target: float) -> int:
+        heap = []  # (abs(root.val - target), root.val)
+
+        def dfs(node):
+            if not node:
+                return
+            dfs(node.left)
+            diff = (abs(node.val - target), node.val)
+            if heap:
+                if heap[0][0] >= diff[0]:
+                    heapq.heappush(heap, diff)
+            else:
+                heapq.heappush(heap, diff)
+            dfs(node.right)
+
+        dfs(root)
+        return heap[0][1]
+
+    def isAlienSorted(self, words: List[str], order: str) -> bool:
+        def is_sorted(first, second):
+            length = min(len(first), len(second))
+            first_idx = 0
+            second_idx = 0
+            while first_idx < length and second_idx < length:
+                first_order = diction[first[first_idx]]
+                second_order = diction[second[second_idx]]
+                if first_order < second_order:
+                    return True
+                elif first_order == second_order:
+                    first_idx += 1
+                    second_idx += 1
+                else:
+                    return False
+            if len(first) == length:
+                return True
+            return False
+
+        diction = {}
+        for i, v in enumerate(order):
+            diction[v] = i
+        for i in range(1, len(words)):
+
+            first = words[i - 1]
+            second = words[i]
+            if not is_sorted(first, second):
+                return False
+        return True
+
+    def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
+        if not root:
+            return []
+        queue = deque()
+        queue.append((0, root))
+        levels = defaultdict(list)
+        while queue:
+            level, node = queue.popleft()
+            levels[level].append(node.val)
+            if node.left:
+                queue.append((level + 1, node.left))
+            if node.right:
+                queue.append((level + 1, node.right))
+
+        result = []
+        max_depth = max(list(levels.keys()))
+        for i in range(max_depth + 1):
+            if i in levels:
+                val = levels[i][-1]
+                result.append(val)
+        return result
+
+    def checkInclusion(self, s1: str, s2: str) -> bool:
+        def check(arr):
+            for i, v in enumerate(arr):
+                if table[i] < arr[i]:
+                    return False
+            return True
+
+        if len(s1) > len(s2):
+            return False
+        table = [0] * 27
+        for s in s1:
+            table[ord(s) - ord("a")] += 1
+
+        arr = [0] * 27
+        for i in range(0, len(s1)):
+            arr[ord(s2[i]) - ord("a")] += 1
+
+        for i in range(len(s1), len(s2)):
+            if check(arr):
+                return True
+            arr[ord(s2[i - len(s1)]) - ord("a")] -= 1
+            arr[ord(s2[i]) - ord("a")] += 1
+        return check(arr)
+
+    def sortedSquares(self, nums: List[int]) -> List[int]:
+        for i, v in enumerate(nums):
+            nums[i] = v * v
+
+        def radix_sort(arr):
+            max_digits = len(str(max(arr)))
+
+            for i in range(max_digits):
+                buckets = [[] for _ in range(10)]
+                for num in arr:
+                    idx = (num // 10**i) % 10
+                    buckets[idx].append(num)
+                j = 0
+                for bucket in buckets:
+                    for n in bucket:
+                        arr[j] = n
+                        j += 1
+            return arr
+
+        return radix_sort(nums)
+
+    def customSortString(self, order: str, s: str) -> str:
+        table = defaultdict(int)
+        for i, v in enumerate(order):
+            table[v] = i
+
+        arr = list(s)
+        arr.sort(key=lambda x: table[x])
+        return "".join(arr)
+
+    def treeToDoublyList(self, root: "Optional[Node]") -> "Optional[Node]":
+        if not root:
+            return root
+        head = Node(-1)
+        arr = [head]
+
+        def dfs(node):
+            if not node:
+                return
+            dfs(node.left)
+            arr.append(node)
+            dfs(node.right)
+
+        dfs(root)
+        for i in range(1, len(arr)):
+            pre_node = arr[i - 1]
+            suc_node = arr[i]
+            pre_node.right = suc_node
+            suc_node.left = pre_node
+        if len(arr) == 2:
+            return root
+        if len(arr) > 2:
+            last_node = arr[-1]
+            first_node = arr[1]
+            last_node.right = first_node
+            first_node.left = last_node
+        return arr[0].right
+
+    def arraysIntersection(
+        self, arr1: List[int], arr2: List[int], arr3: List[int]
+    ) -> List[int]:
+        counts = Counter(arr1, arr2, arr3)
+        return
+
+    def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        stack = []
+        table = {}
+        for n in nums2:
+            table[n] = -1
+        for i in range(len(nums2)):
+            cur = nums2[i]
+            while stack and stack[-1] < cur:
+                num = stack.pop()
+                table[num] = cur
+            stack.append(cur)
+        ans = []
+        for n in nums1:
+            ans.append(table[n])
+        return ans
+
+    def isPalindrome(self, s: str) -> bool:
+        left = 0
+        right = len(s) - 1
+        while left < right:
+            if not s[left].isalnum():
+                left += 1
+                continue
+            if not s[right].isalnum():
+                right -= 1
+                continue
+            if s[left].lower() != s[right].lower():
+                return False
+            left += 1
+            right -= 1
+        return True
+
+    def validPalindrome(self, s: str) -> bool:
+        def valid(ss: list, chance: int, left, right):
+            while left < right:
+                if ss[left] != ss[right]:
+                    if chance == 0:
+                        chance += 1
+                        one = valid(ss, chance, left + 1, right)
+                        two = valid(ss, chance, left, right - 1)
+                        return one or two
+                    else:
+                        return False
+                left += 1
+                right -= 1
+            return True
+
+        return valid(list(s), 0, 0, len(s) - 1)
+
+    def addOperators(self, num: str, target: int) -> List[str]:
+        operators = ["+", "-", "*"]
+
+        def calculate(express):
+            pass
+
+        ans = set()
+        nums = list(num)
+
+        def backtrack(idx, expression):
+            if idx == len(num):
+                total = eval(expression)
+                if total == target:
+                    ans.add(expression)
+                return
+            elif idx >= len(num):
+                return
+            for size in range(idx, len(num)):
+                if expression == "":
+                    new_exp = "".join(nums[idx : size + 1])
+                    backtrack(size + 1, new_exp)
+                else:
+                    for o in operators:
+                        new_exp = expression + o + "".join(nums[idx : size + 1])
+                        backtrack(size + 1, new_exp)
+                if nums[idx] == "0":
+                    break
+
+        backtrack(0, "")
+        return list(ans)
+
+    def maxProfit(self, prices: List[int]) -> int:
+        if len(prices) == 1:
+            return 0
+        profit = 0
+        min_price = float("inf")
+        for price in prices:
+            if price < min_price:
+                min_price = price
+            elif price - min_price > profit:
+                profit = price - min_price
+        return profit
+
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        total = 1
+        zeros = []
+        for i, n in enumerate(nums):
+            if n == 0:
+                zeros.append(i)
+            else:
+                total *= n
+        if len(zeros) > 1:
+            return [0] * len(nums)
+        if len(zeros) == 1:
+            zero_resp = [0] * len(nums)
+            zero_resp[zeros[0]] = total
+            return zero_resp
+        ans = []
+        for i, v in enumerate(nums):
+            num = v**-1
+            ans.append(int(num * total))
+        return ans
+
+    def longestCommonPrefix(self, arr1: List[int], arr2: List[int]) -> int:
+        trie = {}
+
+        def insert_in_trie(word: str, id: str) -> None:
+            cur = trie
+            for c in word:
+                if c not in cur:
+                    cur[c] = {}
+                cur = cur[c]
+                cur[id] = {}
+            cur["*"] = {}
+
+        def add_nums(arr, id):
+            for n in arr:
+                word = str(n)
+                insert_in_trie(word, id)
+
+        def find_longest(cur, level):
+            top_outcome = level
+            for k, v in cur.items():
+                if "a1" in v and "a2" in v:
+                    outcome = find_longest(v, level + 1)
+                    top_outcome = max(top_outcome, outcome)
+            return top_outcome
+
+        add_nums(arr1, "a1")
+        add_nums(arr2, "a2")
+        cur = trie
+        ans = find_longest(cur, 0)
+        return ans
+
+    def threeSumClosest(self, nums: List[int], target: int) -> int:
+        nums.sort()
+        diff = float("inf")
+        ans = 0
+
+        for i in range(len(nums) - 2):
+            left = i + 1
+            right = len(nums) - 1
+
+            while left < right:
+                result = nums[i] + nums[left] + nums[right]
+
+                if abs(result - target) < diff:
+                    ans = result
+                    diff = abs(result - target)
+
+                if result < target:
+                    left += 1
+                elif result > target:
+                    right -= 1
+                else:
+                    return target
+        return ans
+
+    def kthSmallest(self, matrix: List[List[int]], k: int) -> int:
+        heap = []
+        for r in range(len(matrix)):
+            for c in range(len(matrix[0])):
+                if len(heap) < k:
+                    heapq.heappush(heap, -matrix[r][c])
+                else:
+                    if heap[0] < -matrix[r][c]:
+                        heapq.heappop(heap)
+                        heapq.heappush(heap, -matrix[r][c])
+        return heap[0]
+
+    def intersect(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        num1_count = Counter(nums1)
+        num2_count = Counter(nums2)
+        ans = []
+        for n in num1_count:
+            if n in num2_count:
+                total = min(num1_count[n], num2_count[n])
+                ans.extend([n] * total)
+        return ans
+
+    def lengthOfLongestSubstringKDistinct(self, s: str, k: int) -> int:
+        if k == 0:
+            return 0
+        table = defaultdict(int)
+        left = 0
+        ans = 0
+        for right in range(len(s)):
+            char = s[right]
+            table[char] += 1
+            while left < right and len(table) > k:
+                l_char = s[left]
+                table[l_char] -= 1
+                if table[l_char] <= 0:
+                    del table[l_char]
+                left += 1
+            ans = max(right - left + 1, ans)
+        return ans
+
+    def mergeTwoLists(
+        self, list1: Optional[ListNode], list2: Optional[ListNode]
+    ) -> Optional[ListNode]:
+        head = ListNode(-1)
+        curr = head
+        cur1 = list1
+        cur1 = list2
+        while cur1 and cur2:
+            if cur1.val <= cur2.val:
+                curr.next = cur1
+                cur1 = cur1.next
+            else:
+                curr.next = cur2
+                cur2 = cur2.next
+            curr = curr.next
+        if cur2:
+            curr.next = cur2
+        if cur1:
+            curr.next = cur1
+        return head.next
+
+    def maxSubArrayLen(self, nums: List[int], k: int) -> int:
+        table = {}
+        total = 0
+        ans = 0
+        for i in range(len(nums)):
+            total += nums[i]
+            if total == k:
+                ans = i + 1
+            if total - k in table:
+                ans = max(ans, i - table[total - k])
+            if total not in table:
+                table[total] = i
+        return ans
+
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+
+        nums.sort()
+        ans = []
+        seen = set()
+        table = defaultdict(dict)
+        for i, v in enumerate(nums):
+            table[v][i] = 0
+        i = 0
+        while i < len(nums) - 2:
+            for idx in range(i + 1, len(nums) - 1):
+                total = nums[i] + nums[idx]
+                cur_t = table[-total]
+                if -total in table:
+                    if len(table[-total]) > 2 or (idx not in cur_t and i not in cur_t):
+                        right = list(table[-total].keys())
+                        right = right[0]
+                        candidate = [nums[i], nums[idx], nums[right]]
+                        candidate.sort()
+                        if tuple(candidate) not in seen:
+                            ans.append(candidate)
+                            seen.add(tuple(candidate))
+            i += 1
+        return ans
+
 
 def test_solution():
     s = Solution()

@@ -1,3 +1,8 @@
+from dataclasses import dataclass
+from __future__ import annotations
+
+
+@dataclass
 class ListNode:
     def __init__(self, key, val=0):
         self.val = val
@@ -6,10 +11,11 @@ class ListNode:
         self.prev = None
 
 
+@dataclass
 class LRUCache:
     """
-    when a node is accessed, the node is placed back to the tail.
-    when a node is added, it is added to the tail - in case of over capacity, head is removed.
+    - when a node is accessed, the node is placed back to the tail.
+    - when a node is added, it is added to the tail - in case of over capacity, head is removed.
     """
 
     def __init__(self, capacity: int):

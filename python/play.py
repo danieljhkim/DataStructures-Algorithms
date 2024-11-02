@@ -4,7 +4,15 @@ from typing import List
 
 
 class Solution:
-    pass
+
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        """_summary_
+        0: 1, 2
+        1: 2
+        2: 0 or 1 -> false
+        """
+        pass
+        return True
 
 
 def test_solution():
@@ -12,5 +20,5 @@ def test_solution():
 
 
 if __name__ == "__main__":
-    test_solution()
-    print(0 % 26)
+
+    pass

@@ -1,6 +1,9 @@
-"""TOP DOWN
-Memoization
-"""
+import heapq
+from typing import Optional, List
+import random
+from collections import Counter, deque, defaultdict
+import math
+from functools import lru_cache
 
 
 def fn(arr):
@@ -19,6 +22,5 @@ def fn(arr):
     return dp(10)
 
 
-"""BOTTOM UP
-Tabulation
-"""
+class Solution:
+    pass

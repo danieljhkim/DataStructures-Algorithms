@@ -1,10 +1,23 @@
+from dataclasses import dataclass
+from __future__ import annotations
+
+
+@dataclass
 class Node:
+    value: int
+    next: Node | None = None
+
     def __init__(self, value):
         self.value = value
         self.next = None
 
 
+@dataclass
 class LinkedList:
+    head: Node | None = None
+    tail: Node | None = None
+    length: int
+
     def __init__(self):
         self.head = None
         self.tail = None

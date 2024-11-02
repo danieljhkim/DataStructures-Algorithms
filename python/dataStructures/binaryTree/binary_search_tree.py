@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+from __future__ import annotations
+
 """
                 16
          /              \
@@ -9,15 +12,23 @@
 """
 
 
+@dataclass
 class TreeNode(object):
-    def __init__(self, x):
-        self.val = x
+    val: int
+    left: TreeNode | None = None
+    right: TreeNode | None = None
+
+    def __init__(self, value):
+        self.val = value
         self.left = None
         self.right = None
         self.level = None
 
 
+@dataclass
 class BinarySearchTree:
+    root: TreeNode | None = None
+
     def __init__(self):
         self.root = None
 
@@ -42,40 +53,50 @@ class BinarySearchTree:
                 else:
                     break
 
-        def get_min_node(self, node: TreeNode):
-            cur = node
-            while cur.left:
-                cur = cur.left
-            return cur
+    def get_min_node(self, node: TreeNode):
+        cur = node
+        while cur.left:
+            cur = cur.left
+        return cur
 
-        def get_max_node(self, node: TreeNode):
-            cur = node
-            while cur.right:
-                cur = cur.right
-            return cur
+    def get_max_node(self, node: TreeNode):
+        cur = node
+        while cur.right:
+            cur = cur.right
+        return cur
 
-        def delete(self, node: TreeNode, val):
-            """
-            1. when its a leaf node
-            2. when it has one child - replace the node with the child
-            3. when it has 2 children - find predecessor and replace the node's val with the predecessor and delete the predecessor
-            """
-            if not node:
-                return node
-            if node.val > val:
-                node.left = self.delete(node.left, val)
-            elif node.val < val:
-                node.right = self.delete(node.right, val)
-            else:
-                if not node.left:
-                    return node.right
-                elif not node.right:
-                    return node.left
-
-                node_max_of_left = self.get_max_node(node.left)
-                node.val = node_max_of_left.val
-                node.left = self.delete(node.left, node.val)
+    def delete(self, node: TreeNode, val):
+        """
+        1. when its a leaf node
+        2. when it has one child - replace the node with the child
+        3. when it has 2 children - find predecessor and replace the node's val with the predecessor and delete the predecessor
+        """
+        if not node:
             return node
+        if node.val > val:
+            node.left = self.delete(node.left, val)
+        elif node.val < val:
+            node.right = self.delete(node.right, val)
+        else:
+            if not node.left:
+                return node.right
+            elif not node.right:
+                return node.left
+
+            node_max_of_left = self.get_max_node(node.left)
+            node.val = node_max_of_left.val
+            node.left = self.delete(node.left, node.val)
+        return node
+
+    def max_depth(self) -> int:
+        return self._get_depth(self.root, 0)
+
+    def _get_depth(self, node: TreeNode, level: int) -> int:
+        if not node:
+            return level
+        left_depth = self._get_depth(node.left, level + 1)
+        right_depth = self._get_depth(node.right, level + 1)
+        return max(left_depth, right_depth)
 
 
 ################################### helpers #################################

@@ -1,3 +1,6 @@
+from collections import defaultdict
+from types import List
+
 """
 Graph
     Definition: A graph is a collection of nodes (vertices) connected by edges.
@@ -23,6 +26,34 @@ class Graph:
             self.adj_list[v] = []
         self.adj_list[u].append(v)
         self.adj_list[v].append(u)  # For undirected graph
+
+    def countConnectedComponents(self, n: int, edges: List[List[int]]) -> int:
+        table = defaultdict(set)
+        for edge in edges:
+            table[edge[0]].add(edge[1])
+            table[edge[1]].add(edge[0])
+        visited = set()
+
+        def dfs(node, group):
+            if node in group:
+                return
+            cons = table[node]
+            group.add(node)
+            for c in cons:
+                if c not in group:
+                    dfs(c, group)
+            return group
+
+        ans = 0
+        for key in table.keys():
+            if key not in visited:
+                group = dfs(key, set())
+                ans += 1
+                visited.update(group)
+        if n > len(visited):
+            alone = n - len(visited)
+            ans += alone
+        return ans
 
 
 def print_graph(graph):
