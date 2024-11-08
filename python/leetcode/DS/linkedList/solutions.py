@@ -1,4 +1,5 @@
 from ast import List
+from calendar import c
 from typing import Optional
 
 
@@ -102,3 +103,45 @@ class Solutions:
             ans.append(head_node)
             k -= 1
         return ans
+
+    def insert(self, head: "Optional[Node]", insertVal: int) -> "Node":
+        new_node = Node(insertVal)
+        if not head:
+            head = new_node
+            head.next = head
+            return head
+        cur = head
+        if cur.next == cur:
+            cur.next = new_node
+            new_node.next = cur
+            return head
+        smallest = float("inf")
+        biggest = float("-inf")
+        is_full_loop = False
+        while not is_full_loop:
+            smallest = min(cur.val, smallest)
+            biggest = max(cur.val, biggest)
+            if cur.next.val >= insertVal and insertVal >= cur.val:
+                temp = cur.next
+                new_node.next = temp
+                cur.next = new_node
+                return head
+            cur = cur.next
+            if cur == head:
+                is_full_loop = True
+
+        if biggest == smallest:
+            temp = cur.next
+            cur.next = new_node
+            new_node.next = temp
+            return head
+
+        while cur.val != biggest:
+            cur = cur.next
+        if cur.val == cur.next.val:
+            while cur.val == cur.next.val:
+                cur = cur.next
+        temp = cur.next
+        cur.next = new_node
+        new_node.next = temp
+        return head

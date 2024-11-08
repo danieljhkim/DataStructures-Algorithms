@@ -15,7 +15,7 @@ Graph
 """
 
 
-class Graph:
+class UndirectedGraph:
     def __init__(self):
         self.adj_list = {}
 

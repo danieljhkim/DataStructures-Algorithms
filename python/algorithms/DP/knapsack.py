@@ -6,7 +6,7 @@ import math
 
 class KnapSack:
 
-    def knapsack(self, weights: list[int], values: list[int], W: int):
+    def knapsack(self, weights: List[int], values: List[int], W: int):
         n = len(weights)
         dp = [[0 for _ in range(W + 1)] for _ in range(n + 1)]
         for i in range(1, n + 1):

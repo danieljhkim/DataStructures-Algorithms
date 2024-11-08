@@ -435,34 +435,6 @@ class Solution:
         result = dfs(root, 0)
         return result if result != float("inf") else 0
 
-
-class Solution:
-
-    def __init__(self, nums: List[int]):
-        self.table = defaultdict(list)
-        for i, n in enumerate(nums):
-            self.table[n].append(i)
-
-    def pick(self, target: int) -> int:
-        choices = self.table[target]
-        n = len(choices)
-        chosen = math.floor(n * random.random())
-        return choices[chosen]
-
-    def simplifyPath(self, path: str) -> str:
-        stack = []
-        paths = path.split("/")
-        for p in paths:
-            if p == "..":
-                if stack:
-                    stack.pop()
-            elif p == " " or p == "" or p == ".":
-                continue
-            else:
-                stack.append("/" + p)
-        result = "".join(stack)
-        return result or "/"
-
     def closestValue(self, root: Optional[TreeNode], target: float) -> int:
         heap = []  # (abs(root.val - target), root.val)
 
@@ -864,33 +836,524 @@ class Solution:
         return ans
 
     def threeSum(self, nums: List[int]) -> List[List[int]]:
+        ans = set()
+        dups = set()
+        for i, n1 in enumerate(nums):
+            if n1 in dups:
+                continue
+            dups.add(n1)
+            table = {}
+            for j in range(i + 1, len(nums)):
+                n2 = nums[j]
+                target = -n1 - n2
+                if target in table:
+                    ans.add(tuple(sorted([n1, n2, target])))
+                table[n2] = j
+        return [list(x) for x in ans]
 
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
         nums.sort()
         ans = []
-        seen = set()
-        table = defaultdict(dict)
-        for i, v in enumerate(nums):
-            table[v][i] = 0
         i = 0
         while i < len(nums) - 2:
-            for idx in range(i + 1, len(nums) - 1):
-                total = nums[i] + nums[idx]
-                cur_t = table[-total]
-                if -total in table:
-                    if len(table[-total]) > 2 or (idx not in cur_t and i not in cur_t):
-                        right = list(table[-total].keys())
-                        right = right[0]
-                        candidate = [nums[i], nums[idx], nums[right]]
-                        candidate.sort()
-                        if tuple(candidate) not in seen:
-                            ans.append(candidate)
-                            seen.add(tuple(candidate))
+            n1 = nums[i]
+            table = {}
+            j = i + 1
+            while j < len(nums):
+                n2 = nums[j]
+                target = -n1 - n2
+                if target in table:
+                    ans.append([n1, n2, target])
+                    table[n2] = j
+                    while j < len(nums) and nums[j] == n2:
+                        j += 1
+                table[n2] = j
+                j += 1
+            while i < len(nums) and nums[i] == n1:
+                i += 1
+        return ans
+
+    def letterCombinations(self, digits: str) -> List[str]:
+        if not digits:
+            return []
+        letters = {
+            "2": "abc",
+            "3": "def",
+            "4": "ghi",
+            "5": "jkl",
+            "6": "mno",
+            "7": "pqrs",
+            "8": "tuv",
+            "9": "wxyz",
+        }
+        ans = []
+
+        def backtrack(word, digit_pos):
+            if len(word) == len(digits):
+                ans.append("".join(word))
+                return
+            letter = letters[digits[digit_pos]]
+            for i in range(len(letter)):
+                word.append(letter[i])
+                backtrack(word, digit_pos + 1)
+                word.pop()
+
+        backtrack([], 0)
+        return ans
+
+    def checkSubarraySum(self, nums: List[int], k: int) -> bool:
+        total_rem = 0
+        table = {}
+        for i, n1 in enumerate(nums):
+            total_rem = (n1 + total_rem) % k
+            if i > 0 and total_rem == 0:
+                return True
+            if total_rem in table:
+                if i - table[total_rem] > 1:
+                    return True
+            else:
+                table[total_rem] = i
+        return False
+
+    def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        word_set = set(wordDict)
+        cache = {}
+
+        def check(word):
+            if word in cache:
+                return cache[word]
+            if len(word) == 0:
+                return True
+            for i in range(len(word)):
+                if word[: i + 1] in word_set:
+                    found = check(word[i + 1 :])
+                    if found:
+                        cache[word] = True
+                        return found
+            cache[word] = False
+            return False
+
+        return check(s)
+
+    def depthSumInverse(self, nestedList: List[NestedInteger]) -> int:
+        max_depth = 1
+        table = defaultdict(list)
+
+        def explore(nest, level):
+            nonlocal max_depth
+            if nest:
+                max_depth = max(level - 1, max_depth)
+            else:
+                max_depth = max(level, max_depth)
+            for n in nest:
+                if n.isInteger():
+                    table[level].append(n.getInteger())
+                else:
+
+                    explore(n.getList(), level + 1)
+
+        explore(nestedList, 1)
+        if not table:
+            return 0
+        ans = 0
+        for i, v in table.items():
+            for j in v:
+                ans += j * (max_depth - i + 1)
+        return ans
+
+    def rangeSumBST(self, root: Optional[TreeNode], low: int, high: int) -> int:
+        total = 0
+
+        def dfs(node):
+            if not node:
+                return
+            nonlocal total
+            if node.val > low:
+                dfs(node.left)
+            if node.val <= high and node.val >= low:
+                total += node.val
+            if node.val < high:
+                dfs(node.right)
+
+        dfs(root)
+        return total
+
+    def bulbSwitch(self, n: int) -> int:
+
+        bulb = [True] * (n + 1)
+        ans = 0
+        for i in range(n, 0, -1):
+            count = 1
+            j = 2
+            while j < i**0.5:
+                if i % j == 0:
+                    count += 1
+                    j += j
+                else:
+                    j += 1
+
+            if count % 2 == 1:
+                ans += 1
+        return ans
+
+
+class NumMatrix:
+
+    def __init__(self, matrix: List[List[int]]):
+        self.ROW = len(matrix)
+        self.COL = len(matrix[0])
+        self.matrix = matrix
+        self.total = 0
+        self.calculate_row()
+        self.calculate_col()
+        self.rsum = []
+        self.csum = []
+
+    def calculate_row(self):
+        for r in self.matrix:
+            total = 0
+            for c in range(self.COL):
+                total += self.matrix[r][c]
+            self.total += total
+            self.rsum.append(total)
+
+    def calculate_col(self):
+        for c in self.matrix:
+            total = 0
+            for r in range(self.ROW):
+                total += self.matrix[r][c]
+                self.matrix[r][c] = total
+            self.csum.append(total)
+
+    def sumRegion(self, row1: int, col1: int, row2: int, col2: int) -> int:
+        # up
+
+        total = self.rsum[row1 : row2 + 1]
+        cols = 0
+        for i, c in enumerate(self.csum):
+            if i < col1 and i > col2:
+                cols += self.csum[i]
+        rows = 0
+        for i, c in enumerate(self.rsum):
+            if i < row1 and i > row2:
+                rows += self.rsum[i]
+
+    def isBalanced(self, num: str) -> bool:
+        even_sum = 0
+        odd_sum = 0
+        for i, v in enumerate(list(num)):
+            if i % 2 == 0:
+                even_sum += int(v)
+            else:
+                odd_sum += int(v)
+        return even_sum == odd_sum
+
+    def minTimeToReach(self, moveTime: List[List[int]]) -> int:
+        ROW = len(moveTime)
+        COL = len(moveTime[0])
+        ans = float("inf")
+        visited = [[False] * COL for _ in range(ROW)]
+
+        def dfs(time, r, c):
+            nonlocal ans
+            if r == ROW - 1 and c == COL - 1:
+                ans = min(ans, time)
+                return
+            if time >= ans:
+                return
+            visited[r][c] = True
+
+            directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
+            for dr, dc in directions:
+                nr, nc = r + dr, c + dc
+                if 0 <= nr < ROW and 0 <= nc < COL and not visited[nr][nc]:
+                    next_time = max(moveTime[nr][nc], time) + 1
+                    dfs(next_time, nr, nc)
+
+            visited[r][c] = False
+
+        dfs(0, 0, 0)
+        return ans
+
+    def reverseVowels(self, s: str) -> str:
+        vowels = ["a", "e", "i", "o", "u"]
+        vowels = set(vowels)
+
+        pos = []
+        s = list(s)
+        for i, v in enumerate(s):
+            if v.lower() in vowels:
+                pos.append(v)
+
+        for i, v in enumerate(s):
+            if v.lower() in vowels:
+                s[i] = pos.pop()
+        return "".join(s)
+
+    def largestValues(self, root: Optional[TreeNode]) -> List[int]:
+        if not root:
+            return []
+        queue = deque()
+        queue.append((0, root))
+        levels = {}
+        while queue:
+            level, node = queue.popleft()
+            if level not in levels:
+                levels[level] = node.val
+            levels[level] = max(levels[level], node.val)
+            if node.left:
+                queue.append((level + 1, node.left))
+            if node.right:
+                queue.append((level + 1, node.right))
+        ans = []
+        top = max(list(levels.keys()))
+        for i in range(top + 1):
+            ans.append(levels[i])
+        return ans
+
+    def intersection(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        ans = set(nums1)
+        ans.intersection_update(nums2)
+        return list(ans)
+
+    def subtreeWithAllDeepest(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        """_summary_
+            0
+        1       3
+          2
+        """
+
+        def dfs(node, level):
+            if not node:
+                return level - 1, None
+            left_l, left = dfs(node.left, level + 1)
+            right_l, right = dfs(node.right, level + 1)
+
+            if left_l == right_l:
+                return left_l, node
+            elif left_l > right_l:
+                return left_l, left
+            else:
+                return right_l, right
+
+        return dfs(root, 0)[1]
+
+    def minMeetingRooms(self, intervals: List[List[int]]) -> int:
+        heap = []
+        intervals.sort(key=lambda x: x[0])
+        i = 0
+        ans = 0
+        while i < len(intervals):
+            v = intervals[i]
+            begin = v[0]
+            end = v[1]
+            if heap and heap[0][0] <= begin:
+                heapq.heappop(heap)
+            heapq.heappush(heap, (end, begin, i))
+            ans = max(ans, len(heap))
             i += 1
         return ans
+
+    def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:
+        parent = {}
+        names = {}
+
+        def find(x):
+            if parent[x] != x:
+                parent[x] = find(parent[x])
+            return parent[x]
+
+        def union(x_root, y):
+            rootx = find(x_root)
+            rooty = find(y)
+            if rootx != rooty:
+                parent[rooty] = rootx
+
+        for acc in accounts:
+            name = acc[0]
+            first_email = acc[1]
+            for email in acc[1:]:
+                parent[email] = email
+                names[email] = name
+                union(first_email, email)
+
+        merged_emails = defaultdict(list)
+        for email in parent:
+            root = find(email)
+            merged_emails[root].append(email)
+
+        result = []
+        for emails in merged_emails.values():
+            result.append([names[emails[0]] + sorted(emails)])
+
+        return result
+
+    def arrayStringsAreEqual(self, word1: List[str], word2: List[str]) -> bool:
+        idx1 = 0
+        idx2 = 0
+        p1 = 0
+        p2 = 0
+
+        while p1 < len(word1) or p2 < len(word2):
+
+            if idx1 >= len(word1[p1]):
+                idx1 = 0
+                p1 += 1
+
+            if idx2 >= len(word2[p2]):
+                idx2 = 0
+                p2 += 1
+            if idx2 == 0 and idx1 == 0:
+                if p2 == len(word2) and p1 == len(word1):
+                    return True
+            if p2 >= len(word2) or p1 >= len(word1):
+                return False
+
+            w1 = word1[p1][idx1]
+            w2 = word2[p2][idx2]
+
+            idx1 += 1
+            idx2 += 1
+            if w1 != w2:
+                return False
+
+        return True
+
+    def lowestCommonAncestor(self, p: "Node", q: "Node") -> "Node":
+        curp = p
+        curq = q
+        pset = set()
+        qset = set()
+        while curp and curq:
+            if curp.val == curq.val:
+                return curp
+            if curp.val in qset:
+                return curp
+            if curq.val in pset:
+                return curq
+            pset.add(curp.val)
+            qset.add(curq.val)
+            curp = curp.parent
+            curq = curq.parent
+
+        lower = p if curp else q
+        hset = qset if curp else pset
+
+        while lower.parent:
+            if lower.val in hset:
+                return lower
+            lower = lower.parent
+        return lower
+
+    def longestArithSeqLength(self, nums: List[int]) -> int:
+        """_summary_
+        i1 - i = target
+        i = i1 - target
+        """
+        cache = defaultdict(dict)
+
+        def recursion(idx, target):
+            if idx in cache:
+                if target in cache[idx]:
+                    return cache[idx][target]
+            top = 1
+            for i in range(idx + 1, len(nums)):
+                diff = nums[i] - nums[idx]
+                if diff == target:
+                    res = recursion(i, target) + 1
+                    top = max(res, top)
+            cache[idx][target] = top
+            return top
+
+        ans = 0
+        for i in range(len(nums)):
+            for j in range(i + 1, len(nums)):
+                target = nums[j] - nums[i]
+                res = recursion(j, target) + 1
+                ans = max(res, ans)
+        return ans
+
+    def isCompleteTree(self, root: Optional[TreeNode]) -> bool:
+        queue = deque()
+        queue.append((0, root))
+        levels = defaultdict(list)
+        max_depth = 0
+        while queue:
+            level, node = queue.popleft()
+            max_depth = max(max_depth, level)
+            if node.left:
+                queue.append((level + 1, node.left))
+                levels[level + 1].append(node)
+            if node.right:
+                queue.append((level + 1, node.right))
+                levels[level + 1].append(node)
+
+        last_row = levels[max_depth]
+        if not last_row:
+            return True
+        if len(last_row) < max_depth * 2 - 1:
+            return False
+        for i in range(len(last_row) - 2):
+            if not last_row[i].left or not last_row[i].right:
+                return False
+        if not last_row[-1].left and not last_row[-1].right:
+            return True
+        return False
+
+    def isCompleteTree(self, root: Optional[TreeNode]) -> bool:
+        queue = deque([root])
+        prev = root
+        while queue:
+            node = queue.popleft()
+            if node:
+                if not prev:
+                    return False
+                queue.append(node.left)
+                queue.append(node.right)
+            prev = node
+        return True
+
+    def buddyStrings(self, s: str, goal: str) -> bool:
+        """_summary_
+        aaabb
+        aabab
+        """
+        ns = len(s)
+        ng = len(goal)
+        if ns != ng:
+            return False
+        first = None
+        second = None
+        for i in range(ns):
+            if s[i] != goal[i]:
+                if first is not None:
+                    first = i
+                elif second is not None:
+                    second = i
+                else:
+                    return False
+
+        if first is None and second is None:
+            diff = set(list(s))
+            if diff < ns:
+                return True
+        if second is None:
+            return False
+        if s[first] == goal[second] and s[second] == goal[first]:
+            return True
+        return False
+
+    def minChanges(self, s: str) -> int:
+        changes = 0
+        for i in range(0, len(s), 2):
+            if s[i] != s[i + 1]:
+                changes += 1
+        return changes
 
 
 def test_solution():
     s = Solution()
+    s.threeSum([])
     # print(s.subarraySum([1, -1, 0], 0))
     # print(s.subarraySum([1, 1, 1], 2))
     # print(s.subarraySum2(test, -93))
