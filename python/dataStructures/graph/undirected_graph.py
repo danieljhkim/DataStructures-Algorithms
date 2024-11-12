@@ -62,7 +62,7 @@ def print_graph(graph):
 
 
 if __name__ == "main":
-    graph = Graph()
+    graph = UndirectedGraph()
     graph.add_edge(1, 2)
     graph.add_edge(1, 3)
     graph.add_edge(2, 4)

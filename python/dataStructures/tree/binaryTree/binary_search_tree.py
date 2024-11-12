@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from __future__ import annotations
+from typing import Dict, List, Optional
 
 """
                 16
@@ -144,6 +145,25 @@ def create_bst():
     for val in values:
         root = insert_into_bst(root, val)
     return root
+
+
+def pathSum(root: Optional[TreeNode], targetSum: int) -> List[List[int]]:
+    result = []
+
+    def dfs(node, path, total):
+        if not node:
+            return
+        path.append(node.val)
+        total += node.val
+        if not node.left and not node.right:
+            if targetSum == total:
+                result.append(path[::])
+        dfs(node.left, path, total)
+        dfs(node.right, path, total)
+        path.pop()
+
+    dfs(root, [], 0)
+    return result
 
 
 # Test case

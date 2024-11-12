@@ -22,3 +22,16 @@ class RadixSort:
                     arr[i] = n
                     i += 1
         return arr
+
+    def customSortString(self, order: str, s: str) -> str:
+        sorted = ""
+        freq = [0] * 26
+        for char in s:
+            freq[ord(char) - ord("a")] += 1
+        for char in order:
+            sorted += char * (freq[ord(char) - ord("a")])
+            freq[ord(char) - ord("a")] = 0
+        for i in range(26):
+            if freq[i] != 0:
+                sorted += chr(i + 97) * freq[i]
+        return sorted

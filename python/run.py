@@ -26,59 +26,71 @@ class ListNode:
 
 
 class Solution:
-    def stringSequence(self, target: str) -> List[str]:
-        ans = ["a"]
-        idx = 0
+    
+    def smallestNumber(self, n: int, t: int) -> int:
+        while True:
+            prod = 1
+            temp = n
+            while temp > 0:
+                prod *= temp % 10
+                temp //= 10
+            diff = prod % t
+            if diff == 0:
+                return n
+            n += 1
 
-        for i in range(len(target)):
-            let = target[i]
-            nlet = ans[-1][-1]
-            neww = list(ans[-1])
-            if ord(let) > ord(nlet):
-                while ord(let) > ord(nlet):
-                    nlet = chr(ord(nlet) + 1)
-                    neww[len(neww) - 1] = nlet
-                    ans.append("".join(neww))
+    def maxFrequency(self, nums: List[int], k: int, numOperations: int) -> int:
+        """_summary_
+        2, 3, 1, 1, 1, 20, 20, 20, 20
+        
+        k = 10
+        n = 2
+        """
+        counts = Counter(nums)
+        sort_arr = [(v, k) for k,v in counts.items()]
+        sort_arr.sort(key=lambda x:[0])
+        top_f = sort_arr[-1][0]
+        top_val = sort_arr[-1][1]
+        while numOperations:
+            tops = len(sort_arr) - 1
+            top_f = sort_arr[tops]
+            top_val = sort_arr[tops]
+            while tops > 0:
+    
+    def hasIncreasingSubarrays(self, nums: List[int], k: int) -> bool:
+        """
+        1,2,3, 2, 2,3,4
+        """
+        freqs = []
+        freq = 1
+        for i in range(1, len(nums)):
+            prev = nums[i - 1]
+            cur = nums[i]
+            if cur > prev:
+                freq += 1
+                if freq > k:
+                    freqs.append(freq - k)
+                    freqs.append(k)
+                else:
+                    freqs.append(freq)
             else:
-                ans.append(ans[-1] + let)
-        return ans
+                if freq > k:
+                    freqs.append(freq - k)
+                    freqs.append(k)
+                else:
+                    freqs.append(freq)
 
-    def numberOfSubstrings(self, s: str, k: int) -> int:
-        def cal(arr):
-            counts = [0] * 26
-            for i in arr:
-                counts[ord(i) - ord("a")] += 1
-            return counts
-
-        ans = 0
-        left = 0
-        counts = cal(s[:k])
-        right = k - 1
-
-        while right < len(s):
-            if max(counts) >= k:
-                ans += len(s) - right
-                counts[ord(s[left]) - ord("a")] -= 1
-                left += 1
-            else:
-                right += 1
-                if right < len(s):
-                    counts[ord(s[right]) - ord("a")] += 1
-
-        return ans
-
-    def possibleStringCount(self, word: str) -> int:
-        ans = 1
-        words = list(word)
-        for i in range(len(words) - 1):
-            if words[i] == words[i + 1]:
-                ans += 1
-        return ans
-
+                freq = 1
+        for i in range(1, len(freqs)):
+            prev = freqs[i - 1]
+            cur = freqs[i]
+            if cur >= k and prev >= k:
+                return True
+        return False
 
 def test_solution():
     s = Solution()
-    s.maxScore(3, 2, [[3, 4, 2], [2, 1, 2]], [[0, 2, 1], [2, 0, 4], [3, 2, 0]])
+
 
 
 if __name__ == "__main__":

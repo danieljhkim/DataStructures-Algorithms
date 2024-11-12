@@ -58,5 +58,9 @@ class LRUCache:
         self.tail.prev = node
 
     def _remove(self, node: ListNode):
+        """_summary_
+        prev - node - next
+            next   prev
+        """
         node.prev.next = node.next
         node.next.prev = node.prev
