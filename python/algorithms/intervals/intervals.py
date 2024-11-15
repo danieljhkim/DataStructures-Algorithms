@@ -40,3 +40,13 @@ class Intervals:
             ans = max(ans, len(heap))
             i += 1
         return ans
+
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        intervals.sort()
+        stack = [intervals[0]]
+        for interv in intervals[1:]:
+            if stack[-1][1] >= interv[0]:
+                stack[-1][1] = max(interv[1], stack[-1][1])
+            else:
+                stack.append(interv)
+        return stack
