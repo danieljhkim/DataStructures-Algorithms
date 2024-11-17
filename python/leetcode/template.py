@@ -1,7 +1,7 @@
-from math import inf
-from collections import Counter, defaultdict, deque
-from typing import List, Tuple, Optional
 import heapq
+from typing import Optional, List
+import random
+from collections import Counter, deque, defaultdict, OrderedDict
 import math
 
 
@@ -13,7 +13,6 @@ class TreeNode:
 
 
 class Node:
-
     def __init__(self, val=None, children=None):
         self.val = val
         self.children = children
@@ -36,4 +35,3 @@ def test_solution():
 
 if __name__ == "__main__":
     test_solution()
-    print(list(range(10)))

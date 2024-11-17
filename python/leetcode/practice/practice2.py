@@ -136,16 +136,16 @@ class Solution:
 
         dfs(root, [], 0)
         return result
-    
+
     def nextPermutation(self, nums: List[int]) -> None:
         """_summary_
         1 2 3 4 -> 1 2 4 3
-        
+
         4 3 2 1 -> 1 2 3 4
-        
+
         1 2 4 3 -> 1 3 4 2
         """
-        
+
         n = len(nums)
         dec_idx = None
         for i in range(len(nums) - 1, 0, -1):
@@ -161,21 +161,20 @@ class Solution:
         while nums[dec_idx] >= nums[i]:
             i -= 1
         nums[dec_idx], nums[i] = nums[i], nums[dec_idx]
-        nums[dec_idx+1:] = reversed(nums[dec_idx+1:])
-        
-        
-    
+        nums[dec_idx + 1 :] = reversed(nums[dec_idx + 1 :])
+
     def maxLength(self, ribbons: List[int], k: int) -> int:
         """_summary_
-        1 2 3 4 4 4 5 6 
+        1 2 3 4 4 4 5 6
         """
+
         def possible(arr, length):
             count = 0
             for r in arr:
                 if r >= length:
                     count += r // length
             return count >= k
-        
+
         low = 1
         high = max(ribbons)
         while low <= high:
@@ -188,7 +187,69 @@ class Solution:
         if high > 0 and possible(ribbons, high):
             return high
         return 0
-            
+
+    def sortArray(self, nums: List[int]) -> List[int]:
+
+        def merge_sort(arr):
+            if len(arr) < 2:
+                return arr
+            mid = len(arr) // 2
+            left = merge_sort(arr[:mid])
+            right = merge_sort(arr[mid:])
+            l = r = j = 0
+            while l < len(left) and r < len(right):
+                if left[l] < right[r]:
+                    arr[j] = left[l]
+                    l += 1
+                else:
+                    arr[j] = right[r]
+                    r += 1
+                j += 1
+
+            while l < len(left):
+                arr[j] = left[l]
+                l += 1
+                j += 1
+            while r < len(right):
+                arr[j] = right[r]
+                r += 1
+                j += 1
+            return arr
+
+        return merge_sort(nums)
+
+    def findCheapestPrice(
+        self, n: int, flights: List[List[int]], src: int, dst: int, k: int
+    ) -> int:
+        """_summary_
+        flights[i] = [from, to, price]
+        """
+
+        adj = defaultdict(list)
+        for fr, to, pr in flights:
+            adj[fr].append((to, pr))
+
+        # (cost, current_node, stops)
+        heap = [(0, src, 0)]
+        while heap:
+            cost, node, stops = heapq.heappop(heap)
+            if node == dst:
+                return cost
+            if stops <= k:
+                for neighbor, price in adj[node]:
+                    heapq.heappush(heap, (cost + price, neighbor, stops + 1))
+        return -1
+
+    def majorityElement(self, nums: List[int]) -> List[int]:
+        counter = Counter(nums)
+        lim = nums / 3
+        ans = []
+        for k, v in counter.items():
+            if v > lim:
+                ans.append(k)
+        return ans
+
+
 def test_solution():
     s = Solution()
     arr = [1, 2, 3, 4, 5, 6, 7]

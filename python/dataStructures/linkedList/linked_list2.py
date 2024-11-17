@@ -1,12 +1,19 @@
 from typing import Optional
 from dataclasses import dataclass
 from __future__ import annotations
+from typing import Optional, List
 
 
 @dataclass
 class Node:
 
     def __init__(self, val: int, next: Optional[Node]):
+        self.val = val
+        self.next = next
+
+
+class ListNode:
+    def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
 
@@ -109,4 +116,34 @@ class LinkedList:
                 total = 0
             prev = cur
             cur = cur.next
+        return head.next
+
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+
+        pos = {}
+        for i, nodes in enumerate(lists):
+            pos[i] = nodes
+        head = ListNode(-1)
+        cur = head
+        while pos:
+            smallest = float("inf")
+            idx = -1
+            empty = []
+            for i in pos.keys():
+                if not pos[i]:
+                    empty.append(i)
+                    continue
+                num = pos[i].val
+                if num < smallest:
+                    idx = i
+                    smallest = num
+            if idx > -1:
+                cur.next = pos[idx]
+                cur = cur.next
+                pos[idx] = pos[idx].next
+            else:
+                break
+            if empty:
+                for i in empty:
+                    del pos[i]
         return head.next

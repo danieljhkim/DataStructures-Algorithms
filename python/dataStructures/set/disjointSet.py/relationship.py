@@ -18,6 +18,8 @@ class DisjointSet:
         if rootX != rootY:  # for optimization, attach smaller tree to the bigger
             self.parent[rootY] = rootX
 
+    #### problems ####
+
     def accountsMerge(self, accounts: List[List[str]]) -> List[List[str]]:
         """_summary_
         Args:
