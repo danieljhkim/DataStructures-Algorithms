@@ -249,6 +249,96 @@ class Solution:
                 ans.append(k)
         return ans
 
+    def frequencySort(self, s: str) -> str:
+        counts = list(Counter(s).items())
+        counts.sort(key=lambda x: x[1], reverse=True)
+        ans = []
+        for k, v in counts:
+            for i in range(v):
+                ans.append(k)
+        return "".join(ans)
+
+    def frequencySort(self, s: str) -> str:
+        counts = list(Counter(s).items())
+        low = min(counts, key=lambda x: x[1])[1]
+        high = max(counts, key=lambda x: x[1])[1]
+        xrange = high - low + 1
+        buckets = [[] for _ in range(xrange)]
+        for w, count in counts:
+            idx = count - low
+            buckets[idx].extend([w] * count)
+        ans = []
+        for bucket in reversed(buckets):
+            ans.extend(bucket)
+        return "".join(ans)
+
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        indegree = [0] * numCourses
+        adj = defaultdict(list)
+        for course, preq in prerequisites:
+            adj[preq].append(course)
+            indegree[course] += 1
+
+        queue = deque()
+        for i, n in enumerate(indegree):
+            if n == 0:
+                queue.append(i)
+
+        topo_order = []
+        while queue:
+            cur = queue.popleft()
+            topo_order.append(cur)
+            for neigh in adj[cur]:
+                indegree[neigh] -= 1
+                if indegree[neigh] == 0:
+                    queue.append(neigh)
+        return len(topo_order) == numCourses
+
+    def tribonacci(self, n: int) -> int:
+        """_summary_
+        0 1 1 2 4
+        f4 + f3 + f2
+
+        """
+        if n <= 0:
+            return 0
+        if n <= 2:
+            return 1
+        return self.tribonacci(n - 1) + self.tribonacci(n - 2) + self.tribonacci(n - 3)
+
+    def toGoatLatin(self, sentence: str) -> str:
+        ans = []
+        vowels = {"a", "e", "i", "o", "u"}
+        sentence = sentence.split(" ")
+        for i, w in enumerate(sentence):
+            new_word = []
+            if w[0].lower() not in vowels:
+                new_word.append(w[1:])
+                new_word.append(w[0])
+            else:
+                new_word.append(w)
+            new_word.append("ma")
+            new_word.append("a" * (i + 1))
+            ans.append("".join(new_word))
+        return " ".join(ans)
+
+
+class SparseVector:
+    def __init__(self, nums: List[int]):
+        self.set = set()
+        for i, n in enumerate(nums):
+            if n != 0:
+                self.set.add(i)
+        self.nums = nums
+
+    # Return the dotProduct of two sparse vectors
+    def dotProduct(self, vec: "SparseVector") -> int:
+        intersects = self.set.intersection(vec.set)
+        res = 0
+        for i in intersects:
+            res += self.nums[i] * vec.nums[i]
+        return res
+
 
 def test_solution():
     s = Solution()

@@ -147,3 +147,39 @@ class LinkedList:
                 for i in empty:
                     del pos[i]
         return head.next
+
+    def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+
+        def find_middle(node):
+            slow = node
+            fast = node
+            while fast.next and fast.next.next:
+                slow = slow.next
+                fast = fast.next.next
+            return slow
+
+        def merge_sort(node):
+            if not node or not node.next:
+                return node
+            mid = find_middle(node)
+            left = node
+            right = mid.next
+            mid.next = None  # IMPORTMAT!!!! cut it!!
+
+            left = merge_sort(left)
+            right = merge_sort(right)
+
+            dummy = ListNode(-1, node)
+            cur = dummy
+            while left and right:
+                if left.val > right.val:
+                    cur.next = right
+                    right = right.next
+                else:
+                    cur.next = left
+                    left = left.next
+                cur = cur.next
+            cur.next = left if left else right
+            return dummy.next
+
+        return merge_sort(head)
