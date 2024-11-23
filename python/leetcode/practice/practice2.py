@@ -1,3 +1,4 @@
+from curses.ascii import isalpha
 import heapq
 from typing import Optional, List
 import random
@@ -322,28 +323,232 @@ class Solution:
             ans.append("".join(new_word))
         return " ".join(ans)
 
+    def maxFrequency(self, nums: List[int], k: int, numOperations: int) -> int:
+        counter = Counter(nums)
+        ans = 0
+        nums.sort()
 
-class SparseVector:
-    def __init__(self, nums: List[int]):
-        self.set = set()
-        for i, n in enumerate(nums):
-            if n != 0:
-                self.set.add(i)
-        self.nums = nums
+        def bsearch_left(target):
+            """_summary_
+            1 2 3 4 4 4 6 7
+            """
+            low = 0
+            high = len(nums) - 1
+            while low <= high:
+                mid = (high + low) // 2
+                if nums[mid] < target:
+                    low = mid + 1
+                else:
+                    high = mid - 1
+            if low < len(nums) and nums[low] >= target:
+                return low
+            return 0
 
-    # Return the dotProduct of two sparse vectors
-    def dotProduct(self, vec: "SparseVector") -> int:
-        intersects = self.set.intersection(vec.set)
-        res = 0
-        for i in intersects:
-            res += self.nums[i] * vec.nums[i]
+        def bsearch_right(target):
+            low = 0
+            high = len(nums) - 1
+            while low <= high:
+                mid = (high + low) // 2
+                if nums[mid] <= target:
+                    low = mid + 1
+                else:
+                    high = mid - 1
+            if high >= 0:
+                return high + 1
+            return 0
+
+        def how_many(target):
+            left = bsearch_left(target - k)
+            right = bsearch_right(target + k)
+            count = right - left - counter[target]
+            return min(count, numOperations) + counter[target]
+
+        for n in nums:
+            res = max(how_many(n), how_many(n + k))
+            ans = max(ans, res)
+        return ans
+
+    def addBinary(self, a: str, b: str) -> str:
+        def to_int(binary):
+            num = 0
+            for v in binary:
+                num = num * 2 + int(v)
+            return num
+
+        def to_binary(num):
+            ans = []
+            while num:
+                rem = num % 2
+                num = num // 2
+                ans.append(str(rem))
+            ans.reverse()
+            return "".join(ans)
+
+        num_a = to_int(a)
+        num_b = to_int(b)
+        res = to_binary(num_a + num_b)
+        if not res:
+            return "0"
         return res
+
+    def leastInterval(self, tasks: List[str], n: int) -> int:
+        counts = list(Counter(tasks))
+        counts.sort(key=lambda x: x[1])
+        arr = []
+        for task, count in counts:
+            for i in range(count):
+                slot = [task] + [None] * n
+                arr.extend(slot)
+
+    def isMatch(self, s: str, p: str) -> bool:
+        """_summary_
+        "aab"
+        "c*a*b"
+        """
+        dqp = deque(list(p))
+        dqs = deque(list(s))
+        prevp = p[0]
+        prevs = s[0]
+        matching = []
+        while dqp and (dqs or matching):
+
+            pw = dqp[0]
+
+            if pw == "*":
+                matching.clear()
+                if not dqs:
+                    dqs.append(prevs)
+                if prevp == ".":
+                    prevp = dqs[0]
+
+                while dqs and dqs[0] == prevp:
+                    matching.append(dqs.popleft())
+                dqp.popleft()
+                continue
+            if not dqs:
+                dqs.append(matching.pop())
+                if not matching and prevs:
+                    matching.append(prevs)
+            if pw == ".":
+                prevp = dqp.popleft()
+                prevs = dqs.popleft()
+            else:
+                if dqs[0] == dqp[0]:
+                    prevs = dqs.popleft()
+                prevp = dqp.popleft()
+            if not dqs:
+                if not matching and prevs:
+                    matching.append(prevs)
+        while dqp and dqp[-1] == "*":
+            dqp.pop()
+            if dqp:
+                dqp.pop()
+        while dqp and dqp[0] == "*":
+            dqp.popleft()
+        if dqp or dqs:
+            return False
+        return True
+
+
+class Codec:
+
+    def serialize(self, root):
+        """Encodes a tree to a single string.
+
+        :type root: TreeNode
+        :rtype: str
+        """
+        if not root:
+            return "none"
+        stuff = []
+        queue = deque([root])
+        level = 1
+        while queue:
+            count = 0
+            for i in range(level):
+                what = "none"
+                if queue:
+                    node = queue.popleft()
+                    what = str(node.val)
+                    if node.left:
+                        queue.append(node.left)
+                    else:
+                        queue.append(TreeNode("none"))
+                        count += 1
+                    if node.right:
+                        queue.append(node.right)
+                    else:
+                        queue.append(TreeNode("none"))
+                        count += 1
+
+                stuff.append(what + ":")
+            if count == level * 2:
+                for i in range(count):
+                    queue.pop()
+            level *= 2
+        return "".join(stuff)
+
+    def deserialize(self, data):
+        """Decodes your encoded data to tree.
+        1-2-3-none-4-none-none-
+        """
+        dq = deque(data.split(":"))
+        empty = dq.pop()
+        if empty == "none":
+            return None
+
+        root = TreeNode(int(dq.popleft()))
+        queue = deque([root])
+        while dq:
+
+            left = dq.popleft()
+            right = dq.popleft()
+            if left == "none" and right == "none":
+                if not queue[0]:
+                    queue.popleft()
+                continue
+            node = queue.popleft()
+            if left != "none":
+                left = TreeNode(left)
+            else:
+                left = None
+
+            if right != "none":
+                right = TreeNode(right)
+            else:
+                right = None
+            queue.append(left)
+            queue.append(right)
+            node.left = left
+            node.right = right
+        return root
 
 
 def test_solution():
+    """_summary_
+        1
+    2       3
+        4
+    """
+    # s = Codec()
+    # root = TreeNode(1)
+    # root.left = TreeNode(2)
+    # root.right = TreeNode(3)
+    # root.left.right = TreeNode(4)
+    # # aaa = s.serialize(root)
+    # aa = "4:-7:-3:none:none:-9:-3:none:none:none:none:9:-7:-4:none:none:none:none:none:none:none:none:none:6:none:-6:-6:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:0:6:none:none:5:none:9:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:-1:-4:none:none:none:none:none:none:none:none:none:-2:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:"
+    # s.deserialize(aa)
+
+    # """_summary_
+    # 4:-7:-3:none:none:-9:-3:none:none:none:none:9:-7:-4:none:none:none:none:none:none:none:none:none:6:none:-6:-6:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:0:6:none:none:5:none:9:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:-1:-4:none:none:none:none:none:none:none:none:none:-2:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:none:
+    # """
+    s1 = "mississippi"
+    p1 = "mis*is*p*."
+
+    s2 = "aaa"
+    p2 = "a*a"
     s = Solution()
-    arr = [1, 2, 3, 4, 5, 6, 7]
-    s.allSubarraySum2(arr, 2)
+    s.isMatch("a", "ab*")
 
 
 if __name__ == "__main__":

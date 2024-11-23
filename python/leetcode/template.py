@@ -3,6 +3,7 @@ from typing import Optional, List
 import random
 from collections import Counter, deque, defaultdict, OrderedDict
 import math
+import bisect
 
 
 class TreeNode:

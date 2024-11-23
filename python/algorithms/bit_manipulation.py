@@ -15,11 +15,11 @@ def int_to_bin(num):
         remainder = num % 2
         num = num // 2
         binary = str(remainder) + binary
-    return binary
+    return binary or "0"
 
 
 def bin_to_int(binary: str):
     num = 0
-    for i, v in enumerate(binary):
+    for v in binary:
         num = num * 2 + int(v)
     return num

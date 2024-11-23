@@ -25,7 +25,7 @@ class Dikstra:
             cur_dist, cur_node = heapq.heappop(heap)
             for neighbor, neighbor_dist in self.graph[cur_node].items():
                 total_dist = neighbor_dist + cur_dist
-                if total_dist < cur_dist:
+                if total_dist < distances[neighbor]:
                     distances[neighbor] = total_dist
                     heapq.heappush(heap, (total_dist, neighbor))
 
