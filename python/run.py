@@ -3,6 +3,7 @@ from collections import Counter, defaultdict, deque
 from typing import List, Tuple, Optional
 import heapq
 import math
+import bisect
 
 
 class TreeNode:
@@ -36,4 +37,6 @@ def test_solution():
 
 if __name__ == "__main__":
     test_solution()
-    print(list(range(10)))
+    a = [0, 1, 2, 3, 4, 5, 6]
+    print(bisect.bisect_left(a, -1))
+    print(bisect.bisect_right(a, 6))

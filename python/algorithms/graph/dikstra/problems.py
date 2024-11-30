@@ -70,3 +70,33 @@ class Solution:
                     visited[new_dst] = (new_price, trips + 1)
                     heapq.heappush(heap, (new_price, new_dst, trips + 1))
         return -1
+
+    # 2290
+    def minimumObstacles(self, grid: List[List[int]]) -> int:
+        """mininum obstacles (1's) removed to reach botton right
+        [0 1 1 0]
+        [1 0 1 0]
+        [0 0 1 0]
+        """
+        ROW = len(grid)
+        COL = len(grid[0])
+        distances = [[inf] * COL for _ in range(ROW)]
+        distances[0][0] = 0
+        heap = [(0, (0, 0))]
+        directions = [(0, -1), (-1, 0), (1, 0), (0, 1)]
+
+        while heap:
+            cur_dist, cur_pos = heapq.heappop(heap)
+            r, c = cur_pos
+            if cur_pos == (ROW - 1, COL - 1):
+                return cur_dist
+            for dr, dc in directions:
+                nr = r + dr
+                nc = c + dc
+                if 0 <= nr < ROW and 0 <= nc < COL:
+                    cost = grid[nr][nc] + cur_dist
+                    if cost < distances[nr][nc]:
+                        heapq.heappush(heap, (cost, (nr, nc)))
+                        distances[nr][nc] = cost
+        # not found
+        return distances[ROW - 1][COL - 1]

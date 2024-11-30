@@ -19,3 +19,17 @@ class MonotonicStack:
                 ans[idx] = nums[i]
             stack.append(i)
         return ans
+
+    def count_monotonic(nums):
+        as_count = 1
+        is_inc = False if nums[0] > nums[1] else True
+        for i in range(1, len(nums) - 1):
+            if nums[i] > nums[i + 1]:
+                if is_inc:
+                    as_count += 1
+                is_inc = False
+            if nums[i] < nums[i + 1]:
+                if not is_inc:
+                    as_count += 1
+                is_inc = True
+        return as_count
