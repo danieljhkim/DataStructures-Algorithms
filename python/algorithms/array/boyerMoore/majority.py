@@ -42,3 +42,32 @@ class Solution:
             if nums.count(c) > limit:
                 ans.append(c)
         return ans
+
+    def findSpecialInteger(self, arr: List[int]) -> int:
+        """_summary_
+        more than 25%
+        """
+        candidates = [None, None, None]
+        votes = [0, 0, 0]
+        for n in arr:
+            if n == candidates[0]:
+                votes[0] += 1
+            elif n == candidates[1]:
+                votes[1] += 1
+            elif n == candidates[2]:
+                votes[2] += 1
+            elif votes[0] == 0:
+                candidates[0] = n
+            elif votes[1] == 0:
+                candidates[1] = n
+            elif votes[2] == 0:
+                candidates[2] = n
+            else:
+                votes[0] -= 1
+                votes[1] -= 1
+                votes[2] -= 1
+        limit = len(arr) // 4
+        for c in candidates:
+            if arr.count(c) > limit:
+                return c
+        return arr[0]
