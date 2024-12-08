@@ -1,5 +1,6 @@
 import heapq
 from typing import Optional, List
+from itertools import accumulate
 import random
 from collections import Counter, deque, defaultdict, OrderedDict
 import math
