@@ -237,6 +237,322 @@ class Solution:
             return 0
         return res
 
+    def myAtoi(self, s: str) -> int:
+        s = deque(s.strip())
+        if not s:
+            return 0
+        MAX = 2**31
+        sign = "+"
+        if s[0] == "-":
+            sign = "-"
+            s.popleft()
+        elif s[0] == "+":
+            s.popleft()
+
+        while s and s[0] == "0":
+            s.popleft()
+        str_n = ""
+        while s and s[0].isdigit():
+            str_n += s.popleft()
+
+        if not str_n:
+            return 0
+        num = int(str_n)
+        if sign == "-":
+            if num > MAX:
+                return -MAX
+            return -num
+        if num > MAX - 1:
+            return MAX - 1
+        return num
+
+    def myAtoi(self, s: str) -> int:
+        MAX = (2**31) - 1
+        MIN = -(2**31)
+        N = len(s)
+        if not s:
+            return 0
+        sign = 1
+        i = 0
+        while i < N and s[i] == " ":
+            i += 1
+        if i == N:
+            return 0
+
+        if s[i] == "-":
+            sign = -1
+            i += 1
+        elif s[i] == "+":
+            i += 1
+
+        while i < N and s[i] == "0":
+            i += 1
+        num = 0
+        while i < N and s[i].isdigit():
+            num *= 10
+            num += int(s[i])
+            if num > MAX:
+                if sign == -1:
+                    return MIN
+                return MAX
+            i += 1
+        if num > MAX:
+            if sign == -1:
+                return MIN
+            return MAX
+        return num * sign
+
+    def findMinDifference(self, timePoints: List[str]) -> int:
+        times = set()
+        for t in timePoints:
+            hour = int(t[:2])
+            minu = int(t[2:])
+            times.add(hour * 60 + minu)
+        if len(times) != len(timePoints):
+            return 0
+
+        trange = 60 * 24
+        buckets = [0] * trange
+        for m in times:
+            buckets[m] += 1
+
+        left = 0
+        right = 0
+        ans = float("inf")
+        diffs = len(times)
+        while diffs > 0:
+            while buckets[left % trange] == 0:
+                left += 1
+            right = left + 1
+            while buckets[right % trange] == 0:
+                right += 1
+            if right != left:
+                ans = min((right - left), ans)
+                diffs -= 1
+            else:
+                break
+            left += 1
+            right += 1
+        return ans
+
+    def canSortArray(self, nums: List[int]) -> bool:
+        bnums = []
+        prev = bin(nums[0]).count("1")
+        bnums.append([nums[0]])
+        N = len(nums)
+        for i, n in enumerate(nums, start=1):
+            cur = bin(n).count("1")
+            if cur == prev:
+                bnums[-1].append(n)
+            else:
+                bnums.append([n])
+                prev = cur
+        for i in range(len(bnums) - 1):
+            first = max(bnums[i])
+            nxt = min(bnums[i + 1])
+            if first > nxt:
+                return False
+
+        return True
+
+    def boundaryOfBinaryTree(self, root: Optional[TreeNode]) -> List[int]:
+        if not root:
+            return []
+        self.left = []
+        self.leaves = [[], []]
+        self.right = []
+
+        def left_bound(node, isbound):
+            if not node.left and not node.right:
+                self.leaves[0].append(node.val)
+                return
+            if isbound:
+                self.left.append(node.val)
+            if node.left:
+                left_bound(node.left, isbound)
+                isbound = False
+            if node.right:
+                left_bound(node.right, isbound)
+
+        def right_bound(node, isbound):
+            if not node.left and not node.right:
+                self.leaves[1].append(node.val)
+                return
+            if isbound:
+                self.right.append(node.val)
+            if node.right:
+                right_bound(node.right, isbound)
+                isbound = False
+            if node.left:
+                right_bound(node.left, isbound)
+
+        if root.left:
+            left_bound(root.left, True)
+        if root.right:
+            right_bound(root.right, True)
+        self.leaves[1].reverse()
+        self.right.reverse()
+        return [root.val] + self.left + self.leaves[0] + self.leaves[1] + self.right
+
+    def isNumber(self, s: str) -> bool:
+        seen_dot = False
+        seen_exp = False
+        prev = None
+        seen_digit = False
+
+        for i, n in enumerate(s):
+            if n.isalpha():
+                if (n == "E" or n == "e") and not seen_exp and seen_digit:
+                    seen_exp = True
+                else:
+                    return False
+            elif n == ".":
+                if seen_dot or seen_exp:
+                    return False
+                seen_dot = True
+            elif n == "+" or n == "-":
+                if prev and not (prev == "E" or prev == "e"):
+                    return False
+            elif n.isdigit():
+                seen_digit = True
+            else:
+                return False
+            prev = n
+        if (
+            prev.lower() == "e"
+            or (prev == "." and not seen_digit)
+            or (prev == "+" or prev == "-")
+        ):
+            return False
+        return True
+
+    def isValidPalindrome(self, s: str, k: int) -> bool:
+        memo = {}
+
+        def dp(s):
+            if s in memo:
+                return memo[s]
+            left = 0
+            right = len(s) - 1
+            count = 0
+            while left < right:
+                w1 = s[left]
+                w2 = s[right]
+                if w1 != w2:
+                    count += 1
+                    count += min(dp(s[left:right]), dp(s[left + 1 : right + 1]))
+                    memo[s] = count
+                    return count
+                left += 1
+                right -= 1
+            memo[s] = count
+            return count
+
+        res = dp(s)
+        if res > k:
+            return False
+        return True
+
+    def longestPalindromeSubseq(self, s: str) -> int:
+
+        memo = {}
+
+        def dp(s):
+            if s in memo:
+                return memo[s]
+            left = 0
+            right = len(s) - 1
+            size = 0
+            while left < right:
+                if s[left] == s[right]:
+                    size += 2
+                else:
+                    size += max(dp(s[left:right]), dp(s[left + 1 : right + 1]))
+                    memo[s] = size
+                    return size
+                left += 1
+                right -= 1
+            if len(s) % 2 == 1:
+                size += 1
+            memo[s] = size
+            return size
+
+        return dp(s)
+
+    def isArraySpecial(self, nums: List[int], queries: List[List[int]]) -> List[bool]:
+
+        def is_good_f(frm, to):
+            if False in narr[frm:to]:
+                return False
+            return True
+
+        N = len(nums)
+        narr = [True] * N
+        is_good = False
+        for i in range(N - 1):
+            cur = nums[i] % 2
+            nxt = nums[i + 1] % 2
+            is_good = True if cur + nxt == 1 else False
+            narr[i] = is_good
+
+        narr[-1][0] = is_good
+        ans = []
+        for frm, to in queries:
+            res = is_good_f(frm, to)
+            ans.append(res)
+        return ans
+
+    def maxPathSum(self, root: Optional[TreeNode]) -> int:
+        self.max = -inf
+
+        def dfs(node):
+            if not node:
+                return 0
+            left = dfs(node.left)
+            right = dfs(node.right)
+            self.max = max(node.val + max(left, 0) + max(right, 0), self.max)
+            return max(left, right, 0) + node.val
+
+        total = max(dfs(root), self.max)
+        return total
+
+    def divide(self, dividend: int, divisor: int) -> int:
+        count = 0
+        sign = 1
+        if dividend < 0:
+            sign *= -1
+            dividend = -dividend
+        if divisor < 0:
+            sign *= -1
+            divisor = -divisor
+        rem = 0
+        while divisor > 1:
+            dividend = dividend >> 1
+            divisor /= 2
+            rem += 0
+        return int(dividend) * sign
+
+    def isBipartite(self, graph: List[List[int]]) -> bool:
+        """ "
+        0  - o - 0
+         \  |  /
+            0
+        """
+        N = len(graph)
+        indegree = [0] * N
+        nodes = set([n for n in range(N)])
+
+        def bfs(start):
+            queue = deque([start])
+            been = set()
+            while queue:
+                cur = queue.popleft()
+                been.add(cur)
+                for n in graph[start]:
+                    if n not in been:
+                        been.add(n)
+                        queue.append(n)
+
 
 def test_solution():
     s = Solution()
