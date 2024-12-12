@@ -158,7 +158,6 @@ class Solution:
         0 1 2 3
         """
         N = len(nums)
-        prefix_sums = list(accumulate(nums, initial=0))
         prefix = [0]
         for n in nums:
             prefix.append(prefix[-1] + n)

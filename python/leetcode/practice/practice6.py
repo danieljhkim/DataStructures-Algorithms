@@ -1,3 +1,4 @@
+from curses.ascii import isdigit
 import heapq
 from typing import Optional, List
 import random
@@ -532,26 +533,521 @@ class Solution:
             rem += 0
         return int(dividend) * sign
 
-    def isBipartite(self, graph: List[List[int]]) -> bool:
-        """ "
-        0  - o - 0
-         \  |  /
-            0
-        """
-        N = len(graph)
-        indegree = [0] * N
-        nodes = set([n for n in range(N)])
+    def maxTwoEvents(self, events: List[List[int]]) -> int:
+        events.sort(key=lambda x: (x[0], x[1]))
+        heap = []
+        max_val = -1
+        temp_val = 0
+        for s, e, val in events:
+            while heap and heap[0][0] < s:
+                out = heapq.heappop(heap)
+                temp_val = max(temp_val, out[1])
+            max_val = max(temp_val + val, max_val)
+            heapq.heappush(heap, (e, val))
+        return max_val
 
-        def bfs(start):
-            queue = deque([start])
-            been = set()
-            while queue:
-                cur = queue.popleft()
-                been.add(cur)
-                for n in graph[start]:
-                    if n not in been:
-                        been.add(n)
-                        queue.append(n)
+    def maximumLength(self, s: str) -> int:
+        """ "
+        a a a - 3:1, 2:2, 1:3
+
+        a a a a - 4:1, 3:2, 2:3, 1:4
+
+        a a a a a
+        """
+        best = -1
+
+        def log(letter, length):
+            nonlocal best
+            size = length
+            for i in range(0, length):
+                table[letter][size] += i + 1
+                if table[letter][size] >= 3 and size > best:
+                    best = size
+                size -= 1
+
+        left = 0
+        right = 0
+        N = len(s)
+        table = defaultdict(lambda: defaultdict(int))
+        while right < N:
+            cur = s[left]
+            while right < N and cur == s[right]:
+                right += 1
+            length = right - left
+            log(cur, length)
+            left = right
+
+        return best
+
+    def numFriendRequests(self, ages: List[int]) -> int:
+        ages.sort()
+        N = len(ages)
+
+        def bsearch(idx):
+            low = 0
+            high = idx
+            age = ages[idx]
+            target = age // 2 + 7
+            while low <= high:
+                mid = (low + high) // 2
+                if ages[mid] <= target:
+                    low = mid + 1
+                else:
+                    high = mid - 1
+
+            if ages[low] <= age and low != idx:
+                return low
+            return -1
+
+        ans = 0
+        i = N - 1
+        while i > 0:
+            dup = 1
+            cur = ages[i]
+            while i > 0 and ages[i - 1] == cur:
+                i -= 1
+                dup += 1
+            res = bsearch(i)
+            if res >= 0:
+                ans += (i - res) * dup
+            if dup > 1:
+                ans += dup * (dup - 1) // 2
+            i -= 1
+        return ans
+
+    def getLonelyNodes(self, root: Optional[TreeNode]) -> List[int]:
+        if not root:
+            return []
+        self.ans = []
+
+        def dfs(node, only):
+            if only:
+                self.ans.append(node.val)
+            isalone = True
+            if node.left and node.right:
+                isalone = False
+            if node.left:
+                dfs(node.left, isalone)
+            if node.right:
+                dfs(node.right, isalone)
+
+        dfs(root, False)
+        return self.ans
+
+    def maximumBeauty(self, nums: List[int], k: int) -> int:
+        nums.sort()
+        ans = 0
+        left = 0
+        for right in range(len(nums)):
+            while nums[right] - nums[left] > 2 * k:
+                left += 1
+            ans = max(ans, right - left + 1)
+        return ans
+
+    def validWordAbbreviation(self, word: str, abbr: str) -> bool:
+        """ "
+        sub4u4 ("sub stit u tion")
+        """
+        idx = 0
+        widx = 0
+        N = len(abbr)
+        WN = len(word)
+        while idx < N and widx < WN:
+            w = abbr[idx]
+            if w.isdigit():
+                if w == "0":
+                    return False
+                num = w
+                while idx < N - 1 and abbr[idx + 1].isdigit():
+                    idx += 1
+                    num += abbr[idx]
+                widx += int(num) - 1
+                idx += 1
+            else:
+                if widx >= WN or w != word[widx]:
+                    return False
+                widx += 1
+                idx += 1
+
+        if widx != WN or idx != N:
+            return False
+        return True
+
+    def uniquePaths(self, m: int, n: int) -> int:
+        cache = {}
+
+        def dp(r, c):
+            if r == m - 1 and c == n - 1:
+                return 1
+            if (r, c) in cache:
+                return cache[(r, c)]
+            count = 0
+            nr = r + 1
+            nc = c + 1
+            if 0 <= nr < m:
+                count += dp(nr, c)
+            if 0 <= nc < n:
+                count += dp(r, nc)
+            cache[(r, c)] = count
+            return count
+
+        return dp(0, 0)
+
+    def sortedListToBST(self, head: Optional[ListNode]) -> Optional[TreeNode]:
+        def findMid(node):
+            if node and not node.next:
+                return node, None
+            slow = node
+            fast = node
+            prev = slow
+            while fast and fast.next:
+                fast = fast.next.next
+                prev = slow
+                slow = slow.next
+            right = None
+            mid = slow
+            if slow:
+                right = slow.next
+                slow.next = None
+                prev.next = None
+            return mid, right
+
+        def recursion(node):
+            if node and not node.next:
+                return TreeNode(node.val)
+            if not node:
+                return None
+            mid, right = findMid(node)
+            tnode = TreeNode(mid.val)
+            if node:
+                tnode.left = recursion(node)
+            if right:
+                tnode.right = recursion(right)
+            return tnode
+
+        return recursion(head)
+
+    def numIslands(self, grid: List[List[str]]) -> int:
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        ROW = len(grid)
+        COL = len(grid[0])
+
+        def dfs(r, c):
+            cur = grid[r][c]
+            if cur == "0":
+                return
+            if cur == "1":
+                grid[r][c] = "0"
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < ROW and 0 <= nc < COL:
+                    dfs(nr, nc)
+
+        ans = 0
+        for r in range(ROW):
+            for c in range(COL):
+                if grid[r][c] == "1":
+                    dfs(r, c)
+                    ans += 1
+
+        return ans
+
+    def removeInvalidParentheses(self, s: str) -> List[str]:
+
+        def check(arr):
+            left = 0
+            right = 0
+            for i, w in enumerate(arr):
+                if w == ")":
+                    if left > 0:
+                        left -= 1
+                    else:
+                        right += 1
+                elif w == "(":
+                    left += 1
+            return left, right
+
+        left, right = check(list(s))
+        N = len(s)
+        ans = set()
+        remove = left + right
+        NN = N - remove
+        if remove == 0:
+            return [s]
+
+        def back(l_rm, idx, arr):
+            if len(arr) == NN and l_rm <= 0:
+                l, r = check(arr)
+                if l + r == 0:
+                    ans.add("".join(arr))
+                return
+
+            left = l_rm
+            for i in range(idx, N):
+                w = s[i]
+                if w == ")":
+                    if left > 0:
+                        arr.append(w)
+                        back(left - 1, i + 1, arr[:])
+                        arr.pop()
+                    continue
+                elif w == "(":
+                    arr.append(w)
+                    left += 1
+                else:
+                    arr.append(w)
+
+        back(left, 0, [])
+        ans = list(ans)
+        if len(ans) == 0:
+            return [""]
+        return ans
+
+    def convert(self, s: str, numRows: int) -> str:
+        table = {}
+        for i in range(numRows):
+            table[i] = []
+
+        N = len(s)
+        i = 0
+        while i < N:
+            idx = 1
+            table[idx].append(s[i])
+            while i < N - 1 and idx < numRows - 1:
+                idx += 1
+                i += 1
+                table[idx].append(s[i])
+            i += 1
+            idx -= 1
+            while i < N and idx > 0:
+                table[idx].append(s[i])
+                idx -= 1
+                i += 1
+        ans = []
+        for i in range(numRows):
+            ans.extend(table[i])
+        return "".join(ans)
+
+    def trap(self, height: List[int]) -> int:
+
+        def check_monotonic(height):
+            up = True
+            down = True
+            for i in range(1, len(height)):
+                if height[i - 1] > height[i]:
+                    up = False
+                elif height[i - 1] < height[i]:
+                    down = False
+            return up or down
+
+        if check_monotonic(height):
+            return 0
+
+        N = len(height)
+        lcache = {}
+        rcache = {}
+
+        def left(idx, h):
+            if (idx, h) in lcache:
+                return lcache[(idx, h)]
+            if idx < 0:
+                return h
+            h = max(height[idx], h)
+            res = left(idx - 1, h)
+            lcache[(idx, h)] = res
+            return res
+
+        def right(idx, h):
+            if (idx, h) in rcache:
+                return rcache[(idx, h)]
+            if idx >= N:
+                return h
+            h = max(height[idx], h)
+            res = right(idx + 1, h)
+            rcache[(idx, h)] = res
+            return res
+
+        ans = 0
+        for i in range(1, N):
+            l = left(i - 1, height[i])
+            r = right(i + 1, height[i])
+            ans += min(l, r) - height[i]
+        return ans
+
+    def pickGifts(self, gifts: List[int], k: int) -> int:
+        heap = []
+        total = sum(gifts)
+        for g in gifts:
+            heapq.heappush(heap, -g)
+        ans = 0
+        for i in range(k):
+            out = heapq.heappop(heap)
+            stay = int((-out) ** 0.5)
+            ans += -out - stay
+            heapq.heappush(heap, -stay)
+        return total - ans
+
+    def findCelebrity(self, n: int) -> int:
+        def knows(a, b):
+            pass
+
+        memo = {}
+
+        def knows_wrapper(a, b):
+            if (a, b) in memo:
+                return memo[(a, b)]
+            res = knows(a, b)
+            memo[(a, b)] = res
+            return res
+
+        def dfs(a, b):
+            if a >= n:
+                return True
+            if a == b or (knows_wrapper(a, b) and not knows_wrapper(b, a)):
+                return dfs(a + 1, b)
+            else:
+                return False
+
+        candidate = 0
+        for i in range(1, n):
+            if knows_wrapper(candidate, i) and not knows_wrapper(i, candidate):
+                candidate = i
+
+        if dfs(0, candidate):
+            return candidate
+        return -1
+
+    def maxProfit(self, prices: List[int]) -> int:
+        profit = 0
+        buy = prices[0]
+        for p in prices[1:]:
+            if p > buy:
+                profit = max(p - buy, profit)
+            else:
+                buy = p
+        return profit
+
+    def maxProfit(self, k, prices: List[int]) -> int:
+        memo = {}
+
+        def recurs(idx, count):
+            if count <= 0 or idx >= len(prices) - 1:
+                return 0
+            if (idx, count) in memo:
+                return memo[(idx, count)]
+            profit = 0
+            buy = prices[idx]
+            for i in range(idx + 1, len(prices)):
+                p = prices[i]
+                if p > buy:
+                    prof = p - buy
+                    future = recurs(i, count - 1)
+                    profit = max(prof + future, profit)
+                    if profit < self.max and count == 0:
+                        break
+                else:
+                    buy = p
+            self.max = max(self.max, profit)
+            memo[(idx, count)] = profit
+            return profit
+
+        return recurs(0, k)
+
+    def maxProfit(self, k: int, prices: List[int]) -> int:
+        memo = {}
+
+        def recurs(idx, holding, count):
+            if idx == len(prices) or count == 0:
+                return 0
+            key = (idx, holding, count)
+            if key in memo:
+                return memo[key]
+
+            # Option 1: Do nothing
+            profit = recurs(idx + 1, holding, count)
+
+            if holding:
+                # Option 2: Sell stock
+                sell = prices[idx] + recurs(idx + 1, 0, count - 1)
+                profit = max(profit, sell)
+            else:
+                # Option 3: Buy stock
+                buy = -prices[idx] + recurs(idx + 1, 1, count)
+                profit = max(profit, buy)
+
+            memo[key] = profit
+            return profit
+
+        return recurs(0, 0, k)
+
+    def reorderLogFiles(self, logs: List[str]) -> List[str]:
+        words = []
+        digits = []
+        for l in logs:
+            if l[-1].isdigit():
+                digits.append(l)
+            else:
+                ll = l.split(" ")
+                words.append((" ".join(ll[1:]), ll[0]))
+
+        words.sort(key=lambda x: (x[0], x[1]))
+        ans = []
+        for c, k in words:
+            ans.append(k + " " + c)
+        ans.extend(digits)
+        return ans
+
+    def generateParenthesis(self, n: int) -> List[str]:
+        ans = set()
+
+        def recurs(left, right, word):
+            if left == n and right == n:
+                ans.add("".join(word))
+                return
+            if left < n:
+                word.append("(")
+                recurs(left + 1, right, word)
+                word.pop()
+            if right < left:
+                word.append(")")
+                recurs(left, right + 1, word)
+                word.pop()
+
+        recurs(0, 0, [])
+        return list(ans)
+
+
+class WordDictionary:
+
+    def __init__(self):
+        self.table = {}
+
+    def addWord(self, word: str) -> None:
+        table = self.table
+        for i, w in enumerate(word):
+            if w not in table:
+                table[w] = {}
+            table = table[w]
+        table["*"] = {}
+
+    def search(self, word: str) -> bool:
+        def recursion(word, table):
+            for i, w in enumerate(word):
+                if w == ".":
+                    for k, v in table.items():
+                        res = recursion(word[i + 1 :], v)
+                        if res:
+                            return True
+                    return False
+                if w not in table:
+                    return False
+                table = table[w]
+            if "*" in table:
+                return True
+            return False
+
+        return recursion(word, self.table)
 
 
 def test_solution():
