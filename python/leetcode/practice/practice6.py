@@ -1017,6 +1017,242 @@ class Solution:
         recurs(0, 0, [])
         return list(ans)
 
+    def findMaxAverage(self, nums: List[int], k: int) -> float:
+        left = 0
+        right = 0
+        N = len(nums)
+        total = 0
+        ans = float("-inf")
+        while right < N:
+            while right < N and right - left < k:
+                total += nums[right]
+                right += 1
+            ans = max(total, ans)
+            total -= nums[left]
+            left += 1
+        return ans / k
+
+    def countAndSay(self, n: int) -> str:
+
+        def recurs(i, s):
+            if i >= n:
+                return s
+            res = []
+            left = 0
+            right = 0
+            N = len(s)
+            while right < N:
+                while right < N and s[right] == s[left]:
+                    right += 1
+                count = right - left
+                res.append(str(count) + s[left])
+                left = right
+            return recurs(i + 1, "".join(res))
+
+        return recurs(0, "1")
+
+    def str2tree(self, s: str) -> Optional[TreeNode]:
+        """ "
+        4(2(3)(1))(6(5))
+        """
+        if not s:
+            return None
+        stack = []
+        N = len(s)
+        i = 0
+        while i < N:
+            if s[i] == "(" or s[i].isdigit() or s[i] == "-":
+                n = 0
+                if s[i] == "(":
+                    i += 1
+                sign = 1
+                if s[i] == "-":
+                    sign = -1
+                    i += 1
+                while i < N and s[i].isdigit():
+                    n = n * 10 + int(s[i])
+                    i += 1
+                tn = TreeNode(n * sign)
+                stack.append(tn)
+            elif s[i] == ")":
+                node = stack.pop()
+                if stack[-1].left:
+                    stack[-1].right = node
+                else:
+                    stack[-1].left = node
+                i += 1
+        return stack[0]
+
+    def findScore(self, nums: List[int]) -> int:
+        N = len(nums)
+        marked = set()
+        snums = [(nums[i], i) for i in range(N)]
+        snums.sort(key=lambda x: (x[0], x[1]))
+        i = 0
+        score = 0
+        while i < N:
+            val, idx = snums[i]
+            if idx in marked:
+                i += 1
+                continue
+            score += val
+            marked.add(idx)
+            left = idx - 1
+            right = idx + 1
+            if left >= 0:
+                marked.add(left)
+            if right < N:
+                marked.add(right)
+            i += 1
+        return score
+
+    def numFriendRequests(self, ages: List[int]) -> int:
+        """ "
+        - y <= .5 * x + 7
+        - y > x
+        """
+
+        def search(x):
+            high = x
+            low = 0
+            target = ages[x] / 2 + 7
+            while low <= high:
+                mid = (low + high) // 2
+                age = ages[mid]
+                if age <= target:
+                    low = mid + 1
+                else:
+                    high = mid - 1
+            return low
+
+        ages.sort()
+        N = len(ages)
+        i = N - 1
+        ans = 0
+        while i >= 0:
+            cur = ages[i]
+            right = i
+            while i > 0 and ages[i - 1] == cur:
+                i -= 1
+            count = right - i + 1
+            if i == 0:
+                ans += count * (count - 1)
+                return ans
+            idx = search(i)
+            if idx < i:
+                if count > 1:
+                    ans += count * (i - idx) + count * (count - 1)
+                else:
+                    ans += i - idx
+            i -= 1
+        return ans
+
+    def numFriendRequests(self, ages: List[int]) -> int:
+        counts = Counter(ages)
+        ans = 0
+        for agex, countx in counts.items():
+            for agey, county in counts.items():
+                if agey > agex:
+                    continue
+                if agey <= agex * 0.5 + 7:
+                    continue
+                ans += countx * county
+                if agex == agey:
+                    ans -= countx
+        return ans
+
+    def sumNumbers(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+        self.total = 0
+
+        def dfs(node, arr):
+            arr.append(str(node.val))
+            if not node.left and not node.right:
+                num = int("".join(arr))
+                self.total += num
+            if node.left:
+                dfs(node.left, arr)
+            if node.right:
+                dfs(node.right, arr)
+            arr.pop()
+
+        dfs(root, [])
+        return self.total
+
+    def canBeEqual(self, target: List[int], arr: List[int]) -> bool:
+        sum1 = Counter(target)
+        sum2 = Counter(arr)
+        if sum1 != sum2:
+            return False
+        return True
+
+    def minRemoveToMakeValid(self, s: str) -> str:
+        left = 0
+        right = 0
+        stack = []
+        for w in s:
+            if w == "(":
+                stack.append(w)
+                left += 1
+            elif w == ")":
+                if left > 0:
+                    left -= 1
+                    stack.append(w)
+                else:
+                    continue
+            else:
+                stack.append(w)
+        ans = []
+        while stack:
+            w = stack.pop()
+            if w == "(":
+                if right > 0:
+                    right -= 1
+                    ans.append(w)
+            elif w == ")":
+                right += 1
+                ans.append(w)
+            else:
+                ans.append(w)
+
+        ans.reverse()
+        return "".join(ans)
+
+    def numOfWays(self, n: int) -> int:
+        """ "
+        1 2 3
+        """
+        grid = [[0] * 3 for _ in range(n)]
+        grid[0][0] = 0
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        self.ans = 0
+
+        def dfs(grid, r, c):
+            if r == n:
+                self.ans += 1
+                return
+            if c >= 3:
+                dfs(grid, r + 1, 0)
+                return
+            cur = grid[r][c]
+            if cur > 0:
+                return
+            for color in range(1, 4):
+                for dr, dc in directions:
+                    nr = r + dr
+                    nc = c + dc
+                    if 0 <= nr < n and 0 <= nc < 3:
+                        ncolor = grid[nr][nc]
+                        if ncolor == color:
+                            continue
+                grid[r][c] = color
+                dfs(grid, r, c + 1)
+            grid[r][c] = 0
+
+        dfs(grid, 0, 0)
+        return self.ans * 3
+
 
 class WordDictionary:
 
