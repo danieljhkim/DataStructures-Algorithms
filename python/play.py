@@ -20,5 +20,4 @@ def test_solution():
 
 
 if __name__ == "__main__":
-    print(1 // 2)
-    pass
+    print(chr(ord("a") + 25))

@@ -1,5 +1,8 @@
 """
-    
+    low < high or low <= high
+        - if you discard mid (i.e. low = mid+1 or high = mid-1) then (low <= high).
+        - if you keep mid (i.e. low = mid or high = mid) then (llow < high)
+        
     math.ceil(n)
         - low + (high - low + 1) // 2
 """

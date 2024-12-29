@@ -5,7 +5,7 @@ import random
 from collections import Counter, deque, defaultdict, OrderedDict
 import math
 import bisect
-from math import inf
+from math import e, inf
 from functools import lru_cache
 
 
@@ -786,11 +786,994 @@ class Solution:
         for a, b in queries:
             big = max(a, b)
             small = min(a, b)
-            aa = find(a)
-            bb = find(b)
-            ans[i] = max(aa, bb)
+            big_left = find(big)
+            small_left = find(small)
+            if big_left < small:
+                ans[i] = max(small_left, big_left)
             i += 1
         return ans
+
+    def minimumOperations(self, root: Optional[TreeNode]) -> int:
+        def swaps(nums):
+            target = sorted(nums)
+            ans = 0
+            table = {val: idx for idx, val in enumerate(nums)}
+            for i in range(len(nums)):
+                if target[i] != nums[i]:
+                    idx = table[target[i]]
+                    table[nums[i]] = idx
+                    nums[idx] = nums[i]
+                    ans += 1
+            return ans
+
+        if not root:
+            return root
+        queue = deque([root])
+        ans = 0
+        while queue:
+            size = len(queue)
+            nums = []
+            for i in range(size):
+                cur = queue.popleft()
+                nums.append(cur.val)
+                if cur.left:
+                    queue.append(cur.left)
+                if cur.right:
+                    queue.append(cur.right)
+            ans += swaps(nums)
+        return ans
+
+    def minimumDiameterAfterMerge(
+        self, edges1: List[List[int]], edges2: List[List[int]]
+    ) -> int:
+
+        def bfs(adj, start):
+            longest = 0
+            ans = start
+            queue = deque([(start, 0)])
+            visited = set([start])
+            while queue:
+                node, dist = queue.popleft()
+                for nei in adj[node]:
+                    if nei not in visited:
+                        queue.append((nei, dist + 1))
+                        if dist + 1 > longest:
+                            longest = dist + 1
+                            ans = nei
+                        visited.add(nei)
+            return ans, longest
+
+        adj1 = defaultdict(list)
+        adj2 = defaultdict(list)
+
+        for u, v in edges1:
+            adj1[v].append(u)
+            adj1[u].append(v)
+        for u, v in edges2:
+            adj2[v].append(u)
+            adj2[u].append(v)
+
+        end1, _ = bfs(adj1, 0)
+        _, diameter1 = bfs(adj1, end1)
+
+        end2, _ = bfs(adj2, 0)
+        _, diameter2 = bfs(adj2, end2)
+
+        half = math.ceil(diameter1 / 2) + math.ceil(diameter2 / 2) + 1
+        return max(half, diameter1, diameter2)
+
+    def largestValues(self, root: Optional[TreeNode]) -> List[int]:
+        if not root:
+            return []
+        ans = []
+        queue = deque([root])
+        while queue:
+            size = len(queue)
+            large = float("-inf")
+            for i in range(size):
+                cur = queue.popleft()
+                if cur.val > large:
+                    large = cur.val
+                if cur.left:
+                    queue.append(cur.left)
+                if cur.right:
+                    queue.append(cur.right)
+            ans.append(large)
+        return ans
+
+    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        if not root:
+            return []
+        ans = []
+        queue = deque([root])
+        while queue:
+            size = len(queue)
+            level = []
+            for _ in range(size):
+                cur = queue.popleft()
+                level.append(cur.val)
+                if cur.left:
+                    queue.append(cur.left)
+                if cur.right:
+                    queue.append(cur.right)
+            ans.append(level)
+        return ans
+
+    def singleNonDuplicate(self, nums: List[int]) -> int:
+        """ "
+        1 1 2 2 3 4 4
+        """
+        N = len(nums)
+        low = 0
+        high = N - 1
+        while low < high:
+            mid = (high + low) // 2
+            if mid % 2 == 1:
+                mid -= 1
+            if nums[mid] != nums[mid + 1]:
+                high = mid
+            else:
+                low = mid + 2
+        return nums[low]
+
+    def highFive(self, items: List[List[int]]) -> List[List[int]]:
+        table = defaultdict(list)
+        for id, val in items:
+            heap = table[id]
+            if len(heap) < 5:
+                heapq.heappush(heap, val)
+            else:
+                if heap[0] < val:
+                    heapq.heappop(heap)
+                    heapq.heappush(heap, val)
+
+        ans = []
+        small = min(table)
+        big = max(table)
+        for i in range(small, big + 1):
+            if i in table:
+                heap = table[i]
+                avg = int(sum(heap) / 5)
+                ans.append([i, avg])
+        return ans
+
+    def boundaryOfBinaryTree(self, root: Optional[TreeNode]) -> List[int]:
+        if not root:
+            return []
+        self.left = []
+        self.right = []
+
+        def right_dfs(node, is_bounds):
+            if is_bounds or (not node.left and not node.right):
+                self.right.append(node.val)
+            if node.right:
+                right_dfs(node.right, is_bounds)
+            if node.left:
+                right_dfs(node.left, is_bounds and not node.right)
+
+        def left_dfs(node, is_bounds):
+            if is_bounds or (not node.left and not node.right):
+                self.left.append(node.val)
+            if node.left:
+                left_dfs(node.left, is_bounds)
+
+            if node.right:
+                left_dfs(node.right, is_bounds and not node.left)
+
+        if root.right:
+            right_dfs(root.right, True)
+        if root.left:
+            left_dfs(root.left, True)
+        self.right.reverse()
+        return [root.val] + self.left + self.right
+
+    def removeVowels(self, s: str) -> str:
+        vset = set(["a", "e", "i", "o", "u"])
+        ans = []
+        for w in s:
+            if w not in vset:
+                ans.append(w)
+        return "".join(ans)
+
+    def canWinNim(self, n: int) -> bool:
+        return n % 4 != 0
+
+    def hammingDistance(self, x: int, y: int) -> int:
+        xb = bin(x)[2:]
+        yb = bin(y)[2:]
+        NX = len(xb)
+        NY = len(yb)
+        size = max(NX, NY)
+        xb = xb.zfill(size)
+        yb = yb.zfill(size)
+        ans = 0
+        idx = 0
+        while idx < size:
+            if xb[idx] != yb[idx]:
+                ans += 1
+            idx += 1
+        return ans
+
+    def lowestCommonAncestor(
+        self, root: "TreeNode", p: "TreeNode", q: "TreeNode"
+    ) -> "TreeNode":
+        self.p = False
+        self.q = False
+
+        def dfs(node):
+            if not node:
+                return node
+            left = dfs(node.left)
+            right = dfs(node.right)
+            if left and right:
+                return node
+            if node == p:
+                self.p = True
+            if node == q:
+                self.q = True
+            if not left or not right:
+                if node == p or node == q:
+                    return node
+            return left or right
+
+        ans = dfs(root)
+        if self.q and self.p:
+            return ans
+        return None
+
+    def maxProduct(self, nums: List[int]) -> int:
+        prefix = [nums[0]]
+        for n in nums[1:]:
+            if prefix[-1] != 0:
+                new = prefix[-1] * n
+            else:
+                new = n
+            prefix.append(new)
+        top = max(prefix)
+        prefix = [nums[-1]]
+        for i in range(len(nums) - 2, -1, -1):
+            n = nums[i]
+            if prefix[-1] != 0:
+                new = prefix[-1] * n
+            else:
+                new = n
+            prefix.append(new)
+        top = max(max(prefix), top)
+        pos = 1
+        for n in nums:
+            if n > 0:
+                pos *= n
+                top = max(top, pos)
+            else:
+                pos = 1
+
+        return top
+
+    def longestSubstring(self, s: str, k: int) -> int:
+        if len(s) < k:
+            return 0
+        counts = Counter(s)
+
+        for key, val in counts.items():
+            if val < k:
+                subs = s.split(key)
+                top = 0
+                for st in subs:
+                    top = max(self.longestSubstring(st, k), top)
+                return top
+        return len(s)
+
+    def floodFill(
+        self, image: List[List[int]], sr: int, sc: int, color: int
+    ) -> List[List[int]]:
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        ROW = len(image)
+        COL = len(image[0])
+        visited = set()
+
+        def dfs(r, c, val):
+            if image[r][c] != val:
+                return
+            image[r][c] = color
+            visited.add((r, c))
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < ROW and 0 <= nc < COL:
+                    if (nr, nc) not in visited:
+                        visited.add((nr, nc))
+                        dfs(nr, nc, val)
+
+        val = image[sr][sc]
+        dfs(sr, sc, val)
+        return image
+
+    def sufficientSubset(
+        self, root: Optional[TreeNode], limit: int
+    ) -> Optional[TreeNode]:
+        def dfs(node, total):
+            if not node:
+                return float("-inf")
+            total += node.val
+            if not node.left and not node.right:
+                return total
+            left = dfs(node.left, total)
+            right = dfs(node.right, total)
+            if left < limit:
+                node.left = None
+            if right < limit:
+                node.right = None
+            return max(left, right)
+
+        dfs(root, 0)
+        if not root:
+            return root
+        if root.val < limit and not root.left and not root.right:
+            return None
+        return root
+
+    def searchBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
+
+        def dfs(node):
+            if not node:
+                return node
+            if node.val == val:
+                return node
+            left = dfs(node.left)
+            right = dfs(node.right)
+            return left or right
+
+        return dfs(root)
+
+    def minimumSemesters(self, n: int, relations: List[List[int]]) -> int:
+
+        indegree = [0] * (n + 1)
+        adj = defaultdict(list)
+        for prev, nxt in relations:
+            adj[prev].append(nxt)
+            indegree[nxt] += 1
+        queue = deque()
+        for i, n in enumerate(indegree):
+            if n == 0:
+                queue.append((i, 1))
+        ans = 1
+        while queue:
+            cur, count = queue.popleft()
+            ans = max(count, ans)
+            for nei in adj[cur]:
+                indegree[nei] -= 1
+                if indegree[nei] == 0:
+                    queue.append((nei, count + 1))
+        if sum(indegree) == 0:
+            return ans
+        return -1
+
+    def maximumProduct(self, nums: List[int]) -> int:
+        nums.sort()
+        l1 = nums[0]
+        l2 = nums[1]
+        r1 = nums[-1]
+        r2 = nums[-2]
+        r3 = nums[-3]
+
+        ans = max(r1 * r2 * r3, l1 * l2 * r1)
+        return ans
+
+    def topKFrequent(self, words: List[str], kk: int) -> List[str]:
+
+        table = defaultdict(int)
+        for w in words:
+            table[w] += 1
+
+        freq_pairs = [(freq, word) for word, freq in table.items()]
+        freq_pairs.sort(key=lambda x: (-x[0], x[1]))
+
+        ans = []
+        i = 0
+        while i < len(freq_pairs):
+            current_freq = freq_pairs[i][0]
+            group = [freq_pairs[i][1]]
+            j = i + 1
+            while j < len(freq_pairs) and freq_pairs[j][0] == current_freq:
+                group.append(freq_pairs[j][1])
+                j += 1
+
+            group.sort()
+
+            ans.extend(group)
+            i = j
+
+        return ans[:kk]
+
+    def isPowerOfTwo(self, n: int) -> bool:
+        if n == 1:
+            return True
+        if n <= 0:
+            return False
+        if n % 2 == 1:
+            return False
+        return self.isPowerOfTwo(n / 2)
+
+    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:
+        N = len(nums)
+        nset = set([i for i in range(1, N + 1)])
+        nset.difference_update(nums)
+        return list(nset)
+
+    def subtractProductAndSum(self, n: int) -> int:
+        prod = 1
+        total = 0
+        while n > 0:
+            rem = n % 10
+            n //= 10
+            prod *= rem
+            total += rem
+        return prod - total
+
+    def maxScoreSightseeingPair(self, values: List[int]) -> int:
+        memo = {}
+        N = len(values)
+
+        def dp(i, j):
+            if j in memo:
+                return memo[j]
+            if j >= N or i >= N:
+                return float("-inf")
+            max_score = float("-inf")
+            if i < j:
+                max_score = values[i] + values[j] + i - j
+            score_a = dp(i, j + 1)
+            score_b = dp(i + 1, i + 2)
+            memo[j] = max(max_score, score_a, score_b)
+            return memo[j]
+
+        return dp(0, 1)
+
+    def maxScoreSightseeingPair(self, values: List[int]) -> int:
+        top = -inf
+        best_1 = values[0]
+        for i in range(1, len(values)):
+            top = max(top, best_1 + values[i] - i)
+            best_1 = max(best_1, values[i] + i)
+        return top
+
+    def earliestAcq(self, logs: List[List[int]], n: int) -> int:
+        """ "
+        [time, x, y]
+        """
+        parent = {}
+        logs.sort(key=lambda x: x[0])
+
+        def find(x):
+            if x not in parent:
+                parent[x] = x
+            if x != parent[x]:
+                parent[x] = find(parent[x])
+            return parent[x]
+
+        def union(x, y):
+            rootx = find(x)
+            rooty = find(y)
+            if rootx != rooty:
+                parent[rootx] = parent[rooty]
+
+        def is_connected(x, y):
+            return find(x) == find(y)
+
+        for time, x, y in logs:
+            if not is_connected(x, y):
+                union(x, y)
+                n -= 1
+                if n == 1:
+                    return time
+        return -1
+
+    def minimumEffortPath(self, heights: List[List[int]]) -> int:
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        ROW = len(heights)
+        COL = len(heights[0])
+        distances = defaultdict(lambda: float("inf"))
+        heap = [(0, 0, 0)]
+        distances[(0, 0)] = 0
+        while heap:
+            dist, r, c = heapq.heappop(heap)
+            if (r, c) == (ROW - 1, COL - 1):
+                return dist
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < ROW and 0 <= nc < COL:
+                    ndist = max(abs(heights[nr][nc] - heights[r][c]), dist)
+                    if distances[(nr, nc)] > ndist:
+                        distances[(nr, nc)] = ndist
+                        heapq.heappush(heap, (ndist, nr, nc))
+
+    def isValid(self, s: str) -> bool:
+        table = {"}": "{", ")": "(", "]": "["}
+        stack = []
+        for w in s:
+            if not w in table:
+                stack.append(w)
+            else:
+                if not stack:
+                    return False
+                prev = stack[-1]
+                if table[w] != prev:
+                    return False
+                stack.pop()
+        if stack:
+            return False
+        return True
+
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        table = {}
+        groups = defaultdict(dict)
+
+        for w in strs:
+            table[w] = Counter(w)
+
+        for i, n in enumerate(strs):
+            found = False
+            size = len(n)
+            for key, v in groups[size].items():
+                if table[key] == table[n]:
+                    v.append(n)
+                    found = True
+                    break
+            if not found:
+                groups[size][n] = [n]
+
+        ans = []
+        small = min(groups)
+        big = max(groups)
+        for i in range(small, big + 1):
+            if i in groups:
+                for v in groups[i].values():
+                    ans.append(v)
+        return ans
+
+    def pivotIndex(self, nums: List[int]) -> int:
+        prefix = [nums[0]]
+
+        for n in nums[1:]:
+            total = prefix[-1] + n
+            prefix.append(total)
+
+        last = prefix[-1]
+        for i, n in enumerate(prefix):
+            if n - nums[i] == last - n:
+                return i
+        return -1
+
+    def majorityElement(self, nums: List[int]) -> int:
+        c1 = None
+        c2 = None
+        v1 = 0
+        v2 = 0
+        for n in nums:
+            if n == c1:
+                v1 += 1
+            elif n == c2:
+                v2 += 1
+            elif v1 == 0:
+                c1 = n
+                v1 = 0
+            elif v2 == 0:
+                c2 = n
+                v2 = 0
+            else:
+                v1 -= 1
+                v2 -= 1
+        if nums.count(c1) > len(nums) // 2:
+            return c1
+        return c2
+
+    def searchRange(self, nums: List[int], target: int) -> List[int]:
+        N = len(nums)
+        low = 0
+        high = N
+
+    def searchRange(self, nums: List[int], target: int) -> List[int]:
+
+        left = bisect.bisect_left(nums, target)
+        right = bisect.bisect_right(nums, target)
+        if left < len(nums) and nums[left] == target:
+            return [left, right - 1]
+        return [-1, -1]
+
+    def maxAncestorDiff(self, root: Optional[TreeNode]) -> int:
+        self.ans = -inf
+
+        def dfs(node, small, big):
+            if not node:
+                return inf, -inf
+            small = min(node.val, small)
+            big = max(node.val, big)
+
+            lsmall, lbig = dfs(node.left, small, big)
+            if lsmall != inf:
+                self.ans = max(abs(big - lsmall), self.ans)
+            if lbig != -inf:
+                self.ans = max(abs(small - lbig), self.ans)
+
+            rsmall, rbig = dfs(node.right, small, big)
+            if rsmall != inf:
+                self.ans = max(abs(big - rsmall), self.ans)
+            if rbig != -inf:
+                self.ans = max(abs(small - rbig), self.ans)
+
+            small = min(small, lsmall, rsmall)
+            big = max(big, lbig, rbig)
+
+            return small, big
+
+        dfs(root, root.val, root.val)
+        return self.ans
+
+    def smallestSubsequence(self, s: str) -> str:
+        table = defaultdict(list)
+        N = len(s)
+        for i, n in enumerate(s):
+            table[n].append(i)
+        target = len(table)
+
+        self.found = None
+
+        def backtrack(arr, used, pos):
+            if len(arr) == target:
+                self.found = "".join(arr)
+            if pos > N or self.found:
+                return
+            for i in range(26):
+                if i not in used:
+                    ch = chr(i + ord("a"))
+                    if ch in table:
+                        arr.append(ch)
+                        used.add(i)
+                        for j in table[ch]:
+                            if j >= pos:
+                                backtrack(arr, used, j)
+                        used.remove(i)
+                        arr.pop()
+
+        backtrack([], set(), 0)
+        return self.found
+
+    def smallestSubsequence(self, s: str) -> str:
+        stack = []
+        used = set()
+        counts = Counter(s)
+        for w in s:
+            counts[w] -= 1
+            if w in used:
+                continue
+            used.add(w)
+            while stack and stack[-1] > w and counts[stack[-1]] > 0:
+                out = stack.pop()
+                used.remove(out)
+            stack.append(w)
+        return "".join(stack)
+
+    def prevPermOpt1(self, arr: List[int]) -> List[int]:
+        left = 0
+        N = len(arr)
+        first = arr[0]
+        for i in range(N - 1):
+            cur = arr[i]
+            top_i = i + 1
+            top = arr[top_i]
+            for j in range(i + 1, N):
+                if arr[j] > top:
+                    top_i = j
+                    top = arr[j]
+            if top > cur:
+                arr[top_i], arr[i] = arr[i], arr[top_i]
+                return arr
+        return arr
+
+    def prevPermOpt1(self, arr: List[int]) -> List[int]:
+        n = len(arr)
+        # Step 1: find the first index i from the right where arr[i] > arr[i+1]
+        i = n - 2
+        while i >= 0 and arr[i] <= arr[i + 1]:
+            i -= 1
+        if i < 0:
+            return arr  # Already in smallest permutation form
+
+        # Step 2: from the right, find j where arr[j] < arr[i]
+        j = n - 1
+        while j > i and arr[j] >= arr[i]:
+            j -= 1
+
+        # If there are duplicates equal to arr[j], move j left to the first occurrence
+        while j > 0 and arr[j - 1] == arr[j]:
+            j -= 1
+
+        # Step 3: swap arr[i] and arr[j]
+        arr[i], arr[j] = arr[j], arr[i]
+
+        return arr
+
+    def anagramMappings(self, nums1: List[int], nums2: List[int]) -> List[int]:
+        table = defaultdict(list)
+        for i, n in enumerate(nums2):
+            table[n].append(i)
+        ans = []
+        for n in nums1:
+            cur = table[n].pop()
+            ans.append(cur)
+        return ans
+
+    def deepestLeavesSum(self, root: Optional[TreeNode]) -> int:
+        queue = deque([root])
+        while queue:
+            size = len(queue)
+            subt = 0
+            for _ in range(size):
+                cur = queue.popleft()
+                subt += cur.val
+                if cur.left:
+                    queue.append(cur.left)
+                if cur.right:
+                    queue.append(cur.right)
+            if not queue:
+                return subt
+
+    def checkRecord(self, s: str) -> bool:
+        acnt = 0
+        cons = 0
+        for w in s:
+            if w == "A":
+                acnt += 1
+                if acnt == 2:
+                    return False
+                cons = 0
+            elif w == "L":
+                cons += 1
+                if cons >= 3:
+                    return False
+            else:
+                cons = 0
+        return True
+
+    def networkDelayTime(self, times: List[List[int]], n: int, k: int) -> int:
+        """ "
+        src, dst, time
+        k = start
+        """
+        adj = defaultdict(list)
+        for s, d, t in times:
+            adj[s].append((d, t))
+        heap = [(0, k)]
+        visited = set()
+        while heap:
+            time, cur = heapq.heappop(heap)
+            visited.add(cur)
+            if len(visited) == n:
+                return time
+            for nei, w in adj[cur]:
+                if nei not in visited:
+                    ntime = time + w
+                    heapq.heappush(heap, (ntime, nei))
+        return -1
+
+    def validMountainArray(self, arr: List[int]) -> bool:
+        if len(arr) < 3:
+            return False
+        prev = arr[0]
+        changed = False
+        incr = False
+        for n in arr[1:]:
+            if n > prev:
+                incr = True
+                if changed:
+                    return False
+            elif n < prev:
+                if not changed:
+                    changed = True
+            else:
+                return False
+            prev = n
+        if not incr:
+            return False
+        return changed
+
+    def minAreaRect(self, points: List[List[int]]) -> int:
+        """ "
+        x1, y2  |  x2, y2
+        x1, y1  |  x2, y1
+        """
+        xadj = defaultdict(list)
+        for x, y in points:
+            xadj[x].append(y)
+        ans = inf
+        table = {}
+
+        for x in sorted(xadj):
+            ys = xadj[x]
+            ys.sort()
+            for i in range(len(ys)):
+                y1 = ys[i]
+                for j in range(i + 1, len(ys)):
+                    y2 = ys[j]
+                    if (y1, y2) in table:
+                        width = x - table[(y1, y2)]
+                        height = y2 - y1
+                        area = width * height
+                        ans = min(area, ans)
+                    table[(y1, y2)] = x
+        if ans != inf:
+            return ans
+        return 0
+
+    def firstUniqChar(self, s: str) -> int:
+        counts = Counter(s)
+        for i, n in enumerate(s):
+            if counts[n] == 1:
+                return i
+        return -1
+
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        """ "
+        1 -> 2 -> 3
+        1 <- 2
+        """
+        if not head:
+            return head
+        cur = head
+        prev = None
+        while cur:
+            nxt = cur.next
+            cur.next = prev
+            prev = cur
+            cur = nxt
+        return prev
+
+    def search(self, nums: List[int], target: int) -> int:
+        N = len(nums)
+        pivot = 0
+        for i in range(N - 1):
+            if nums[i] > nums[i + 1]:
+                pivot = i
+                break
+
+        low = 0
+        high = N - 1
+        while low <= high:
+            mid = (low + high) // 2
+            idx = (mid + pivot) % N
+            if nums[idx] > target:
+                high = mid - 1
+            elif nums[idx] < target:
+                low = mid + 1
+            else:
+                return True
+        return False
+
+    def isCousins(self, root: Optional[TreeNode], x: int, y: int) -> bool:
+        queue = deque([(root, 0)])
+        found = {}
+        while queue:
+            size = len(queue)
+            for _ in range(size):
+                cur, depth = queue.popleft()
+                if cur.left:
+                    queue.append((cur.left, depth + 1))
+                    if cur.left.val == x or cur.left.val == y:
+                        found[cur.left.val] = (cur, depth + 1)
+                if cur.right:
+                    queue.append((cur.right, depth + 1))
+                    if cur.right.val == x or cur.right.val == y:
+                        found[cur.right.val] = (cur, depth + 1)
+            if len(found) == 2:
+                break
+        if len(found) < 2:
+            return False
+        if found[x][1] == found[y][1] and found[x][0] != found[y][0]:
+            return True
+        return False
+
+    def minPathSum(self, grid: List[List[int]]) -> int:
+        heap = [(grid[0][0], 0, 0)]
+        directions = [(1, 0), (0, 1)]
+        distances = defaultdict(lambda: inf)
+        ROW = len(grid)
+        COL = len(grid[0])
+        while heap:
+            total, r, c = heapq.heappop(heap)
+            if r == ROW - 1 and c == COL - 1:
+                return total
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < ROW and 0 <= nc < COL:
+                    nt = total + grid[nr][nc]
+                    if distances[(nr, nc)] > nt:
+                        heapq.heappush(heap, (nt, nr, nc))
+                        distances[(nr, nc)] = nt
+
+        def minPathSum(self, grid: List[List[int]]) -> int:
+            directions = [(1, 0), (0, 1)]
+            distances = defaultdict(lambda: inf)
+            ROW = len(grid)
+            COL = len(grid[0])
+            queue = deque([(grid[0][0], 0, 0)])
+            ans = inf
+            while queue:
+                total, r, c = queue.popleft()
+                if r == ROW - 1 and c == COL - 1:
+                    ans = min(ans, total)
+                for dr, dc in directions:
+                    nr = dr + r
+                    nc = dc + c
+                    if 0 <= nr < ROW and 0 <= nc < COL:
+                        nt = total + grid[nr][nc]
+                        if distances[(nr, nc)] > nt:
+                            queue.append((nt, nr, nc))
+                            distances[(nr, nc)] = nt
+            return ans
+
+
+class MyCalendarTwo:
+    def __init__(self):
+        self.booked = []
+        self.overlaps = []
+
+    def book(self, start: int, end: int) -> bool:
+
+        for s2, e2 in self.overlaps:
+            if not (end <= s2 or start >= e2):
+                return False
+
+        for s1, e1 in self.booked:
+            if not (end <= s1 or start >= e1):
+                self.overlaps.append((max(s1, start), min(e1, end)))
+
+        self.booked.append((start, end))
+        return True
+
+
+class Solution:
+
+    def __init__(self, head: Optional[ListNode]):
+        self.head = head
+        self.arr = []
+        cur = head
+        while cur:
+            self.arr.append(cur)
+            cur = cur.next
+
+    def getRandom(self) -> int:
+        size = len(self.arr)
+        randidx = random.randint(0, size)
+        return self.arr[randidx]
+
+
+class MinStack:
+
+    def __init__(self):
+        self.stack = []
+        self.heap = []
+        self.table = {}
+        self.idx = 0
+
+    def push(self, val: int) -> None:
+        self.idx += 1
+        heapq.heappush(self.heap, (val, self.idx))
+        self.stack.append((val, self.idx))
+        self.table[self.idx] = val
+
+    def pop(self) -> None:
+        val, idx = self.stack.pop()
+        self.table.pop(idx, None)
+
+    def top(self) -> int:
+        return self.stack[-1][0]
+
+    def getMin(self) -> int:
+        while self.heap and self.heap[0][1] not in self.table:
+            heapq.heappop(self.heap)
+        return self.heap[0][0]
 
 
 class RobotRoomCleaner:

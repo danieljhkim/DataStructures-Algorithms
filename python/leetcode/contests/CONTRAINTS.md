@@ -5,3 +5,4 @@
 - constraints of 1000 ~ 2000 -> O(n^2)
 - less than 300 -> O(n^3)
 - less than 16 -> O(2^n)
+

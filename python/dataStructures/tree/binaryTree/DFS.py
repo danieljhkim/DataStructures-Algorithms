@@ -1,4 +1,4 @@
-from binary_search_tree import TreeNode
+from dataStructures.tree.binaryTree.binarySearchTree import TreeNode
 
 
 """ ordered 

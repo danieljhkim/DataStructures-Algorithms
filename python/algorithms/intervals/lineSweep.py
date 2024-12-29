@@ -1,4 +1,5 @@
 from typing import Optional, List
+from sortedcontainers import SortedDict
 
 """Line Sweep Technique
 
@@ -54,6 +55,26 @@ def count_intervals_covering_points(
         result[point] = active_intervals
 
     return result
+
+
+def max_overlapping_intervals(intervals, start, end, max_overlap):
+    """
+    - granular overlapping segments
+    """
+    table = SortedDict()
+    for s, e in intervals:
+        table[s] = table.get(s, 0) + 1
+        table[e] = table.get(e, 0) - 1
+
+    table[start] = table.get(start, 0) + 1
+    table[end] = table.get(end, 0) - 1
+
+    overlaps = 0
+    for count in table.values():
+        overlaps += count
+        if overlaps > max_overlap:
+            return False
+    return True
 
 
 if __name__ == "__main__":
