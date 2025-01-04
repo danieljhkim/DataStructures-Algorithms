@@ -5,14 +5,7 @@ from typing import List
 
 class Solution:
 
-    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
-        """_summary_
-        0: 1, 2
-        1: 2
-        2: 0 or 1 -> false
-        """
-        pass
-        return True
+    pass
 
 
 def test_solution():
@@ -20,4 +13,4 @@ def test_solution():
 
 
 if __name__ == "__main__":
-    print(chr(ord("a") + 25))
+    print(max("a", "b"))

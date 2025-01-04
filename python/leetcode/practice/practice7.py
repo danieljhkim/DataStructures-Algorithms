@@ -1856,6 +1856,34 @@ class MedianFinder:
         return self.data[size // 2] + self.data[size // 2 - 1]
 
 
+class Bank:
+
+    def __init__(self, balance: List[int]):
+        self.balance = balance
+        self.size = len(balance)
+
+    def transfer(self, account1: int, account2: int, money: int) -> bool:
+        if not (0 < account1 <= self.size) or not (0 < account1 <= self.size):
+            return False
+        if self.balance[account1 - 1] < money:
+            return False
+        self.balance[account1 - 1] -= money
+        self.balance[account2 - 1] += money
+        return True
+
+    def deposit(self, account: int, money: int) -> bool:
+        if not (0 < account <= self.size):
+            return False
+        self.balance[account - 1] += money
+        return True
+
+    def withdraw(self, account: int, money: int) -> bool:
+        if not (0 < account <= self.size) or self.balance[account - 1] < money:
+            return False
+        self.balance[account - 1] -= money
+        return True
+
+
 def test_solution():
     s = Solution()
     m = [[0, 0, 0, 5], [4, 3, 1, 4], [0, 1, 1, 4], [1, 2, 1, 3], [0, 0, 1, 1]]

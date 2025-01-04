@@ -77,3 +77,30 @@ class Window:
         if ans == float("inf"):
             return 0
         return ans
+
+    # 1438
+    def longestSubarray(self, nums: List[int], limit: int) -> int:
+        """
+        - longest continuous subarray with abs diff less than or equal to limit
+        """
+        dec_dq = deque()
+        inc_dq = deque()
+        max_len = 0
+        left = 0
+        N = len(nums)
+        for right in range(N):
+            cur = nums[right]
+            while dec_dq and dec_dq[-1] < cur:
+                dec_dq.pop()
+            while inc_dq and inc_dq[-1] > cur:
+                inc_dq.pop()
+            dec_dq.append(cur)
+            inc_dq.append(cur)
+            while dec_dq and inc_dq and dec_dq[0] - inc_dq[0] > limit:
+                if inc_dq[0] == nums[left]:
+                    inc_dq.popleft()
+                if dec_dq[0] == nums[left]:
+                    dec_dq.popleft()
+                left += 1
+            max_len = max(max_len, right - left + 1)
+        return max_len

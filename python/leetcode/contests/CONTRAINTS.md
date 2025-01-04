@@ -1,3 +1,4 @@
+### Algorithm Time Constraint Approximations
 
 - a solution with less than 10 million computation times can generally pass
 
