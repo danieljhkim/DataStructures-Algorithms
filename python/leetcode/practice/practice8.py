@@ -613,6 +613,97 @@ class Solution:
             max_len = max(max_len, right - left + 1)
         return max_len
 
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        R = len(matrix)
+        C = len(matrix[0])
+        right = C - 1
+        left = 0
+        up = 0
+        bottom = R - 1
+        res = []
+        while len(res) < R * C:
+            # left right
+            for i in range(left, right + 1):
+                res.append(matrix[up][i])
+
+            # up down
+            for i in range(up + 1, bottom + 1):
+                res.append(matrix[i][right])
+
+            if up != bottom:
+                # right left
+                for i in range(right - 1, left + 1, -1):
+                    res.append(matrix[bottom][i])
+
+            if left != right:
+                # down up
+                for i in range(bottom + 1, up - 1, -1):
+                    res.append(matrix[i][left])
+
+            up += 1
+            bottom -= 1
+            right -= 1
+            left += 1
+        return res
+
+    def minAvailableDuration(
+        self, slots1: List[List[int]], slots2: List[List[int]], duration: int
+    ) -> List[int]:
+        slots1.sort()
+        slots2.sort()
+        N1 = len(slots1)
+        N2 = len(slots2)
+        idx1 = 0
+        idx2 = 0
+        while idx1 < N1 and idx2 < N2:
+            while idx1 < N1 and slots1[idx1][1] - slots1[idx1][0] < duration:
+                idx1 += 1
+            while idx2 < N2 and slots2[idx2][1] - slots2[idx2][0] < duration:
+                idx2 += 1
+            if idx1 >= N1 or idx2 >= N2:
+                break
+            if slots1[idx1][1] <= slots2[idx2][0]:
+                idx1 += 1
+            elif slots2[idx2][1] <= slots1[idx1][0]:
+                idx2 += 1
+            elif (
+                min(slots1[idx1][1], slots2[idx2][1])
+                - max(slots1[idx1][0], slots2[idx2][0])
+                >= duration
+            ):
+                start = max(slots1[idx1][0], slots2[idx2][0])
+                return [start, start + duration]
+            else:
+                if slots2[idx2][1] < slots1[idx1][1]:
+                    idx2 += 1
+                elif slots2[idx2][1] > slots1[idx1][1]:
+                    idx1 += 1
+                else:
+                    idx2 += 1
+                    idx1 += 1
+        return []
+
+    def shiftingLetters(self, s: str, shifts: List[List[int]]) -> str:
+        N = len(s)
+        lines = [0] * (N + 1)
+        for st, e, d in shifts:
+            if d > 0:
+                lines[st] += 1
+                lines[e + 1] -= 1
+            else:
+                lines[st] -= 1
+                lines[e + 1] += 1
+        total = 0
+        for i, n in enumerate(lines):
+            total += n
+            lines[i] = total
+
+        arr = []
+        for i, w in enumerate(s):
+            cur = chr((ord(w) - ord("a") + lines[i]) % 26 + ord("a"))
+            arr.append(cur)
+        return "".join(arr)
+
 
 def test_solution():
     s = Solution()
