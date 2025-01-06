@@ -704,6 +704,354 @@ class Solution:
             arr.append(cur)
         return "".join(arr)
 
+    def reverseOnlyLetters(self, s: str) -> str:
+        N = len(s)
+        left = 0
+        right = N - 1
+        s = list(s)
+        while left < right:
+            while left < right and not s[left].isalpha():
+                left += 1
+            while left < right and not s[right].isalpha():
+                right -= 1
+            s[left], s[right] = s[right], s[left]
+            left += 1
+            right -= 1
+        return "".join(s)
+
+    def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        table = {}
+        cur = head
+        idx = 0
+        while cur:
+            if cur in table:
+                return cur
+            table[cur] = idx
+            idx += 1
+            cur = cur.next
+        return -1
+
+    def oddEvenList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        idx = 1
+        cur = head
+        odds = ListNode(-1)
+        dummy = odds
+        evens = ListNode(-1)
+        dummy_even = evens
+        while cur:
+            if idx % 2 == 1:
+                odds.next = cur
+                odds = odds.next
+            else:
+                evens.next = cur
+                evens = evens.next
+            idx += 1
+            cur = cur.next
+        evens.next = None
+        odds.next = dummy_even.next
+        return dummy.next
+
+    def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
+
+        def recursion(arr):
+            if len(arr) == 1:
+                return TreeNode(arr[0])
+            if len(arr) == 0:
+                return None
+            mid = len(arr) // 2
+            node = TreeNode(arr[mid])
+            node.left = recursion(arr[:mid])
+            node.right = recursion(arr[mid + 1 :])
+            return node
+
+        return recursion(nums)
+
+    def strStr(self, haystack: str, needle: str) -> int:
+        return haystack.find(needle)
+
+    def mostVisitedPattern(
+        self, username: List[str], timestamp: List[int], website: List[str]
+    ) -> List[str]:
+        table = defaultdict(list)
+        N = len(username)
+        for i in range(N):
+            entry = (timestamp[i], website[i])
+            table[username[i]].append(entry)
+
+        scores = defaultdict(int)
+        for k, v in table.items():
+            v.sort()
+            visited = set()
+            if len(v) >= 3:
+                for i in range(len(v) - 2):
+                    for j in range(i + 1, len(v) - 1):
+                        for k in range(j + 1, len(v)):
+                            item = (v[i][1], v[j][1], v[k][1])
+                            if item not in visited:
+                                scores[item] += 1
+                                visited.add(item)
+        max_count = max(scores.values())
+        candidates = [seq for seq, cnt in scores.items() if cnt == max_count]
+        return list(min(candidates))
+
+    def suggestedProducts(
+        self, products: List[str], searchWord: str
+    ) -> List[List[str]]:
+        idx = 0
+        N = len(searchWord)
+        table = defaultdict(list)
+        queue = deque(products)
+        while queue and idx < N:
+            size = len(queue)
+            for _ in range(size):
+                cur = queue.popleft()
+                if len(cur) > idx and cur[idx] == searchWord[idx]:
+                    table[idx].append(cur)
+                    queue.append(cur)
+            idx += 1
+        ans = []
+        for idx in range(N):
+            if idx not in table:
+                ans.append([])
+                continue
+            cur = table[idx]
+            cur.sort()
+            size = min(len(cur), 3)
+            ans.append(cur[:size])
+        return ans
+
+    def combinationSum3(self, k: int, n: int) -> List[List[int]]:
+        ans = []
+
+        def backtrack(arr, idx, total):
+            if len(arr) == k and total == n:
+                ans.append(arr[:])
+                return
+            if total > n or idx > 9 or len(arr) > k:
+                return
+            for i in range(idx + 1, 10):
+                arr.append(i)
+                backtrack(arr, i, total + i)
+                arr.pop()
+
+        backtrack([], 0, 0)
+        return ans
+
+    def findLeaves(self, root: Optional[TreeNode]) -> List[List[int]]:
+        def dfs(node, res):
+            if not node:
+                return node
+            if not node.left and not node.right:
+                res.append(node.val)
+                return None
+            node.left = dfs(node.left, res)
+            node.right = dfs(node.right, res)
+            return node
+
+        ans = []
+        while root:
+            res = []
+            root = dfs(root, res)
+            ans.append(res)
+
+        return ans
+
+    def minOperations(self, boxes: str) -> List[int]:
+        N = len(boxes)
+        ans = [0] * N
+        left_balls = 0
+        left_moves = 0
+        right_balls = right_moves = 0
+        for i, n in enumerate(boxes):
+            ans[i] = left_moves
+            left_balls += int(n)
+            left_moves += left_balls
+        for i in range(N - 1, -1, -1):
+            ans[i] = right_moves
+            right_balls += int(n)
+            right_moves += right_balls
+        return ans
+
+    def lowestCommonAncestor(
+        self, root: "TreeNode", p: "TreeNode", q: "TreeNode"
+    ) -> "TreeNode":
+        def dfs(node):
+            if not node or node == p or node == q:
+                return node
+            left = dfs(node.left)
+            right = dfs(node.right)
+            if left and right:
+                return node
+            return left or right
+
+        return dfs(root)
+
+    def compareVersion(self, version1: str, version2: str) -> int:
+        v1 = version1.split(".")
+        v2 = version2.split(".")
+        N = max(len(v1), len(v2))
+        for i in range(N):
+            val1 = 0
+            val2 = 0
+            if i < len(v1):
+                val1 = int(v1[i])
+            if i < len(v2):
+                val2 = int(v2[i])
+            if val1 < val2:
+                return -1
+            elif val1 > val2:
+                return 1
+        return 0
+
+    def multiply(self, num1: str, num2: str) -> str:
+        """ "
+        123
+         19
+        """
+        N1 = len(num1)
+        N2 = len(num2)
+        dq = deque()
+        carry = 0
+        idx1 = N1 - 1
+        summ = 0
+        counter = 1
+        while idx1 >= 0:
+            n1 = int(num1[idx1])
+            stack = []
+            carry = 0
+            for j in range(N2 - 1, -1, -1):
+                n2 = int(num2[j])
+                total = n1 * n2 + carry
+                if total > 9:
+                    carry = total // 10
+                    total = total % 10
+                else:
+                    carry = 0
+                stack.append(str(total))
+            if carry:
+                stack.append(str(carry))
+            stack.reverse()
+            out = int("".join(stack))
+            out *= counter
+            summ += out
+            counter *= 10
+            idx1 -= 1
+        return summ
+
+    def mySqrt(self, x: int) -> int:
+        if x < 2:
+            return 0
+        n = 1
+        prev = n
+        while n * n <= x:
+            prev = n
+            n = n * n + 1
+        return prev
+
+    def connect(self, root: "Node") -> "Node":
+        if not root:
+            return root
+        queue = deque([root])
+        while queue:
+            size = len(queue)
+            prev = None
+            for _ in range(size):
+                cur = queue.popleft()
+                cur.next = prev
+                prev = cur
+                if cur.right:
+                    queue.append(cur.right)
+                if cur.left:
+                    queue.append(cur.left)
+        return root
+
+    def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
+        dq = deque()
+        for i in range(k):
+            while dq and nums[dq[-1]] < nums[i]:
+                dq.pop()
+            dq.append(i)
+
+        ans = [nums[dq[0]]]
+        N = len(nums)
+        for i in range(k, N):
+            while dq and i - dq[0] + 1 > k:
+                dq.popleft()
+            while dq and nums[dq[-1]] < nums[i]:
+                dq.pop()
+            dq.append(i)
+            ans.append(nums[dq[0]])
+        return ans
+
+    def slowestKey(self, releaseTimes: List[int], keysPressed: str) -> str:
+        key = keysPressed[0]
+        time = releaseTimes[0]
+        N = len(releaseTimes)
+
+        for i in range(1, N):
+            prev = releaseTimes[i - 1]
+            cur = releaseTimes[i]
+            diff = cur - prev
+            if diff > time:
+                key = [keysPressed[i]]
+                time = diff
+            elif diff == time:
+                key.append(keysPressed[i])
+        key.sort()
+        return key[-1]
+
+    def numKLenSubstrNoRepeats(self, s: str, k: int) -> int:
+        left = 0
+        N = len(s)
+        if N < k:
+            return 0
+        seen = set()
+        left = 0
+        count = 0
+
+        for right, ch in enumerate(s):
+            while ch in seen:
+                seen.remove(s[left])
+                left += 1
+            seen.add(ch)
+
+            while right - left + 1 > k:
+                seen.remove(s[left])
+                left += 1
+
+            if right - left + 1 == k:
+                count += 1
+                seen.remove(s[left])
+                left += 1
+
+        return count
+
+    def minDifficulty(self, jobs: List[int], d: int) -> int:
+        if len(jobs) < d:
+            return -1
+        memo = {}
+        N = len(jobs)
+
+        def dpp(idx, left):
+            if idx == N and left == 0:
+                return 0
+            if idx >= N or left <= 0:
+                return float("inf")
+            if (idx, left) in memo:
+                return memo[(idx, left)]
+            top = -1
+            res = float("inf")
+            i = idx
+            while i < N:
+                top = max(top, jobs[i])
+                res = min(dpp(i + 1, left - 1) + top, res)
+                i += 1
+            memo[(idx, left)] = res
+            return res
+
+        ans = dpp(0, d)
+        return ans if ans != float("inf") else -1
+
 
 def test_solution():
     s = Solution()
