@@ -1,4 +1,3 @@
-from curses.ascii import isdigit
 import heapq
 from tkinter import S
 from token import NL
@@ -1052,6 +1051,599 @@ class Solution:
         ans = dpp(0, d)
         return ans if ans != float("inf") else -1
 
+    def longestSubarray(self, nums: List[int], limit: int) -> int:
+        min_dq = deque()
+        max_dq = deque()
+        ans = -inf
+        left = 0
+        for i, n in enumerate(nums):
+            while min_dq and nums[min_dq[-1]] > n:
+                min_dq.pop()
+            min_dq.append(i)
+            while max_dq and nums[max_dq[-1]] < n:
+                max_dq.pop()
+            max_dq.append(i)
+            while max_dq and min_dq and nums[max_dq[0]] - nums[min_dq[0]] > limit:
+                if max_dq[0] == left:
+                    max_dq.popleft()
+                if min_dq[0] == left:
+                    min_dq.popleft()
+                left += 1
+            ans = max(ans, i - left + 1)
+        return ans
+
+    def longestSubarray(self, nums: List[int], limit: int) -> int:
+        min_heap = []
+        max_heap = []
+        left = 0
+        ans = -inf
+        for i, n in enumerate(nums):
+            heapq.heappush(min_heap, (n, i))
+            heapq.heappush(max_heap, (-n, i))
+            while min_heap and max_heap and -max_heap[0][0] - min_heap[0][0] > limit:
+                if max_heap[0][1] == left:
+                    heapq.heappop(max_heap)
+                if min_heap[0][1] == left:
+                    heapq.heappop(min_heap)
+                left += 1
+            ans = max(ans, i - left + 1)
+        return ans
+
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        ROW = len(matrix)
+        COL = len(matrix[0])
+        left = 0
+        right = COL - 1
+        top = 0
+        bottom = ROW - 1
+        res = []
+        while len(res) < ROW * COL:
+            for i in range(left, right + 1):
+                res.append(matrix[top][i])
+            for i in range(top + 1, bottom + 1):
+                res.append(matrix[i][right])
+            if len(res) == ROW * COL:
+                break
+            for i in range(right - 1, left - 1, -1):
+                res.append(matrix[bottom][i])
+            if len(res) == ROW * COL:
+                break
+            for i in range(bottom - 1, top, -1):
+                res.append(matrix[i][left])
+            left += 1
+            right -= 1
+            top += 1
+            bottom -= 1
+        return res
+
+    def longestCommonPrefix(self, arr1: List[int], arr2: List[int]) -> int:
+        trie = {}
+        ans = 0
+
+        def build(num):
+            table = trie
+            for w in num:
+                if w not in table:
+                    table[w] = {}
+                table = table[w]
+
+        def size(num):
+            table = trie
+            cnt = 0
+            for w in num:
+                if w not in table:
+                    return cnt
+                table = table[w]
+                cnt += 1
+            return cnt
+
+        for n in arr1:
+            build(str(n))
+        for n in arr2:
+            ans = max(ans, size(str(n)))
+        return ans
+
+    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+        intervals.sort(key=lambda x: (x[0], -x[1]))
+        stack = []
+        cnt = 0
+        for s, e in intervals:
+            while stack and stack[-1] > s:
+                stack.pop()
+                cnt += 1
+            stack.append(e)
+        return cnt
+
+    def stringMatching(self, words: List[str]) -> List[str]:
+        table = {}
+        ans = set()
+        for w in words:
+            table[w] = set(w)
+        for w in words:
+            for word in table:
+                if len(word) >= len(w) and w != word:
+                    if table[w].issubset(table[word]):
+                        if word.index(w) >= 0:
+                            ans.add(w)
+
+        return list(ans)
+
+    def compress(self, chars: List[str]) -> int:
+        stack = []
+        idx = 0
+        N = len(chars)
+        while idx < N:
+            cur = chars[idx]
+            i = idx
+            while i < N and chars[i] == cur:
+                i += 1
+            cnt = i - idx
+            stack.append(cur)
+            if cnt > 1:
+                cnt = str(cnt)
+                for c in cnt:
+                    stack.append(c)
+            idx = i
+        chars.clear()
+        chars.extend(stack)
+        return len(chars)
+
+    def killProcess(self, pid: List[int], ppid: List[int], kill: int) -> List[int]:
+        adj = defaultdict(list)
+        N = len(pid)
+        for i in range(N):
+            p = pid[i]
+            parent = ppid[i]
+            adj[parent].append(p)
+
+        self.ans = []
+        visited = set([kill])
+
+        def dfs(cur):
+            self.ans.append(cur)
+            for c in adj[cur]:
+                if c not in visited:
+                    visited.add(c)
+                    dfs(c)
+
+        dfs(kill)
+        return self.ans
+
+    def reverseWords(self, s: str) -> str:
+        arr = s.split(" ")
+        for i, w in enumerate(arr):
+            rev = reversed(list(w))
+            arr[i] = "".join(rev)
+        return " ".join(arr)
+
+    def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        if not head:
+            return head
+        dummy = ListNode(-1, head)
+        cur = dummy
+        while cur and cur.next and cur.next.next:
+            first = cur.next
+            second = cur.next.next
+            first.next = second.next
+            second.next = first
+            cur.next = second
+            cur = first
+        return dummy.next
+
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        ans = set()
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        ROW = len(board)
+        COL = len(board[0])
+        adj = defaultdict(list)
+
+        def dfs(idx, word, used, r, c):
+            if idx == len(word):
+                return True
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < ROW and 0 <= nc < COL:
+                    if board[nr][nc] == word[idx] and (nr, nc) not in used:
+                        used.add((nr, nc))
+                        res = dfs(idx + 1, word, used, nr, nc)
+                        if res:
+                            return True
+                        used.remove((nr, nc))
+            return False
+
+        for r in range(ROW):
+            for c in range(COL):
+                w = board[r][c]
+                adj[w].append((r, c))
+
+        for word in words:
+            if word not in ans:
+                for r, c in adj[word[0]]:
+                    if dfs(1, word, {(r, c)}, r, c):
+                        ans.add(word)
+                        break
+        return list(ans)
+
+    def findWords(self, board: List[List[str]], words: List[str]) -> List[str]:
+        ans = set()
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        ROW = len(board)
+        COL = len(board[0])
+        table = {}
+
+        def dfs(node, used, r, c):
+            if "*" in node:
+                ans.add(node["*"])
+            if not node or len(ans) == len(words):
+                return
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < ROW and 0 <= nc < COL:
+                    letter = board[nr][nc]
+                    if letter in node and (nr, nc) not in used:
+                        used.add((nr, nc))
+                        dfs(node[letter], used, nr, nc)
+                        used.remove((nr, nc))
+
+        def build_trie(word):
+            cur = table
+            for w in word:
+                if w not in cur:
+                    cur[w] = {}
+                cur = cur[w]
+            cur["*"] = word
+
+        for w in words:
+            build_trie(w)
+
+        for r in range(ROW):
+            for c in range(COL):
+                w = board[r][c]
+                if w in table:
+                    dfs(table[w], {(r, c)}, r, c)
+
+        return list(ans)
+
+    def peopleIndexes(self, favoriteCompanies: List[List[str]]) -> List[int]:
+        setarr = [set(com) for com in favoriteCompanies]
+        ans = []
+        for i, n in enumerate(setarr):
+            good = True
+            for j, v in enumerate(setarr):
+                if j != i:
+                    if v.issuperset(n):
+                        good = False
+                        break
+            if good:
+                ans.append(i)
+        return ans
+
+    def countPrefixSuffixPairs(self, words: List[str]) -> int:
+        table = defaultdict(list)
+        for i, w in enumerate(words):
+            char = w[0]
+            table[char].append((w, i))
+        ans = 0
+        for i, w in enumerate(words):
+            options = table[w[0]]
+            found = False
+            for o, j in options:
+                if i == j:
+                    found = True
+                    continue
+                if not found:
+                    continue
+                if o.startswith(w) and o.endswith(w):
+                    ans += 1
+
+        return ans
+
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        memo = {}
+
+        def dp(left):
+            if left in memo:
+                return memo[left]
+            if left < 0:
+                return inf
+            if left == 0:
+                return 0
+            cnt = inf
+            for c in coins:
+                cnt = min(dp(left - c), cnt)
+            memo[left] = cnt + 1
+            return memo[left]
+
+        res = dp(amount)
+        return res if res != inf else -1
+
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        dp = [float("inf")] * (amount + 1)
+        dp[0] = 0
+
+        for coin in coins:
+            for x in range(coin, amount + 1):
+                dp[x] = min(dp[x], dp[x - coin] + 1)
+        return dp[amount] if dp[amount] != float("inf") else -1
+
+    def prefixCount(self, words: List[str], pref: str) -> int:
+        cnt = 0
+        for w in words:
+            if w.startswith(pref):
+                cnt += 1
+        return cnt
+
+    def equalDigitFrequency(self, s: str) -> int:
+        ans = set()
+        N = len(s)
+        for i in range(N):
+            counts = defaultdict(int)
+            total = 0
+            max_cnt = 0
+            for j in range(i, N):
+                num = int(s[j])
+                counts[num] += 1
+                max_cnt = max(max_cnt, counts[num])
+                total += 1
+                if total // len(counts) == max_cnt and total % len(counts) == 0:
+                    ans.add(s[i : j + 1])
+
+        return len(ans)
+
+    def runningSum(self, nums: List[int]) -> List[int]:
+        arr = [nums[0]]
+        for n in nums[1:]:
+            arr.append(arr[-1] + n)
+        return arr
+
+    def maxFreq(self, s: str, maxLetters: int, minSize: int, maxSize: int) -> int:
+        N = len(s)
+        left = right = 0
+        table = defaultdict(int)
+        freq = [0] * 26
+        dis = 0
+        while right < N and left < N:
+            idx = ord(s[right]) - ord("a")
+            freq[idx] += 1
+            if freq[idx] == 1:
+                dis += 1
+            while right - left + 1 > minSize:
+                idx = ord(s[left]) - ord("a")
+                freq[idx] -= 1
+                if freq[idx] == 0:
+                    dis -= 1
+                left += 1
+            if right - left + 1 >= minSize and dis <= maxLetters:
+                table[s[left : right + 1]] += 1
+            right += 1
+
+        if len(table) == 0:
+            return 0
+        return max(table.values())
+
+    def canConstruct(self, s: str, k: int) -> bool:
+        if k > len(s):
+            return False
+        if k == len(s):
+            return True
+        counts = Counter(s)
+        odds = 0
+        for v in counts.items():
+            if v % 2 == 1:
+                odds += 1
+        return odds <= k
+
+    def isArmstrong(self, n: int) -> bool:
+        K = len(str(n))
+        rem = 0
+        total = 0
+        prev = n
+        while n > 0:
+            rem = n % 10
+            total += rem**K
+            if total > prev:
+                return False
+            n //= 10
+        return total == prev
+
+    def bstFromPreorder(self, preorder: List[int]) -> Optional[TreeNode]:
+        """ "
+        root, left1, left2, left3, right1,
+        """
+        N = len(preorder)
+        self.idx = 0
+
+        def build(prev):
+            if self.idx == N:
+                return None
+            if preorder[self.idx] > prev:
+                return None
+            cur = TreeNode(preorder[self.idx])
+            self.idx += 1
+            cur.left = build(cur.val)
+            cur.right = build(prev)
+
+            return cur
+
+        if len(preorder) == 0:
+            return None
+        return build(inf)
+
+    def maxDepth(self, root: "Node") -> int:
+        if not root:
+            return 0
+        depth = 0
+        for c in root.children:
+            depth = max(depth, self.maxDepth(c))
+        return depth + 1
+
+    def bstToGst(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        def dfs(node, total):
+            if not node:
+                return 0
+            right = dfs(node.right, total)
+            prev = node.val
+            node.val += right + total
+            left = dfs(node.left, node.val)
+            return prev + left + right
+
+        dfs(root, 0)
+        return root
+
+    def missingNumber(self, nums: List[int]) -> int:
+        total = sum(nums)
+        N = len(nums)
+        total2 = sum([i for i in range(0, N)])
+        return total2 - total
+
+    def checkStraightLine(self, coordinates: List[List[int]]) -> bool:
+        y = coordinates[0][1] - coordinates[1][1]
+        x = coordinates[0][0] - coordinates[1][0]
+        if x == 0:
+            for xx, y in coordinates:
+                if xx != coordinates[0][0]:
+                    return False
+            return True
+        slope = y / x
+        for i in range(len(coordinates) - 1):
+            yc = coordinates[i][1] - coordinates[i + 1][1]
+            xc = coordinates[i][0] - coordinates[i + 1][0]
+            if xc == 0:
+                return False
+            slope2 = yc / xc
+            if slope != slope2:
+                return False
+        return True
+
+    def numTeams(self, rating: List[int]) -> int:
+        """ "
+        [1,2,3,4,5]
+        3 + 2 + 1
+        """
+
+        N = len(rating)
+        ans = 0
+        for i in range(N):
+            small_left = big_left = 0
+            small_right = big_right = 0
+            for j in range(i):
+                if rating[j] < rating[i]:
+                    small_left += 1
+                else:
+                    big_left += 1
+            for j in range(i + 1, N):
+                if rating[j] < rating[i]:
+                    small_right += 1
+                else:
+                    big_right += 1
+            ans += small_left * big_right
+            ans += big_left * small_right
+        return ans
+
+    def maxDepth(self, root: "Node") -> int:
+        if not root:
+            return 0
+        stack = [(root, 1)]
+        ans = 0
+        while stack:
+            cur, depth = stack.pop()
+            ans = max(depth, ans)
+            for c in cur.children:
+                stack.append((c, depth + 1))
+        return ans
+
+    def minAvailableDuration(
+        self, slots1: List[List[int]], slots2: List[List[int]], duration: int
+    ) -> List[int]:
+        slots1.sort()
+        slots2.sort()
+        N1, N2 = len(slots1), len(slots2)
+        i1 = i2 = 0
+        while i1 < N1 and i2 < N2:
+            s1, e1 = slots1[i1]
+            s2, e2 = slots2[i2]
+            e = min(e1, e2)
+            s = max(s2, s1)
+            if e - s >= duration:
+                return [s, s + duration]
+            if e1 > e2:
+                i2 += 1
+            else:
+                i1 += 1
+        return []
+
+    def mostCommonWord(self, paragraph: str, banned: List[str]) -> str:
+        banned = set(banned)
+        table = defaultdict(int)
+        N = len(paragraph)
+        left = right = 0
+        while right < N:
+            cur = paragraph[right]
+            if not cur.isalnum():
+                right += 1
+                left = right
+            while right < N and paragraph[right].isalnum():
+                right += 1
+            word = paragraph[left:right]
+            table[word.lower()] += 1
+            right += 1
+            left = right
+
+        cnt = 0
+        word = None
+        for k, v in table.items():
+            if v > cnt and k not in banned:
+                word = k
+                cnt = v
+        return word
+
+    def maxPathSum(self, root: Optional[TreeNode]) -> int:
+        def dfs(cur):
+            if not cur:
+                return -inf, -inf
+            left, ltotal = dfs(cur.left)
+            right, rtotal = dfs(cur.right)
+            left2 = left + cur.val
+            right2 = right + cur.val
+
+            return max(left2, right2, cur.val), max(
+                left + right + cur.val, ltotal, rtotal, cur.val, left, right
+            )
+
+        one, two = dfs(root)
+        return max(one, two)
+
+    def maxVacationDays(self, flights: List[List[int]], days: List[List[int]]) -> int:
+        """ "
+        flights[i][j] - city i to city j
+        days[i][j] - max vacay days in city i in week j
+        """
+        W = len(days[0])
+        N = len(flights)
+        memo = {}
+
+        def dp(city, week):
+            if week == W - 1:
+                return days[city][week]
+            if (city, week) in memo:
+                return memo[city, week]
+            res = 0
+            for c in range(N):
+                if flights[city][c] == 1 or c == city:
+                    vacay = dp(c, week + 1)
+                    res = max(vacay, res)
+            res += days[city][week]
+            memo[(city, week)] = res
+            return res
+
+        ans = 0
+        for j in range(N):
+            if j == 0 or flights[0][j]:
+                ans = max(ans, dp(j, 0))
+        return ans
+
 
 def test_solution():
     s = Solution()
@@ -1059,3 +1651,4 @@ def test_solution():
 
 if __name__ == "__main__":
     test_solution()
+    dd = OrderedDict()
