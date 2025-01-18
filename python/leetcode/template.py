@@ -1,12 +1,12 @@
 import heapq
-from typing import Optional, List
-from itertools import accumulate
 import random
-from collections import Counter, deque, defaultdict, OrderedDict
 import math
 import bisect
-from math import inf
-from functools import lru_cache
+from typing import *
+from math import inf, factorial
+from functools import lru_cache, cache
+from itertools import accumulate, permutations, combinations
+from collections import Counter, deque, defaultdict, OrderedDict
 from sortedcontainers import SortedSet, SortedList, SortedDict
 
 
