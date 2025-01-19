@@ -2477,6 +2477,60 @@ class Solution:
                         queue.append((nr, nc, dist + 1))
         return -1
 
+    def minCost(self, arr: List[int], brr: List[int], k: int) -> int:
+        cost1 = cost2 = 0
+        N = len(arr)
+        for i in range(N):
+            n1 = arr[i]
+            n2 = brr[i]
+            diff = abs(n1 - n2)
+            cost1 += diff
+        arr.sort()
+        brr.sort()
+        for i in range(N):
+            n1 = arr[i]
+            n2 = brr[i]
+            diff = abs(n1 - n2)
+            cost2 += diff
+        return min(cost1, cost2 + k)
+
+    def longestSpecialPath(self, edges: List[List[int]], nums: List[int]) -> List[int]:
+        adj = defaultdict(list)
+        for s, d, w in edges:
+            adj[s].append((d, w))
+
+        self.ans = 0
+        self.cnt = 1
+
+        def dfs(cur, visited):
+            best = 0
+            cnt0 = 1
+            if cur not in adj:
+                return 0, 1
+            for nei, w in adj[cur]:
+                if nums[nei] not in visited:
+                    visited.add(nums[nei])
+                    res1, cnt1 = dfs(nei, visited)
+                    visited.remove(nums[nei])
+                    if res1 + w > best:
+                        best = res1 + w
+                        cnt0 = cnt1 + 1
+                    elif res1 + w == best and cnt1 + 1 < cnt0:
+                        cnt0 = cnt1 + 1
+            return best, cnt0
+
+        res = 0
+        cnt = 1
+        for st in list(adj.keys()):
+            res2, cnt2 = dfs(st, set([nums[st]]))
+            if res2 > res:
+                res = res2
+                cnt = cnt2
+            elif res2 == res and cnt2 < cnt:
+                cnt = cnt2
+
+        return [res, cnt]
+
 
 def test_solution():
     s = Solution()
