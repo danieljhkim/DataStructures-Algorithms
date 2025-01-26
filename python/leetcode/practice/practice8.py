@@ -1,4 +1,5 @@
 import heapq
+from termios import NL1
 from typing import Optional, List
 from itertools import accumulate
 import random
@@ -2530,6 +2531,376 @@ class Solution:
                 cnt = cnt2
 
         return [res, cnt]
+
+    def isPalindrome(self, head: Optional[ListNode]) -> bool:
+        fast = head
+        slow = head
+        stack = []
+        while fast and fast.next:
+            stack.append(slow.val)
+            fast = fast.next.next
+            slow = slow.next
+        if slow == fast:
+            return True
+        if not fast:
+            slow = slow.next
+        while stack and slow:
+            out = stack.pop()
+            if out == slow.val:
+                slow = slow.next
+            else:
+                return False
+        if not stack and not slow:
+            return True
+        return False
+
+    def frequencySort(self, s: str) -> str:
+        counts = Counter(s)
+        table = defaultdict(list)
+        ans = []
+        for k, v in counts.items():
+            table[v].append(k)
+        small, big = min(table.keys()), max(table.keys())
+        for i in range(small, big + 1):
+            if i in table:
+                entry = [w * i for w in table[i]]
+                ans.extend(entry)
+        ans.reverse()
+        return "".join(ans)
+
+    def flatten(self, head: "Optional[Node]") -> "Optional[Node]":
+        if not head:
+            return head
+
+        def recurs(node):
+            cur = node
+            tail = node
+            while cur:
+                nxt = cur.next
+                if cur.child:
+                    child_head, child_tail = recurs(cur.child)
+                    cur.child = None
+                    cur.next = child_head
+                    child_head.prev = cur
+                    child_tail.next = nxt
+                    if nxt:
+                        nxt.prev = child_tail
+                    tail = child_tail
+                else:
+                    tail = cur
+                cur = nxt
+            return node, tail
+
+        recurs(head)
+        return head
+
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        N = len(nums)
+        ans = []
+        visited = set()
+        first_visited = set()
+        for i in range(N - 1):
+            n1 = nums[i]
+            if n1 in first_visited:
+                continue
+            table = {}
+            first_visited.add(n1)
+            for j in range(i + 1, N):
+                # n + n1 + n3 = 0
+                # n + n1 = -n3
+                n2 = nums[j]
+                target = n2 + n1
+                if -target in table:
+                    vals = tuple(sorted([n1, n2, -target]))
+                    if vals not in visited:
+                        ans.append([n1, n2, -target])
+                        visited.add(vals)
+                table[n2] = j
+        return ans
+
+    def firstCompleteIndex(self, arr: List[int], mat: List[List[int]]) -> int:
+        row = defaultdict(int)
+        col = defaultdict(int)
+        table = {}
+        R, C = len(mat), len(mat[0])
+        for r in range(len(mat)):
+            for c in range(len(mat[0])):
+                val = mat[r][c]
+                table[val] = (r, c)
+        for i, n in enumerate(arr):
+            r, c = table[n]
+            row[r] += 1
+            col[c] += 1
+            if row[r] == C or col[c] == R:
+                return i
+
+    def longestCommonPrefix(self, strs: List[str]) -> str:
+        idx = 0
+        N = len(strs[0])
+        while idx < N:
+            cur = strs[0][idx]
+            for w in strs:
+                if idx >= len(w) or w[idx] != cur:
+                    return strs[0][:idx]
+            idx += 1
+        return strs[0]
+
+    def maxArea(self, height: List[int]) -> int:
+        left, right = 0, len(height) - 1
+        max_area = 0
+        while left < right:
+            max_area = max(max_area, (right - left) * min(height[left], height[right]))
+            if height[left] < height[right]:
+                left += 1
+            else:
+                right -= 1
+        return max_area
+
+    def rotate(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        ROW = len(matrix)
+        COL = len(matrix[0])
+        for i in range(ROW):
+            for j in range(i + 1, COL):
+                matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+
+        for row in matrix:
+            row.reverse()
+
+    def validWordAbbreviation(self, word: str, abbr: str) -> bool:
+        N = len(word)
+        A = len(abbr)
+        iw = ib = 0
+        while iw < N and ib < A:
+            num = ""
+            while ib < A and abbr[ib].isdigit():
+                num += abbr[ib]
+                ib += 1
+            if num:
+                if num[0] == "0":
+                    return False
+                num = int(num)
+                iw += num
+                if N == iw and ib == A:
+                    return True
+                if iw >= N or ib >= A:
+                    return False
+            if word[iw] != abbr[ib]:
+                return False
+            ib += 1
+            iw += 1
+        return iw == N and ib == A
+
+    def coinChange(self, coins: List[int], amount: int) -> int:
+        N = len(coins)
+        memo = {}
+
+        def dp(idx, amt):
+            if (idx, amt) in memo:
+                return memo[(idx, amt)]
+            if idx == N or amt < 0:
+                return inf
+            if amt == 0:
+                return 0
+            cnt = coins[idx]
+            res = min(
+                dp(idx + 1, amt - cnt) + 1, dp(idx, amt - cnt) + 1, dp(idx + 1, amt)
+            )
+            memo[(idx, amt)] = res
+            return res
+
+        res = dp(0, amount)
+        return res if res != inf else -1
+
+    def maxVacationDays(self, flights: List[List[int]], days: List[List[int]]) -> int:
+        """_summary_
+        flights[i][j] -> 1 if fly from i to city j
+        days: n * k - days[i][j] max vacay in city i in week j
+        """
+        N = len(flights[0])
+        K = len(days[0])
+        memo = {}
+
+        def dp(week, city):
+            if week == K:
+                return 0
+            if (week, city) in memo:
+                return memo[(week, city)]
+            cur = days[city][week]
+            res = dp(week + 1, city)
+            for i, nc in enumerate(flights[city]):
+                if nc == 1:
+                    res = max(dp(week + 1, i), res)
+            memo[(week, city)] = res + cur
+            return res + cur
+
+        res = dp(0, 0)
+        for i, c in enumerate(flights[0]):
+            if c:
+                res = max(dp(0, i), res)
+        return res
+
+    def minAvailableDuration(
+        self, slots1: List[List[int]], slots2: List[List[int]], duration: int
+    ) -> List[int]:
+        slots1.sort()
+        slots2.sort()
+        i1 = i2 = 0
+        N1, N2 = len(slots1), len(slots2)
+        while i1 < N1 and i2 < N2:
+            s1, e1 = slots1[i1]
+            s2, e2 = slots2[i2]
+            if (s1 + duration <= e2) and s2 + duration <= e1:
+                return [max(s1, s2), max(s1, s2) + duration]
+            if e1 > e2:
+                i2 += 1
+            else:
+                i1 += 1
+        return []
+
+    def generateMatrix(self, n: int) -> List[List[int]]:
+        mat = [[0] * n for _ in range(n)]
+        cur = 0
+        r_up = c_left = 0
+        r_down = c_right = n - 1
+        while cur < n * n:
+            # right
+            for i in range(c_left, c_right + 1):
+                cur += 1
+                mat[r_up][i] = cur
+            r_up += 1
+
+            # down
+            for i in range(r_up, r_down + 1):
+                cur += 1
+                mat[i][c_right] = cur
+            c_right -= 1
+
+            if cur == n * n:
+                break
+            # left
+            for i in range(c_right, c_left - 1, -1):
+                cur += 1
+                mat[r_down][i] = cur
+            r_down -= 1
+
+            if cur == n * n:
+                break
+            # up
+            for i in range(r_down, r_up - 1, -1):
+                cur += 1
+                mat[i][c_left] = cur
+            c_left += 1
+        return mat
+
+    def computeArea(
+        self,
+        ax1: int,
+        ay1: int,
+        ax2: int,
+        ay2: int,
+        bx1: int,
+        by1: int,
+        bx2: int,
+        by2: int,
+    ) -> int:
+        """ "
+        bottom-left: (x1, y1)
+        top-right: (x2, y2)
+
+        x1, y2 - x2, y2
+        x1, y1 - x2, y1
+        """
+        areaA = (ax2 - ax1) * (ay2 - ay1)
+        areaB = (bx2 - bx1) * (by2 - by1)
+        left = max(ax1, bx1)
+        right = min(ax2, bx2)
+        bottom = max(ay1, by1)
+        top = min(ay2, by2)
+        overlap = 0
+        if left < right and bottom < top:
+            overlap = (right - left) * (top - bottom)
+        return areaA + areaB - overlap
+
+    def gridGame(self, grid: List[List[int]]) -> int:
+        N = len(grid)
+        memo = {}
+        where = None
+
+        def dp(r, c):
+            if (r, c) in memo:
+                return memo[(r, c)]
+            if c == N:
+                return 0
+            point = grid[r][c]
+            res = dp(r, c + 1)
+            if r == 0:
+                nonlocal where
+                res2 = dp(r + 1, c)
+                if res2 > res:
+                    where = c
+                    res = res2
+            memo[(r, c)] = res + point
+            return res + point
+
+        res = dp(0, 0)
+        for r in range(2):
+            if r == 0:
+                for c in range(where + 1):
+                    grid[r][c] = 0
+            if r == 1:
+                for c in range(where, N):
+                    grid[r][c] = 0
+        memo = {}
+        res2 = dp(0, 0)
+        return res2
+
+    def highestPeak(self, isWater: List[List[int]]) -> List[List[int]]:
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        queue = deque()
+        ROW = len(isWater)
+        COL = len(isWater[0])
+        visited = set()
+        for r in range(ROW):
+            for c in range(COL):
+                if isWater[r][c] == 1:
+                    visited.add((r, c))
+                    queue.append((r, c))
+                    isWater[r][c] = 0
+        while queue:
+            r, c = queue.popleft()
+            val = isWater[r][c]
+            for dr, dc in directions:
+                nr = r + dr
+                nc = c + dc
+                if 0 <= nr < ROW and 0 <= nc < COL:
+                    if (nr, nc) not in visited:
+                        queue.append((nr, nc))
+                        visited.add((nr, nc))
+                        isWater[nr][nc] = val + 1
+
+        return isWater
+
+    def countServers(self, grid: List[List[int]]) -> int:
+        row_table = defaultdict(list)
+        col_table = defaultdict(list)
+        R = len(grid)
+        C = len(grid[0])
+        for r in range(R):
+            for c in range(C):
+                if grid[r][c] == 1:
+                    row_table[r].append(c)
+                    col_table[c].append(r)
+        ans = set()
+        for k, v in row_table.items():
+            if len(v) > 1:
+                ans.update((k, c) for c in v)
+        for k, v in col_table.items():
+            if len(v) > 1:
+                ans.update(((c, k) for c in v))
+        return len(ans)
 
 
 def test_solution():
