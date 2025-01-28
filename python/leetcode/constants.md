@@ -5,5 +5,7 @@ memo = [[0] * COL for _ in range(ROW)]
 
 alpha = "abcdefghijklmnopqrstuvwxyz"
 
+0 <= nr < ROW and 0 <= nc < COL
+
 def is_valid(nr, nc, ROW, COL):
     return 0 <= nr < ROW and 0 <= nc < COL

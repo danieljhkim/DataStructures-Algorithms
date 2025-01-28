@@ -276,6 +276,175 @@ class Solution:
                     max_side = max(max_side, dp(r, c))
         return max_side * max_side
 
+    def checkIfPrerequisite(
+        self, numCourses: int, prerequisites: List[List[int]], queries: List[List[int]]
+    ) -> List[bool]:
+        adj = defaultdict(list)
+        ans = []
+        for s, e in prerequisites:
+            adj[e].append(s)
+
+        memo = {}
+
+        def dfs(course, preq, visited):
+            if (course, preq) in memo:
+                return memo[(course, preq)]
+            res = False
+            for nei in adj[course]:
+                if nei in visited:
+                    continue
+                visited.add(nei)
+                if nei == preq:
+                    res = True
+                    break
+                else:
+                    out = dfs(nei, preq, visited)
+                    if out:
+                        res = True
+                        break
+            memo[(course, preq)] = res
+            return res
+
+        for s, e in queries:
+            res = dfs(e, s, set([e]))
+            ans.append(res)
+        return ans
+
+    # floyd warshall
+    def checkIfPrerequisite(
+        self, numCourses: int, prerequisites: List[List[int]], queries: List[List[int]]
+    ) -> List[bool]:
+        table = defaultdict(bool)
+
+        for p, t in prerequisites:
+            table[(p, t)] = True
+
+        for btw in range(numCourses):
+            for src in range(numCourses):
+                for target in range(numCourses):
+                    if not table[(src, target)]:
+                        if table[(src, btw)] and table[(btw, target)]:
+                            table[(src, target)] = True
+
+        answer = []
+        for p, t in queries:
+            answer.append(table[(p, t)])
+
+        return answer
+
+    def findMaxFish(self, grid: List[List[int]]) -> int:
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        ROW = len(grid)
+        COL = len(grid[0])
+
+        def dfs(r, c):
+            fishes = grid[r][c]
+            grid[r][c] = 0
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < ROW and 0 <= nc < COL:
+                    if grid[nr][nc] > 0:
+                        fishes += dfs(nr, nc)
+            return fishes
+
+        ans = 0
+        for r in range(ROW):
+            for c in range(COL):
+                if grid[r][c] > 0:
+                    ans = max(dfs(r, c), ans)
+        return ans
+
+    def numTrees(self, n: int) -> int:
+        memo = {}
+
+        def dp(start, end):
+            if start >= end:
+                return 1
+            if (start, end) in memo:
+                return memo[(start, end)]
+            total = 0
+            for i in range(start, end + 1):
+                left = dp(start, i - 1)
+                right = dp(i + 1, end)
+                total += left * right
+            memo[(start, end)] = total
+            return total
+
+        return dp(1, n)
+
+    def isInterleave(self, s1: str, s2: str, s3: str) -> bool:
+        N1 = len(s1)
+        N2 = len(s2)
+        N3 = len(s3)
+        if N1 + N2 != N3:
+            return False
+        memo = {}
+
+        def dp(i1, i2, i3):
+            if i3 == N3:
+                return True
+            if (i1, i2, i3) in memo:
+                return memo[(i1, i2, i3)]
+            res = False
+            if i1 < N1:
+                if s1[i1] == s3[i3]:
+                    res = dp(i1 + 1, i2, i3 + 1)
+            if i2 < N2:
+                if s2[i2] == s3[i3]:
+                    res = res or dp(i1, i2 + 1, i3 + 1)
+            memo[(i1, i2, i3)] = res
+            return res
+
+        return dp(0, 0, 0)
+
+    def maxMoves(self, grid: List[List[int]]) -> int:
+        directions = [(0, 1), (1, 1), (-1, 1)]
+        ROW = len(grid)
+        COL = len(grid[0])
+        memo = {}
+
+        def dp(r, c):
+            if (r, c) in memo:
+                return memo[(r, c)]
+            cur = grid[r][c]
+            res = 0
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < ROW and 0 <= nc < COL:
+                    nval = grid[nr][nc]
+                    if nval > cur:
+                        res = max(res, dp(nr, nc))
+            memo[(r, c)] = res + 1
+            return res + 1
+
+        res = 0
+        for r in range(ROW):
+            res = max(dp(r, 0), res)
+
+        return res - 1
+
+    def minSteps(self, n: int) -> int:
+        if n <= 1:
+            return 0
+        memo = {}
+
+        def dp(count, cur):
+            if count == n:
+                return 0
+            if count > n:
+                return inf
+            if (count, cur) in memo:
+                return memo[(count, cur)]
+            res = dp(count + cur, cur) + 1
+            if count * 2 <= n:
+                res = min(dp(count * 2, count) + 2, res)
+            memo[(count, cur)] = res
+            return res
+
+        return dp(1, 1) + 1
+
 
 def test_solution():
     s = Solution()
