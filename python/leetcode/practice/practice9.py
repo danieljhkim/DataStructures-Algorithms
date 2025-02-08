@@ -998,6 +998,784 @@ class Solution:
                 heapq.heappush(heap, t)
         return ans
 
+    def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        """
+        1 -> 2 -> none
+        none <- 1 <- 2
+        """
+        prev = None
+        cur = head
+        while cur:
+            nxt = cur.next
+            cur.next = prev
+            prev = cur
+            cur = nxt
+        return prev
+
+    def buttonWithLongestTime(self, events: List[List[int]]) -> int:
+        table = defaultdict(int)
+        time = events[0][1]
+        table[time] = events[0][0]
+        for event in events[1:]:
+            dur = event[1] - time
+            idx = event[0]
+            if dur not in table or table[dur] > idx:
+                table[dur] = idx
+            time = event[1]
+        top = max(table.keys())
+        return table[top]
+
+    def check(self, nums: List[int]) -> bool:
+        flip = False
+        prev = nums[0]
+        for n in nums[1:]:
+            if n < prev:
+                if flip:
+                    return False
+                flip = True
+            prev = n
+        if flip and nums[-1] > nums[0]:
+            return False
+        return True
+
+    def wordPatternMatch(self, pattern: str, s: str) -> bool:
+        N, P = len(s), len(pattern)
+        ans = False
+
+        def backtrack(idx, pid, table, wset):
+            nonlocal ans
+            if idx == N and pid == P and len(table) == P:
+                ans = True
+                return
+            if ans or idx == N or pid == P:
+                return
+
+            p = pattern[pid]
+            for i in range(idx + 1, N + 1):
+                word = s[idx:i]
+                if word in table:
+                    if p == table[word]:
+                        backtrack(i, pid + 1, table, wset)
+                else:
+                    if p in wset:
+                        continue
+                    table[word] = p
+                    wset.add(p)
+                    backtrack(i, pid + 1, table, wset)
+                    table.pop(word)
+                    wset.remove(p)
+
+        backtrack(0, 0, {}, set())
+        return ans
+
+    def pacificAtlantic(self, heights: List[List[int]]) -> List[List[int]]:
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        ROW = len(heights)
+        COL = len(heights[0])
+        atlantic = set()
+        pacific = set()
+
+        def dfs(r, c, visited):
+            visited.add((nr, nc))
+            cur = heights[r][c]
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < ROW and 0 <= nc < COL:
+                    if heights[nr][nc] >= cur and (nr, nc) not in visited:
+                        visited.add((nr, nc))
+                        dfs(nr, nc, visited)
+
+        for r in range(ROW):
+            dfs(r, COL - 1, atlantic)
+            dfs(r, 0, pacific)
+
+        for c in range(COL):
+            dfs(ROW - 1, c, atlantic)
+            dfs(0, c, pacific)
+
+        return list(atlantic.intersection(pacific))
+
+    def sumRootToLeaf(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+        self.ans = 0
+
+        def dfs(cur, arr):
+            arr.append(str(cur.val))
+            if not cur.left and not cur.right:
+                num = "".join(arr)
+                self.ans += int(num, 2)
+                arr.pop()
+                return
+
+            if cur.left:
+                dfs(cur.left, arr)
+            if cur.right:
+                dfs(cur.right, arr)
+            arr.pop()
+
+        dfs(root, [])
+        return self.ans
+
+    def generateSentences(self, synonyms: List[List[str]], text: str) -> List[str]:
+        ans = []
+        table = defaultdict(set)
+        texts = text.split(" ")
+        N = len(texts)
+
+        def build_index(table):
+            for s in synonyms:
+                wset = set(s)
+                for w in s:
+                    for ww in table[w]:
+                        wset.update(table[ww])
+                        table[ww] = wset
+                    wset.update(table[w])
+                    table[w] = wset
+
+        build_index(table)
+
+        def backtrack(idx, arr):
+            if idx == N:
+                ans.append(" ".join(arr))
+                return
+            cur = texts[idx]
+            if cur in table:
+                for nw in table[cur]:
+                    arr.append(nw)
+                    backtrack(idx + 1, arr)
+                    arr.pop()
+            else:
+                arr.append(cur)
+                backtrack(idx + 1, arr)
+                arr.pop()
+
+        backtrack(0, [])
+        ans.sort()
+        return ans
+
+    def longestMonotonicSubarray(self, nums: List[int]) -> int:
+        best, cur = 1, 1
+        trend = 0
+        N = len(nums)
+        for i in range(1, N):
+            if nums[i] > nums[i - 1]:
+                if trend == 1:
+                    cur += 1
+                else:
+                    cur = 2
+                    trend = 1
+            elif nums[i] < nums[i - 1]:
+                if trend == -1:
+                    cur += 1
+                else:
+                    cur = 2
+                    trend = -1
+            else:
+                cur = 1
+                trend = 0
+            best = max(best, cur)
+        return best
+
+    def threeSumSmaller(self, nums: List[int], target: int) -> int:
+        nums.sort()
+        N = len(nums)
+        ans = 0
+        for i in range(N - 2):
+            n1 = nums[i]
+            left = i + 1
+            right = N - 1
+            while left < right:
+                if n1 + nums[left] + nums[right] < target:
+                    ans += right - left
+                    left += 1
+                else:
+                    right -= 1
+        return ans
+
+    def maxAscendingSum(self, nums: List[int]) -> int:
+        ans = total = nums[0]
+        for i in range(1, len(nums)):
+            if nums[i - 1] < nums[i]:
+                total += nums[i]
+                ans = max(total, ans)
+            else:
+                total = nums[i]
+        return ans
+
+    def minNumberOfFrogs(self, croakOfFrogs: str) -> int:
+        table = defaultdict(list)
+        mapper = {"r": "c", "o": "r", "a": "o", "k": "a"}
+        cnt = 0
+        outs = 0
+        for i, n in enumerate(croakOfFrogs):
+            if n == "c":
+                table[n].append(i)
+                outs += 1
+                cnt = max(cnt, outs)
+            else:
+                if len(table[mapper[n]]) == 0:
+                    return -1
+                table[mapper[n]].pop()
+                if n != "k":
+                    table[n].append(i)
+            if n == "k":
+                if outs == 0:
+                    return -1
+                outs -= 1
+
+        for v in table.values():
+            if len(v) > 0:
+                return -1
+        return cnt
+
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        nums.sort()
+        N = len(nums)
+        idx = 0
+        res = []
+        while idx < N - 3:
+            if idx > 0 and nums[idx] == nums[idx - 1]:
+                idx += 1
+                continue
+            n0 = nums[idx]
+            i = idx + 1
+            while i < N - 2:
+                if i > idx + 1 and nums[i] == nums[i - 1]:
+                    i += 1
+                    continue
+                n1 = nums[i]
+                left = i + 1
+                right = N - 1
+                while left < right:
+                    total = n0 + n1 + nums[left] + nums[right]
+                    if total < target:
+                        left += 1
+                    elif total > target:
+                        right -= 1
+                    else:
+                        res.append([n0, n1, nums[left], nums[right]])
+                        left_val = nums[left]
+                        right_val = nums[right]
+                        while left < right and nums[left] == left_val:
+                            left += 1
+                        while left < right and nums[right] == right_val:
+                            right -= 1
+                i += 1
+            idx += 1
+        return res
+
+    def areAlmostEqual(self, s1: str, s2: str) -> bool:
+        if s2 == s1:
+            return True
+
+        N1, N2 = len(s1), len(s2)
+
+        if N1 != N2:
+            return False
+
+        p1 = p2 = -1
+        for i in range(N1):
+            if s1[i] != s2[i]:
+                if p1 == -1:
+                    p1 = i
+                elif p2 == -1:
+                    p2 = i
+                    if s1[p1] != s2[p2] or s1[p2] != s2[p1]:
+                        return False
+                else:
+                    return False
+        if p2 == -1:
+            return False
+        return True
+
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        """ "
+        row/col -> 1-9
+        3 x 3 -> 1-9
+        """
+        rtable = defaultdict(set)
+        ctable = defaultdict(set)
+        sqtable = defaultdict(set)
+
+        for r in range(9):
+            for c in range(9):
+                val = board[r][c]
+                if val != ".":
+                    sq = (r // 3, c // 3)
+                    if val in rtable[r] or val in ctable[c] or val in sqtable[sq]:
+                        return False
+                    rtable[r].add(val)
+                    ctable[c].add(val)
+                    sqtable[sq].add(val)
+        return True
+
+    def subdomainVisits(self, cpdomains: List[str]) -> List[str]:
+        """ "
+        "# a.b.com"
+        """
+        table = defaultdict(int)
+        res = []
+
+        for d in cpdomains:
+            splits = d.split(" ")
+            cnt = int(splits[0])
+            domains = splits[1].split(".")
+            for i in range(len(domains)):
+                key = ".".join(domains[i:])
+                table[key] += cnt
+
+        for k, v in table.items():
+            res.append(f"{v} {k}")
+
+        return res
+
+    def alertNames(self, keyName: List[str], keyTime: List[str]) -> List[str]:
+        table = defaultdict(list)
+        N = len(keyName)
+
+        for i in range(N):
+            times = keyTime[i].split(":")
+            hour = int(times[0]) * 60
+            minute = int(times[1])
+            time = hour + minute
+            table[keyName[i]].append(time)
+
+        res = []
+        for k, times in table.items():
+            right = 0
+            N = len(times)
+            for left in range(N):
+                cur = times[left]
+                while right < N and times[right] - cur <= 60:
+                    right += 1
+                if right - left >= 3:
+                    res.append(k)
+                    break
+        res.sort()
+        return res
+
+    def checkValid(self, matrix: List[List[int]]) -> bool:
+        rtable = defaultdict(set)
+        ctable = defaultdict(set)
+        N = len(matrix)
+        for r in range(N):
+            for c in range(N):
+                val = matrix[r][c]
+                if val in rtable[r] or val in ctable[c]:
+                    return False
+                rtable[r].add(val)
+                ctable[c].add(val)
+
+        for val in rtable.values():
+            if len(val) != N:
+                return False
+        for val in ctable.values():
+            if len(val) != N:
+                return False
+        return True
+
+    def tupleSameProduct(self, nums: List[int]) -> int:
+        products = defaultdict(int)
+        N = len(nums)
+        for i in range(N - 1):
+            for j in range(i + 1, N):
+                prod = nums[i] * nums[j]
+                products[prod] += 1
+        ans = 0
+        for n in products.values():
+            cnt = (n - 1) * n // 2  # wtf?
+            ans += 8 * cnt
+        return ans
+
+    def nextGreaterElements(self, nums: List[int]) -> List[int]:
+        N = len(nums)
+        stack = []
+        ans = [-1] * N
+        i = N - 1
+        for i in range(N * 2 - 1):
+            cur = nums[i % N]
+            while stack and nums[stack[-1]] < cur:
+                out = stack.pop()
+                ans[out] = cur
+            stack.append(i % N)
+        return ans
+
+    def longestConsecutive(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+
+        def dfs(node, prev):
+            if not node:
+                return 0
+            diff = node.val - prev
+            left = dfs(node.left, node.val)
+            right = dfs(node.right, node.val)
+            best = 0
+            if diff == 1:
+                #  inc
+                if node.left:
+                    if node.left.val - node.val == 1:
+                        best = left + 1
+                if node.right:
+                    if node.right.val - node.val == 1:
+                        best = max(right + 1, best)
+            elif diff == -1:
+                if node.left:
+                    if node.left.val - node.val == -1:
+                        best = left + 1
+                if node.right:
+                    if node.right.val - node.val == -1:
+                        best = max(right + 1, best)
+
+            best = max(best, left, right)
+            return best
+
+        return dfs(root, root.val - 5)
+
+    def findOrder(self, n: int, prerequisites: List[List[int]]) -> List[int]:
+        """ "
+        [preq, course]
+        """
+        indegrees = [0] * n
+        adj = defaultdict(list)
+        for p, c in prerequisites:
+            adj[c].append(p)
+            indegrees[p] += 1
+
+        queue = deque()
+        for i, v in enumerate(indegrees):
+            if v == 0:
+                queue.append(i)
+
+        topo = []
+        while queue:
+            cur = queue.popleft()
+            topo.append(cur)
+            for nei in adj[cur]:
+                indegrees[nei] -= 1
+                if indegrees[nei] == 0:
+                    queue.append(nei)
+        if len(topo) == n:
+            return topo
+        return []
+
+    def increasingTriplet(self, nums: List[int]) -> bool:
+        N = len(nums)
+        if N < 3:
+            return False
+        first = inf
+        second = inf
+        for n in nums:
+            if first >= n:
+                first = n
+            elif second >= n:
+                second = n
+            else:
+                return True
+        return False
+
+    def maxVowels(self, s: str, k: int) -> int:
+        vowels = "aeiou"
+        cnt = 0
+        for i in range(k):
+            if s[i] in vowels:
+                cnt += 1
+        best = cnt
+        left = 0
+        for right in range(k, len(s)):
+            if s[left] in vowels:
+                cnt -= 1
+            if s[right] in vowels:
+                cnt += 1
+            best = max(best, cnt)
+            left += 1
+        return best
+
+    def maxOperations(self, nums: List[int], k: int) -> int:
+        counts = Counter(nums)
+        res = 0
+        for key, v in counts.items():
+            target = k - key
+            if target in counts:
+                if target != key:
+                    out = min(counts[target], v)
+                    res += out
+                    counts[target] = 0
+                else:
+                    res += v // 2
+        return res
+
+    def removeStars(self, s: str) -> str:
+        stack = []
+        for w in s:
+            if w == "*" and stack:
+                stack.pop()
+            else:
+                stack.append(w)
+
+        return "".join(stack)
+
+    def pathSum(self, root: Optional[TreeNode], targetSum: int) -> int:
+        if not root:
+            return 0
+
+        def dfs(cur, arr):
+            val = cur.val
+            res = 0
+            arr.append(0)
+            for i in range(len(arr)):
+                arr[i] += val
+                if arr[i] == targetSum:
+                    res += 1
+            if cur.left:
+                res += dfs(cur.left, arr[:])
+            if cur.right:
+                res += dfs(cur.right, arr[:])
+            return res
+
+        return dfs(root, [])
+
+    def goodNodes(self, root: TreeNode) -> int:
+        if not root:
+            return 0
+
+        def dfs(node, top):
+            val = node.val
+            res = 0
+            if top <= val:
+                res += 1
+            if node.left:
+                res += dfs(node.left, max(val, top))
+            if node.right:
+                res += dfs(node.right, max(val, top))
+            return res
+
+        return dfs(root, root.val)
+
+    def longestZigZag(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+
+        def dfs(node, is_left, cnt):
+            if not node:
+                return 0
+            res = 0
+            if is_left:
+                res = dfs(node.left, True, 1)
+                res = max(dfs(node.right, False, cnt + 1), res)
+            else:
+                res = dfs(node.left, True, cnt + 1)
+                res = max(dfs(node.right, False, 1), res)
+            return max(res, cnt)
+
+        return max(dfs(root.left, True, 1), dfs(root.right, False, 1))
+
+    def queryResults(self, limit: int, queries: List[List[int]]) -> List[int]:
+        btable = {}
+        ctable = defaultdict(set)
+        res = []
+        for b, c in queries:
+            if b in btable:
+                prev = btable[b]
+                del btable[b]
+                ctable[prev].remove(b)
+                if len(ctable[prev]) == 0:
+                    del ctable[prev]
+            btable[b] = c
+            ctable[c].add(b)
+            res.append(len(ctable))
+        return res
+
+    def permute(self, n: int) -> List[List[int]]:
+
+        def is_good(n1, n2):
+            return n2 % 2 != n1 % 2
+
+        ans = []
+
+        def backtrack(arr, nset):
+            if len(arr) == n:
+                ans.append(arr[:])
+            for i in range(1, n + 1):
+                if i not in nset:
+                    if (arr and is_good(i, arr[-1])) or not arr:
+                        arr.append(i)
+                        nset.add(i)
+                        backtrack(arr, nset)
+                        arr.pop()
+                        nset.remove(i)
+
+        backtrack([], set())
+        return ans
+
+    def solveSudoku(self, board: List[List[str]]) -> None:
+        """
+        Do not return anything, modify board in-place instead.
+        """
+        R = len(board)
+        C = len(board[0])
+        rtable = defaultdict(set)
+        ctable = defaultdict(set)
+        stable = defaultdict(set)
+        self.solved = False
+
+        for r in range(R):
+            for c in range(C):
+                val = board[r][c]
+                if val != ".":
+                    rtable[r].add(val)
+                    ctable[c].add(val)
+                    stable[(r // 3, c // 3)].add(val)
+
+        def place_val(val, r, c):
+            board[r][c] = val
+            rtable[r].add(val)
+            ctable[c].add(val)
+            stable[(r // 3, c // 3)].add(val)
+
+        def remove_val(val, r, c):
+            board[r][c] = "."
+            rtable[r].remove(val)
+            ctable[c].remove(val)
+            stable[(r // 3, c // 3)].remove(val)
+
+        def backtrack(rr, cc):
+            if rr == R and cc == 0:
+                self.solved = True
+            if self.solved:
+                return
+
+            if board[rr][cc] == ".":
+                for val in range(1, 10):
+                    val = str(val)
+                    if (
+                        val not in rtable[rr]
+                        and val not in ctable[cc]
+                        and val not in stable[(rr // 3, cc // 3)]
+                    ):
+                        place_val(val, rr, cc)
+                        if cc == C - 1:
+                            backtrack(rr + 1, 0)
+                        else:
+                            backtrack(rr, cc + 1)
+                        if self.solved:
+                            return
+                        remove_val(val, rr, cc)
+            else:
+                if cc == C - 1:
+                    backtrack(rr + 1, 0)
+                else:
+                    backtrack(rr, cc + 1)
+                if self.solved:
+                    return
+
+        backtrack(0, 0)
+
+    def firstMissingPositive(self, nums: List[int]) -> int:
+        N = len(nums)
+        i = 0
+
+        while i < N:
+            val = nums[i]
+            if 0 < val <= N and nums[i] != nums[val - 1]:
+                nums[i], nums[val - 1] = nums[val - 1], nums[i]
+            else:
+                i += 1
+
+        for i, n in enumerate(nums):
+            if n != i + 1:
+                return i + 1
+
+        return N + 1
+
+    def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
+        visited = set([0])
+        N = len(rooms)
+
+        def dfs(i, visited):
+            if len(visited) == N:
+                return True
+            keys = rooms[i]
+            for k in keys:
+                if k not in visited:
+                    visited.add(k)
+                    res = dfs(k, visited)
+                    if res:
+                        return True
+            return False
+
+        return dfs(0, visited)
+
+    def findCircleNum(self, isConnected: List[List[int]]) -> int:
+        N = len(isConnected)
+        parent = {}
+
+        def find(x):
+            if x not in parent:
+                parent[x] = x
+            else:
+                if parent[x] != x:
+                    parent[x] = find(parent[x])
+            return parent[x]
+
+        def union(x, y):
+            rootx = find(x)
+            rooty = find(y)
+            if rootx != rooty:
+                parent[rootx] = parent[rooty]
+
+        for i, group in enumerate(isConnected):
+            root = find(i)
+            for c, v in enumerate(group):
+                if c == i:
+                    continue
+                if v == 1:
+                    union(root, c)
+
+        gset = set()
+        for i in range(N):
+            gset.add(find(i))
+        return len(gset)
+
+    def longestSubarray(self, nums: List[int]) -> int:
+        ans = right = left = prev = 0
+        zero = 0
+        N = len(nums)
+
+        while right < N:
+            if nums[right] == 0:
+                zero += 1
+            while zero > 1:
+                zero += -1 if nums[left] == 0 else 0
+                left += 1
+            if right - left + 1 == N:
+                return N - 1
+            ans = max(ans, right - left)
+            right += 1
+        return ans
+
+    def deleteMiddle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        """ "
+        0 - 1 - 2 - 3 - 4
+            s   f
+                s       f
+        """
+        slow = head
+        fast = head
+        prev = None
+        while fast and fast.next:
+            prev = slow
+            slow = slow.next
+            fast = fast.next.next
+
+        if prev is None:
+            return None
+        prev.next = slow.next
+        slow.next = None
+        return head
+
 
 def test_solution():
     s = Solution()

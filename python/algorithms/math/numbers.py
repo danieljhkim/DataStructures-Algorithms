@@ -121,8 +121,17 @@ def gcd3(a, b):
     return gcd3(b % a, a)
 
 
-# print(gcd(500, 500))
-# print(gcd2(500, 500))
+def lcm(a: int, b: int) -> int:
+    return a // gcd(a, b) * b
+
+
+def find_lcm_of_list(values: list) -> int:
+    if not values:
+        return 1
+    current_lcm = values[0]
+    for val in values[1:]:
+        current_lcm = lcm(current_lcm, val)
+    return current_lcm
 
 
 def smallestNumber(n: int, t: int) -> int:

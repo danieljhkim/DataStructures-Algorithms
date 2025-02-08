@@ -59,6 +59,26 @@ class LinkedList:
             self.tail = cur
         return deleted_count
 
+    def deleteMiddle(self) -> Optional[ListNode]:
+        """
+        0 - 1 - 2 - 3 - 4
+            s   f
+                s       f
+        """
+        slow = self.head
+        fast = self.head
+        prev = None
+        while fast and fast.next:
+            prev = slow
+            slow = slow.next
+            fast = fast.next.next
+
+        if prev is None:
+            return None
+        prev.next = slow.next
+        slow.next = None
+        return self.head
+
     def reverse(self):
         """
         1 -> 2 -> 3 -> None
