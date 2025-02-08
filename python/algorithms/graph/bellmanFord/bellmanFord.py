@@ -5,7 +5,6 @@
     - space: O(V)
 """
 
-import heapq
 from typing import Dict, List
 from math import inf
 
