@@ -1,6 +1,42 @@
 import math
 
 
+# 3447
+def diviable(groups: list, nums):
+    """
+    - for n in groups, find first element in nums where, n // element == 0
+    - i.e. n is divisible by element
+    """
+    memo = {}
+    visited = set()
+    big = max(groups)
+    for idx, element in enumerate(nums):
+        if element in visited:
+            continue
+        visited.add(element)
+        for i in range(0, big + 1, element):
+            if i not in memo:
+                memo[i] = idx
+    ans = []
+    for n in groups:
+        if n in memo:
+            ans.append(memo[n])
+        else:
+            ans.append(-1)
+    return ans
+
+
+def get_divisors(n):
+    """
+    divisors[num] = [list of all divisors of num]
+    """
+    divisors = [[] for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for j in range(i, n + 1, i):
+            divisors[j].append(i)
+    return divisors
+
+
 def count_sysmmetric_nums(LOW, HIGH):
     count = 0
     for size in range(1, len(str(HIGH)) + 1):
@@ -135,6 +171,11 @@ def find_lcm_of_list(values: list) -> int:
 
 
 def smallestNumber(n: int, t: int) -> int:
+    """ ""
+    # You are given two integers n and t.
+    # Return the smallest number greater than or equal to n
+    # such that the product of its digits is divisible by t.
+    """
     prod = 1
     temp = n
     while temp > 0:
@@ -145,9 +186,3 @@ def smallestNumber(n: int, t: int) -> int:
         return n
 
     return n + t - diff
-
-
-# You are given two integers n and t.
-# Return the smallest number greater than or equal to n
-# such that the product of its digits is divisible by t.
-print(smallestNumber(14, 3))

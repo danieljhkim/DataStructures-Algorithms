@@ -1873,6 +1873,24 @@ class Solution:
             res.append(sentence)
         return res
 
+    def assignElements(self, groups: List[int], elements: List[int]) -> List[int]:
+        etable = {}
+        for i, n in enumerate(elements):
+            if n not in etable:
+                etable[n] = i
+
+        top = max(groups) + 1
+        divisions = [-1] * top
+        for n, i in etable.values():
+            for d in range(n, top, n):
+                if divisions[d] == -1:
+                    divisions[d] = i
+
+        res = []
+        for n in groups:
+            res.append(divisions[n])
+        return res
+
 
 def test_solution():
     s = Solution()

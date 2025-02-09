@@ -3,7 +3,7 @@ import random
 import math
 import bisect
 from typing import *
-from math import inf, factorial
+from math import inf, factorial, gcd, lcm
 from functools import lru_cache, cache
 from heapq import heapify, heappush, heappop
 from itertools import accumulate, permutations, combinations

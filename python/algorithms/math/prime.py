@@ -29,3 +29,17 @@ class Primes:
                 return False
             i += 6
         return True
+
+
+def get_all_primes(n):  # sieve_of_eratosthenes
+    primes = [True] * (n + 1)
+    primes[0] = primes[1] = False  # 0 and 1 are not prime
+
+    p = 2
+    while p * p <= n:
+        if primes[p]:
+            for i in range(p * p, n + 1, p):
+                primes[i] = False
+        p += 1
+
+    return [i for i, is_prime in enumerate(primes) if is_prime]

@@ -2,6 +2,8 @@ from typing import Optional, List
 
 matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 
+############## operations ##############
+
 
 def reverse_rows(matrix):
     h = len(matrix)
@@ -41,7 +43,7 @@ def transpose(matrix):
     print(matrix)
 
 
-####### rotates #######
+############## rotates ##############
 
 """starting
     1 2 3
@@ -50,7 +52,7 @@ def transpose(matrix):
 """
 
 
-def rotate_90_right(matrix) -> None:
+def rotate_90_right(matrix):
     N = len(matrix)
 
     """ transpose
@@ -71,7 +73,7 @@ def rotate_90_right(matrix) -> None:
         row.reverse()
 
 
-def rotate_90_left(matrix) -> None:
+def rotate_90_left(matrix):
     transpose(matrix)
     reverse_col(matrix)
 
@@ -79,6 +81,39 @@ def rotate_90_left(matrix) -> None:
 def rotate_180_right(matrix):
     reverse_rows(matrix)
     reverse_col(matrix)
+
+
+############## traversal ##############
+
+
+def diagonal_traversal(matrix):
+    """
+    bottom-left to top-right, left to right, diagnonally
+    7, 4, 8, 1, 5, 9, 2, 6, 3
+
+    [1, 2, 3]
+    [4, 5, 6]
+    [7, 8, 9]
+    """
+    R = len(matrix)
+    C = len(matrix[0])
+    res = []
+
+    for start in range(R - 1, -1, -1):
+        r, c = start, 0
+        while r < R and c < C:
+            res.append(matrix[r][c])
+            r += 1
+            c += 1
+
+    for start in range(1, C):
+        r, c = 0, start
+        while r < R and c < C:
+            res.append(matrix[r][c])
+            r += 1
+            c += 1
+
+    return res
 
 
 def diagonal_weaving_traverse(matrix: List[List[int]]) -> List[int]:
@@ -97,7 +132,6 @@ def diagonal_weaving_traverse(matrix: List[List[int]]) -> List[int]:
 
     for d in range(ROW + COL - 1):
         intermediate.clear()
-        # Determine the starting point of the diagonal
         r = 0 if d < COL else d - COL + 1
         c = d if d < COL else COL - 1
 
