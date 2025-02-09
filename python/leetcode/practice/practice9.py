@@ -4,6 +4,7 @@ import math
 import bisect
 from typing import *
 from math import inf, factorial
+from heapq import heapify, heappush, heappop
 from functools import lru_cache, cache
 from itertools import accumulate, permutations, combinations
 from collections import Counter, deque, defaultdict, OrderedDict
@@ -1775,6 +1776,102 @@ class Solution:
         prev.next = slow.next
         slow.next = None
         return head
+
+    def pairSum(self, head: Optional[ListNode]) -> int:
+        table = defaultdict(int)
+        i = ans = 0
+        slow = head
+        fast = head
+        while fast and fast.next:
+            table[i] = slow.val
+            i += 1
+            slow = slow.next
+            fast = fast.next.next
+
+        del table[i]
+        i -= 1
+        while slow:
+            table[i] += slow.val
+            ans = max(table[i], ans)
+            slow = slow.next
+            i -= 1
+        return ans
+
+    def countBadPairs(self, nums: List[int]) -> int:
+        """ "
+        bad -> j - i != nj - ni
+
+        good -> j - nj == i - ni
+        """
+        table = defaultdict(int)
+        table[-nums[0]] += 1
+        total = bads = 0
+        for j in range(1, len(nums)):
+            need = j - nums[j]
+            if need in table:
+                bads += table[need]
+            table[need] += 1
+            total += j
+        return total - bads
+
+    def longestSubarray(self, nums: List[int], limit: int) -> int:
+        min_heap = []
+        max_heap = []
+        ans = 0
+        left = -1
+        for right, n in enumerate(nums):
+            heappush(min_heap, (n, right))
+            heappush(max_heap, (-n, right))
+            while -max_heap[0][0] - min_heap[0][0] > limit:
+                if max_heap[0][1] > min_heap[0][1]:
+                    out, idx = heappop(min_heap)
+                    left = max(idx, left)
+                else:
+                    out, idx = heappop(max_heap)
+                    left = max(idx, left)
+            ans = max(ans, right - left)
+        return ans
+
+    def fullJustify(self, words: List[str], maxWidth: int) -> List[str]:
+        N = len(words)
+
+        def create_line(idx):
+            line = []
+            cnt = -1
+            while idx < N and cnt + len(words[idx]) + 1 <= maxWidth:
+                cnt += len(words[idx]) + 1
+                line.append(words[idx])
+                idx += 1
+            return line
+
+        def space_it(idx, line):
+            wlen = -1
+            for w in line:
+                wlen += len(w) + 1
+
+            extra_len = maxWidth - wlen
+            if idx == N or len(line) == 1:
+                return " ".join(line) + " " * extra_len
+
+            W = len(line) - 1
+            per_w = extra_len // W
+            extra_w = extra_len % W
+
+            for i in range(extra_w):
+                line[i] += " "
+            for i in range(W):
+                line[i] += " " * per_w
+
+            return " ".join(line)
+
+        res = []
+        idx = 0
+        while idx < N:
+            line = create_line(idx)
+            idx += len(line)
+            sentence = space_it(idx, line)
+            res.append(sentence)
+        return res
 
 
 def test_solution():

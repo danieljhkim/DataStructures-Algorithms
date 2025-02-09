@@ -14,11 +14,11 @@ def topo_sort(graph):
         for neighbor in graph[node]:
             in_degree[neighbor] += 1
 
-    queue = [node for node in in_degree if in_degree[node] == 0]
+    queue = deque([node for node in in_degree if in_degree[node] == 0])
     topo_order = []
 
     while queue:
-        node = queue.pop(0)
+        node = queue.popleft()
         topo_order.append(node)
         for neighbor in graph[node]:
             in_degree[neighbor] -= 1

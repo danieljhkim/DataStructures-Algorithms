@@ -5,6 +5,7 @@ import bisect
 from typing import *
 from math import inf, factorial
 from functools import lru_cache, cache
+from heapq import heapify, heappush, heappop
 from itertools import accumulate, permutations, combinations
 from collections import Counter, deque, defaultdict, OrderedDict
 from sortedcontainers import SortedSet, SortedList, SortedDict

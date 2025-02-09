@@ -1,9 +1,4 @@
-import heapq
 from typing import Optional, List
-import random
-from collections import Counter, deque, defaultdict, OrderedDict
-import math
-
 
 matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
 
@@ -44,6 +39,46 @@ def transpose(matrix):
         for col in range(row, n):
             matrix[row][col], matrix[col][row] = matrix[col][row], matrix[row][col]
     print(matrix)
+
+
+####### rotates #######
+
+"""starting
+    1 2 3
+    4 5 6
+    7 8 9
+"""
+
+
+def rotate_90_right(matrix) -> None:
+    N = len(matrix)
+
+    """ transpose
+    1 4 7
+    2 5 8
+    3 6 9
+    """
+    for r in range(N):
+        for c in range(r, N):
+            matrix[r][c], matrix[c][r] = matrix[c][r], matrix[r][c]
+
+    """ reverse reach row
+    7 4 1
+    8 5 2
+    9 6 3
+    """
+    for row in matrix:
+        row.reverse()
+
+
+def rotate_90_left(matrix) -> None:
+    transpose(matrix)
+    reverse_col(matrix)
+
+
+def rotate_180_right(matrix):
+    reverse_rows(matrix)
+    reverse_col(matrix)
 
 
 def diagonal_weaving_traverse(matrix: List[List[int]]) -> List[int]:

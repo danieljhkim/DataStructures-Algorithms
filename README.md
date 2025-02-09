@@ -38,6 +38,7 @@ This repository contains implementations of various data structures and algorith
   - [Kadane](./python/algorithms/array/kadane/)
   - [Sliding Window](./python/algorithms/array/slidingWindow/)
   - [Prefix Sum](./python/algorithms/array/prefixSum/)
+  - [Matrix](./python/algorithms/matrix/)
 
 #### Data Structures
 - [Linked List](./python/dataStructures/linkedList/)
