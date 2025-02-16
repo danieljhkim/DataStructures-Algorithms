@@ -9,6 +9,4 @@ alpha = "abcdefghijklmnopqrstuvwxyz"
 
 def is_valid(nr, nc, ROW, COL):
     return 0 <= nr < ROW and 0 <= nc < COL
-
-# Transpose the matrix to access columns
 for col in zip(*matrix): 

@@ -1891,6 +1891,559 @@ class Solution:
             res.append(divisions[n])
         return res
 
+    def longestCommonPrefix(self, arr1: List[int], arr2: List[int]) -> int:
+        nset1 = set(arr1)
+        nset2 = set(arr2)
+        res = 0
+        trie = {}
+
+        def build(num):
+            snum = str(num)
+            cur = trie
+            for i, n in enumerate(snum):
+                if n not in cur:
+                    cur[n] = {}
+                cur = cur[n]
+
+        def prefix_len(num):
+            snum = str(num)
+            cnt = 0
+            cur = trie
+            for n in snum:
+                if n not in cur:
+                    return cnt
+                cur = cur[n]
+                cnt += 1
+            return cnt
+
+        for n in nset1:
+            build(n)
+
+        for n in nset2:
+            res = max(prefix_len(n), res)
+
+        return res
+
+    def minimumOperationsToWriteY(self, grid: List[List[int]]) -> int:
+        """ "
+        val - 0,1,2
+        """
+        N = len(grid)
+        yvals = [0] * 3
+        othervals = [0] * 3
+        yset = set()
+
+        mid = N // 2
+
+        # top-left to middle
+        for i in range(mid + 1):
+            yset.add((i, i))
+        # top-right to mid
+        for i in range(mid + 1):
+            r = i
+            c = N - i - 1
+            yset.add((r, c))
+        # down mid
+        for i in range(mid + 1, N):
+            yset.add((i, mid))
+
+        for r in range(N):
+            for c in range(N):
+                val = grid[r][c]
+                if (r, c) in yset:
+                    yvals[val] += 1
+                else:
+                    othervals[val] += 1
+
+        y_total = sum(yvals)
+        res = N * N
+        """"
+        y 5 2 3
+        x 9 5 2
+        
+        0 -> 9 + min(5+2, 2+3)
+        """
+        for i in range(3):
+            diff = (
+                othervals[i]
+                + y_total
+                - yvals[i]
+                + min(othervals[(i + 1) % 3], othervals[(i + 2 % 3)])
+            )
+            res = min(diff, res)
+
+        return res
+
+    def maxProfit(self, prices: List[int]) -> int:
+        low = inf
+        profit = 0
+        for n in prices:
+            if n < low:
+                low = n
+            elif n > low:
+                profit = max(n - low, profit)
+        return profit
+
+    def maxSubArray(self, nums: List[int]) -> int:
+        best = nums[0]
+        total = nums[0]
+        for n in nums[1:]:
+            if n + total < n:
+                total = n
+            else:
+                total += n
+            best = max(total, best)
+        return best
+
+    def maxProfit(self, prices: List[int]) -> int:
+        N = len(prices)
+
+        @cache
+        def dp(i, has):
+            if i == N:
+                return 0
+            cur = prices[i]
+            res = 0
+            if has:
+                res = max(dp(i + 1, False) + cur, dp(i + 1, True))
+            else:
+                res = max(res, dp(i + 1, True) - cur, dp(i + 1, False))
+            return res
+
+        return dp(0, False)
+
+    def maxProfit(self, prices: List[int]) -> int:
+        N = len(prices)
+
+        @cache
+        def dp(i, cooldown, has):
+            if i == N:
+                return 0
+            res = 0
+            cur = prices[i]
+            if cooldown == 1:
+                res = max(dp(i + 1, 0, False), res)
+            else:
+                if has:
+                    res = max(dp(i + 1, 1, False) + cur, dp(i + 1, 0, True), res)
+                else:
+                    res = max(dp(i + 1, 0, True) - cur, dp(i + 1, 0, False), res)
+            return res
+
+        return dp(0, 0, False)
+
+    def removeBoxes(self, boxes: List[int]) -> int:
+        N = len(boxes)
+
+        @cache
+        def dp(color, cnt, idx):
+            if idx == N:
+                return 0
+            cur = boxes[idx]
+            res = 0
+            if color != cur:
+                nidx = idx
+                while nidx < N and boxes[nidx] == cur:
+                    nidx += 1
+                if nidx == N:
+                    return cnt**2 + (nidx - idx) ** 2
+                res = max(res, dp(color, cnt, nidx) + (nidx - idx) ** 2)  # keep
+                res = max(res, dp(cur, (nidx - idx), nidx) + cnt**2)  # new
+            else:
+                if idx == N - 1:
+                    return (cnt + 1) ** 2
+                res = max(dp(color, cnt + 1, idx + 1), res)
+            return res
+
+        return dp(boxes[0], 0, 0)
+
+    def simplifyPath(self, path: str) -> str:
+        paths = path.split("/")
+        stack = []
+        for p in paths:
+            print(p)
+            if p == "..":
+                if stack:
+                    stack.pop()
+            elif p == "." or "":
+                continue
+            else:
+                stack.append(p)
+        return "/" + "/".join(stack)
+
+    def minMeetingRooms(self, intervals: List[List[int]]) -> int:
+        """ "
+        s       e
+            s       e
+        """
+        intervals.sort()
+        heap = []
+        ans = 1
+        for s, e in intervals:
+            while heap and heap[0] <= s:
+                heapq.heappop(heap)
+            heapq.heappush(heap, e)
+            ans = max(len(heap), ans)
+        return ans
+
+    def eraseOverlapIntervals(self, intervals: List[List[int]]) -> int:
+        intervals.sort()
+        endtime = intervals[0][1]
+        res = 0
+        for s, e in intervals[1:]:
+            if s < endtime:
+                res += 1
+                endtime = min(e, endtime)
+            else:
+                endtime = e
+        return res
+
+    def largestRectangleArea(self, heights: List[int]) -> int:
+        stack = []
+        left = ans = 0
+        heights.append(0)
+        for i, n in enumerate(heights):
+            s = i
+            while stack and heights[stack[-1][1]] > n:
+                idx, h = stack.pop()
+                width = i - idx
+                ans = max(width * heights[h], ans)
+                s = idx  # how far left is it bigger
+            stack.append((s, i))
+        return ans
+
+    def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+        dummy = ListNode(0)
+        dummy.next = head
+        group_prev = dummy
+
+        while True:
+            kth = group_prev
+            for i in range(k):
+                kth = kth.next
+                if not kth:
+                    return dummy.next
+            group_next = kth.next
+
+            # Reverse the group
+            prev = group_next
+            curr = group_prev.next
+            while curr != group_next:
+                tmp = curr.next
+                curr.next = prev
+                prev = curr
+                curr = tmp
+
+            tmp = group_prev.next
+            group_prev.next = kth
+            group_prev = tmp
+
+    def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
+
+        def reverse(start, end, new_head):
+            cur = start
+            prev = end
+            while cur != end:
+                nxt = cur.next
+                cur.next = prev
+                prev = cur
+                cur = nxt
+            prev.next = new_head
+
+        cur = head
+        start = None
+        prev = None
+        while cur:
+            t = k
+            ccur = cur
+            while ccur and t > 0:
+                prev = ccur
+                ccur = ccur.next
+                t -= 1
+            if t > 0:
+                return prev
+            reverse(cur, ccur.next, start)
+            start = cur
+            prev = ccur
+            cur = ccur.next
+        return prev
+
+    def clearDigits(self, s: str) -> str:
+        stack = []
+        for w in s:
+            if w.isdigit():
+                if stack:
+                    stack.pop()
+            else:
+                stack.append(w)
+        return "".join(stack)
+
+    def alertNames(self, keyName: List[str], keyTime: List[str]) -> List[str]:
+        table = defaultdict(list)
+        N = len(keyName)
+
+        for i in range(N):
+            time = keyTime[i].split(":")
+            minutes = int(time[0]) * 60 + int(time[1])
+            table[keyName[i]].append(minutes)
+
+        res = []
+        for k, v in table.items():
+            v.sort()
+            left, n = 0, len(v)
+            if n < 3:
+                continue
+            right = 2
+            while right < n:
+                if v[left] + 60 >= v[right]:
+                    res.append(k)
+                    break
+                right += 1
+                left += 1
+
+        res.sort()
+        return res
+
+    def subdomainVisits(self, cpdomains: List[str]) -> List[str]:
+        # cpdomains = ["9001 discuss.leetcode.com"]
+        # output = ["9001 leetcode.com","9001 discuss.leetcode.com","9001 com"]
+        table = defaultdict(int)
+
+        for d in cpdomains:
+            splits = d.split(" ")
+            cnt = int(splits[0])
+            domain = splits[1].split(".")
+            n = len(domain) - 1
+            for i in range(domain):
+                name = ".".join(domain[n - i :])
+                table[name] += cnt
+
+        res = []
+        for k, v in table.items():
+            res.append(f"{v} {k}")
+        return res
+
+    def maximalSquare(self, matrix: List[List[str]]) -> int:
+        R = len(matrix)
+        C = len(matrix[0])
+        directions = [(1, 0), [0, 1]]
+
+        @cache
+        def dp(r, c):
+            if r == R or c == C:
+                return 0
+            if matrix[r][c] == "0":
+                return 0
+            res = inf
+            for dr, dc in directions:
+                nr = r + dr
+                nc = c + dc
+                res = min(res, dp(nr, nc))
+            return res + 1
+
+        ans = 0
+        for r in range(R):
+            for c in range(C):
+                if matrix[r][c] == "1":
+                    ans = max(dp(r, c), ans)
+        return ans * ans
+
+    def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        adj = defaultdict(list)
+        indegree = [0] * numCourses
+        for c, p in prerequisites:
+            adj[p].append(c)
+            indegree[c] += 1
+
+        queue = deque()
+        for i, n in enumerate(indegree):
+            if n == 0:
+                queue.append(i)
+
+        topo = []
+        while queue:
+            cur = queue.popleft()
+            topo.append(cur)
+            for c in adj[cur]:
+                indegree[c] -= 1
+                if indegree[c] == 0:
+                    queue.append(c)
+
+        if len(topo) == numCourses:
+            return True
+        return False
+
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        table = defaultdict(int)
+        left = ans = 0
+        N = len(s)
+        for right in range(N):
+            cur = s[right]
+            table[cur] += 1
+            while left < right and table[cur] > 1:
+                table[s[left]] -= 1
+                left += 1
+            ans = max(right - left + 1, ans)
+        return ans
+
+    def generateParenthesis(self, n: int) -> List[str]:
+        ans = []
+
+        def backtrack(left, right, arr):
+            if len(arr) == n * 2:
+                ans.append("".join(arr))
+                return
+            if left < n:
+                arr.append("(")
+                backtrack(left + 1, right, arr)
+                arr.pop()
+            if right < left:
+                arr.append(")")
+                backtrack(left, right + 1, arr)
+                arr.pop()
+
+        backtrack(0, 0, [])
+        return ans
+
+    def removeOccurrences(self, s: str, part: str) -> str:
+        P = len(part)
+        N = len(s)
+        res = []
+        for i in range(N):
+            cur = s[i]
+            res.append(cur)
+            while len(res) >= P and "".join(res[-P:]) == part:
+                for _ in range(P):
+                    res.pop()
+        return "".join(res)
+
+    def rotateTheBox(self, box: List[List[str]]) -> List[List[str]]:
+        m = len(box)
+        n = len(box[0])
+        result = [["" for _ in range(m)] for _ in range(n)]
+
+        # Create the transpose of the input grid in `result`
+        for i in range(n):
+            for j in range(m):
+                result[i][j] = box[j][i]
+
+        # Reverse each row in the transpose grid to complete the 90° rotation
+        for i in range(n):
+            result[i].reverse()
+
+        # Apply gravity to let stones fall to the lowest possible empty cell in each column
+        for j in range(m):
+            lowest_row_with_empty_cell = n - 1
+            # Process each cell in column `j` from bottom to top
+            for i in range(n - 1, -1, -1):
+                # Found a stone - let it fall to the lowest empty cell
+                if result[i][j] == "#":
+                    result[i][j] = "."
+                    result[lowest_row_with_empty_cell][j] = "#"
+                    lowest_row_with_empty_cell -= 1
+                # Found an obstacle - reset `lowest_row_with_empty_cell` to the row directly above it
+                if result[i][j] == "*":
+                    lowest_row_with_empty_cell = i - 1
+
+        return result
+
+    def rotateTheBox(self, boxGrid: List[List[str]]) -> List[List[str]]:
+        # stone:#, obs:*, empty:.
+        R = len(boxGrid)
+        C = len(boxGrid[0])
+
+        grid = [[0] * R for _ in range(C)]
+        obs_table = defaultdict(lambda: inf)
+
+        for c in range(C):
+            for r in range(R):
+                val = boxGrid[r][c]
+                grid[c][r] = val
+
+        for c in range(R):
+            rval = obs_table[c]
+            if rval == inf:
+                rval = 0
+            pos = -1
+            for r in range(rval + 1, -1, -1):
+                if grid[r][c] == "." and pos == -1:
+                    pos = r
+                elif grid[r][c] == "#":
+                    if pos != -1:
+                        grid[r][c] == "."
+                        grid[pos][c] == "#"
+                        while pos <= r and grid[pos][c] != ".":
+                            pos += 1
+        for i in range(C):
+            grid[i].reverse()
+        return grid
+
+    def maximumSum(self, nums: List[int]) -> int:
+        table = defaultdict(int)
+        ans = -1
+        for i, n in enumerate(nums):
+            nn = str(n)
+            total = 0
+            for j in nn:
+                total += int(j)
+            if total in table:
+                best = max(table[total], n)
+                ans = max(ans, table[total] + n)
+                table[total] = best
+            else:
+                table[total] = n
+
+        return ans
+
+    def minOperations(self, nums: List[int], k: int) -> int:
+        heapq.heapify(nums)
+        cnt = 0
+        while len(nums) >= 2 and nums[0] < k:
+            x = heapq.heappop(nums)
+            y = heapq.heappop(nums)
+            n = min(x, y) * 2 + max(x, y)
+            cnt += 1
+            heapq.heappush(nums, n)
+        return cnt
+
+    def makePrefSumNonNegative(self, nums: List[int]) -> int:
+        total = 0
+        cnt = 0
+        heap = []
+        for i, n in enumerate(nums):
+            total += n
+            if n < 0:
+                heapq.heappush(heap, n)
+            while heap and total < 0:
+                out = heapq.heappop(heap)
+                total += -out
+                cnt += 1
+        return cnt
+
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+
+        def quick_select(arr, limit):
+            if len(arr) == 1:
+                return arr[0]
+            left, right = [], []
+            mid = []
+            N = len(arr)
+            piv = random.choice(arr)
+            for n in arr:
+                if n > piv:
+                    right.append(n)
+                elif n < piv:
+                    left.append(n)
+                else:
+                    mid.append(n)
+            if len(right) >= limit:
+                return quick_select(right, limit)
+            elif len(right) + len(mid) >= limit:
+                return piv
+            return quick_select(left, limit - len(right) - len(mid))
+
+        return quick_select(nums, k)
+
 
 def test_solution():
     s = Solution()
