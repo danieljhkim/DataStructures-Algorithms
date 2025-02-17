@@ -186,3 +186,13 @@ def smallestNumber(n: int, t: int) -> int:
         return n
 
     return n + t - diff
+
+
+def sum_series_formula(n: int) -> int:
+    # n + (n - 1) + (n - 2)...
+    return n * (n + 1) // 2
+
+
+def sum_k_terms(n: int, k: int) -> int:
+    # For k terms: (n-1) + (n-2) + ... + (n-k)
+    return k * n - (k * (k + 1) // 2)

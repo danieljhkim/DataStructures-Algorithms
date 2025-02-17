@@ -102,3 +102,10 @@ def addBinary(a, b) -> str:
         answer.append("1")
     answer.reverse()
     return "".join(answer)
+
+
+def differ_by_one_bit(bin1: str, bin2: str) -> bool:
+    num1 = int(bin1, 2)
+    num2 = int(bin2, 2)
+    xor_result = num1 ^ num2
+    return xor_result != 0 and (xor_result & (xor_result - 1)) == 0
