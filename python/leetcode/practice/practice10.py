@@ -156,37 +156,6 @@ class Solution:
         return -heap[0] if heap else 0
 
     def lastStoneWeightII(self, stones: List[int]) -> int:
-        counts = Counter(stones)
-        arr = []
-        for k, v in counts.items():
-            if v % 2 == 1:
-                arr.append(k)
-
-        N = len(arr)
-        self.ans = inf
-
-        def backtrack(idx, arr):
-            if idx >= N - 1:
-                self.ans = min(sum(arr), self.ans)
-                return
-            if arr[idx] == 0:
-                backtrack(idx + 1, arr)
-                return
-            val = arr[idx]
-            arr[idx] = 0
-            for i in range(idx + 1, len(arr)):
-                if arr[i] != 0:
-                    prev = arr[i]
-                    nval = abs(val - arr[i])
-                    arr[i] = nval
-                    backtrack(idx + 1, arr)
-                    arr[i] = prev
-            arr[idx] = val
-
-        backtrack(0, arr)
-        return self.ans
-
-    def lastStoneWeightII(self, stones: List[int]) -> int:
         N = len(stones)
 
         @cache
@@ -198,93 +167,6 @@ class Solution:
             return min(add, sub)
 
         return dp(0, 0)
-
-    def constructDistancedSequence(self, x: int) -> List[int]:
-        ans, options = [], []
-        for i in range(1, x + 1):
-            options.append(i)
-        N = (x - 1) * 2 + 1
-        arr = [0] * N
-        options.reverse()
-        used = [0] * x
-
-        def backtrack(arr, idx, used):
-            if sum(used) == x:
-                ans.append(tuple(arr))
-                return
-            if ans:
-                return
-            if arr[idx] != 0:
-                backtrack(arr, idx + 1, used)
-                return
-
-            for i, n in enumerate(options):
-                if n == 1 and used[n] == 0:
-                    arr[idx] = n
-                    used[n] = 1
-                    backtrack(arr, idx + 1, used)
-                    arr[idx] = 0
-                    used[n] = 0
-                else:
-                    dist = idx + n
-                    if dist >= N:
-                        continue
-                    if arr[dist] == 0 and used[n] == 0:
-                        arr[dist] = n
-                        arr[idx] = n
-                        used[n] = 1
-                        backtrack(arr, idx + 1, used)
-                        arr[idx] = 0
-                        arr[dist] = 0
-                        used[n] = 0
-
-        backtrack(arr, 0, used)
-        ans.sort(reverse=True)
-        return list(ans[0])
-
-    def grayCode(self, n: int) -> List[int]:
-
-        @cache
-        def good_bit(num1, num2) -> bool:
-            xor_result = num1 ^ num2
-            return xor_result != 0 and (xor_result & (xor_result - 1)) == 0
-
-        ans = []
-        options = []
-
-        def permute(arr):
-            if len(arr) == n:
-                options.append(int("".join(arr), 2))
-                return
-            arr.append("1")
-            permute(arr)
-            arr.pop()
-            arr.append("0")
-            permute(arr)
-            arr.pop()
-
-        options.pop()
-        permute([])
-
-        def backtrack(arr):
-            if len(ans) > 0:
-                return
-            if len(arr) == len(options) + 1:
-                if good_bit(arr[0], arr[-1]):
-                    ans.append(arr[:])
-                return
-
-            prev = arr[-1]
-            for i, b in enumerate(options):
-                if b != -1 and good_bit(prev, b):
-                    arr.append(b)
-                    options[i] = -1
-                    backtrack(arr)
-                    arr.pop()
-                    options[i] = b
-
-        backtrack([0])
-        return ans[0]
 
     def twoSumLessThanK(self, nums: List[int], k: int) -> int:
         best = -1
@@ -313,27 +195,6 @@ class Solution:
                 third = stack.pop()
             stack.append(num)
         return False
-
-    def numTilePossibilities(self, tiles: str) -> int:
-        N = len(tiles)
-        ans = set()
-
-        def backtrack(arr, used):
-            if arr:
-                ans.add("".join(arr))
-            if len(used) == N:
-                return
-            for i in range(N):
-                if i not in used:
-                    w = tiles[i]
-                    arr.append(w)
-                    used.add(i)
-                    backtrack(arr, used)
-                    arr.pop()
-                    used.remove(i)
-
-        backtrack([], set())
-        return len(ans)
 
     def maxSubstringLength(self, s: str, k: int) -> bool:
         if k > len(s):
@@ -386,6 +247,122 @@ class Solution:
             return res
 
         return dfs(0, tuple(bad), k)
+
+    def minSwaps(self, data: List[int]) -> int:
+        total = sum(data)
+        if total == 1:
+            return 0
+        left = 0
+        right = total
+        cnt = sum(data[left:right])
+        ans = total - cnt
+
+        N = len(data)
+        while right < N:
+            cur = data[right]
+            prev = data[left]
+            cnt += cur - prev
+            ans = min(total - cnt, ans)
+            right += 1
+            left += 1
+        return ans
+
+    # 1861. Rotating the Box
+    def rotateTheBox(self, boxGrid: List[List[str]]) -> List[List[str]]:
+        R = len(boxGrid)
+        C = len(boxGrid[0])
+        grid = [["."] * R for _ in range(C)]
+
+        for r in range(R):
+            rocks = 0
+            for c in range(C):
+                val = boxGrid[r][c]
+                if val == "#":
+                    rocks += 1
+                elif val == "*":
+                    grid[c][r] = "*"
+                    idx = c
+                    while rocks > 0:
+                        idx -= 1
+                        rocks -= 1
+                        grid[idx][r] = "#"
+            idx = C
+            while rocks > 0:
+                idx -= 1
+                rocks -= 1
+                grid[idx][r] = "#"
+
+        for row in grid:
+            row.reverse()
+        return grid
+
+    # 1197. Minimum Knight Moves
+    def minKnightMoves(self, x: int, y: int) -> int:
+        moves = ((2, 1), (1, 2), (-2, 1), (-1, 2), (-2, -1), (-1, -2), (2, -1), (1, -2))
+        heap = [(0, 0, 0)]
+        distances = defaultdict(lambda: inf)
+        while heap:
+            dist, r, c = heapq.heappop(heap)
+            if r == x and c == y:
+                return dist
+            for dr, dc in moves:
+                nr = dr + r
+                nc = dc + c
+                if distances[(nr, nc)] > dist + 1:
+                    distances[(nr, nc)] = dist + 1
+                    heapq.heappush(heap, (dist + 1, nr, nc))
+        return -1
+
+    # 1028. Recover a Tree From Preorder Traversal
+    def recoverFromPreorder(self, nodes: str) -> Optional[TreeNode]:
+        stack = []
+        idx = 0
+        root = None
+        N = len(nodes)
+
+        while idx < N:
+            cnt = 0
+            while idx < N and nodes[idx] == "-":
+                cnt += 1
+                idx += 1
+            while stack and stack[-1][1] >= cnt:
+                stack.pop()
+            cur = ""
+            while idx < N and nodes[idx].isdigit():
+                cur += nodes[idx]
+                idx += 1
+            nnode = TreeNode(int(cur))
+            if not root:
+                root = nnode
+            if stack:
+                if not stack[-1][0].left:
+                    stack[-1][0].left = nnode
+                else:
+                    stack[-1][0].right = nnode
+                    stack.pop()
+            stack.append((nnode, cnt))
+        return root
+
+    # 487. Max Consecutive Ones II
+    def findMaxConsecutiveOnes(self, nums: List[int]) -> int:
+        stack = []
+        max_len = cur = 0
+        for n in nums:
+            if n == 0:
+                prev = 0
+                if stack:
+                    prev = stack.pop() + 1
+                max_len = max(prev + cur, max_len)
+                stack.clear()
+                stack.append(cur)
+                cur = 0
+            else:
+                cur += 1
+        prev = 0
+        if stack:
+            prev = stack.pop() + 1
+        max_len = max(prev + cur, max_len)
+        return max_len
 
 
 def test_solution():

@@ -2317,67 +2317,6 @@ class Solution:
                     res.pop()
         return "".join(res)
 
-    def rotateTheBox(self, box: List[List[str]]) -> List[List[str]]:
-        m = len(box)
-        n = len(box[0])
-        result = [["" for _ in range(m)] for _ in range(n)]
-
-        # Create the transpose of the input grid in `result`
-        for i in range(n):
-            for j in range(m):
-                result[i][j] = box[j][i]
-
-        # Reverse each row in the transpose grid to complete the 90° rotation
-        for i in range(n):
-            result[i].reverse()
-
-        # Apply gravity to let stones fall to the lowest possible empty cell in each column
-        for j in range(m):
-            lowest_row_with_empty_cell = n - 1
-            # Process each cell in column `j` from bottom to top
-            for i in range(n - 1, -1, -1):
-                # Found a stone - let it fall to the lowest empty cell
-                if result[i][j] == "#":
-                    result[i][j] = "."
-                    result[lowest_row_with_empty_cell][j] = "#"
-                    lowest_row_with_empty_cell -= 1
-                # Found an obstacle - reset `lowest_row_with_empty_cell` to the row directly above it
-                if result[i][j] == "*":
-                    lowest_row_with_empty_cell = i - 1
-
-        return result
-
-    def rotateTheBox(self, boxGrid: List[List[str]]) -> List[List[str]]:
-        # stone:#, obs:*, empty:.
-        R = len(boxGrid)
-        C = len(boxGrid[0])
-
-        grid = [[0] * R for _ in range(C)]
-        obs_table = defaultdict(lambda: inf)
-
-        for c in range(C):
-            for r in range(R):
-                val = boxGrid[r][c]
-                grid[c][r] = val
-
-        for c in range(R):
-            rval = obs_table[c]
-            if rval == inf:
-                rval = 0
-            pos = -1
-            for r in range(rval + 1, -1, -1):
-                if grid[r][c] == "." and pos == -1:
-                    pos = r
-                elif grid[r][c] == "#":
-                    if pos != -1:
-                        grid[r][c] == "."
-                        grid[pos][c] == "#"
-                        while pos <= r and grid[pos][c] != ".":
-                            pos += 1
-        for i in range(C):
-            grid[i].reverse()
-        return grid
-
     def maximumSum(self, nums: List[int]) -> int:
         table = defaultdict(int)
         ans = -1
