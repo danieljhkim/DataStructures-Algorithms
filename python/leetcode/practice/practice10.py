@@ -364,6 +364,51 @@ class Solution:
         max_len = max(prev + cur, max_len)
         return max_len
 
+    # 889. Construct Binary Tree from Preorder and Postorder Traversal
+    def constructFromPrePost(
+        self, preorder: List[int], postorder: List[int]
+    ) -> Optional[TreeNode]:
+        N = len(preorder)
+
+        def build(prel, prer, postr):
+            if prel > prer:
+                return None
+            if prel == prer:
+                return TreeNode(preorder[prel])
+            left_node = preorder[prel + 1]
+            n_nodes = 1
+            while n_nodes + postr < N and postorder[postr + n_nodes - 1] != left_node:
+                n_nodes += 1
+            root = TreeNode(preorder[prel])
+            root.left = build(prel + 1, prel + n_nodes, postr)
+            root.right = build(prel + n_nodes + 1, prer, postr + n_nodes)
+            return root
+
+        return build(0, N - 1, 0)
+
+    # 2023. Number of Pairs of Strings With Concatenation Equal to Target
+    def numOfPairs(self, nums: List[str], target: str) -> int:
+        table = defaultdict(int)
+        cnt = 0
+        nset = set()
+        N = len(target)
+
+        for i, n in enumerate(nums):
+            if len(n) >= N:
+                continue
+            nset.add(len(n))
+            table[n] += 1
+
+        for diff in nset:
+            left = target[:diff]
+            right = target[diff:]
+            if left in table and right in table:
+                if left != right:
+                    cnt += table[left] * table[right]
+                else:
+                    cnt += table[left] * (table[left] - 1)
+        return cnt
+
 
 def test_solution():
     s = Solution()
