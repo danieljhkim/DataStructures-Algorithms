@@ -409,6 +409,42 @@ class Solution:
                     cnt += table[left] * (table[left] - 1)
         return cnt
 
+    def mostProfitablePath(
+        self, edges: List[List[int]], bob: int, amount: List[int]
+    ) -> int:
+        adj = defaultdict(list)
+        for s, e in edges:
+            adj[s].append(e)
+
+        def dfs(a, b, bvisited, avisited):
+            if a not in adj:
+                return amount[a]
+            if a == b:
+                ap = amount[a] // 2
+            else:
+                ap = amount[a]
+            prev_a, prev_b = amount[a], amount[b]
+            amount[a] = 0
+            amount[b] = 0
+            best = 0
+            for adest in adj[a]:
+                if adest not in avisited:
+                    avisited.add(adest)
+                    if b != 0:
+                        for bdest in adj[b]:
+                            if bdest not in bvisited:
+                                bvisited.add(bdest)
+                                best = max(best, dfs(adest, bdest, bvisited, avisited))
+                                bvisited.remove(bdest)
+                    else:
+                        best = max(best, dfs(adest, 0, bvisited, avisited))
+                    avisited.remove(adest)
+            amount[a] = prev_a
+            amount[b] = prev_b
+            return best + ap
+
+        return dfs(0, bob, set([bob]), set([0]))
+
 
 def test_solution():
     s = Solution()

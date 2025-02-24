@@ -139,4 +139,36 @@ public class Solutions1 {
         }
     }
 
+    // 2187. Minimum Time to Complete Trips
+    class P2187 {
+
+        int target;
+
+        public long minimumTime(int[] time, int totalTrips) {
+            long lo = 0;
+            long hi = (long) time[0] * totalTrips;
+            target = totalTrips;
+            while (lo < hi) {
+                long mid = (hi - lo) / 2 + lo;
+                if (totalTrips(time, mid)) {
+                    hi = mid;
+                } else {
+                    lo = mid + 1;
+                }
+            }
+            return hi;
+        }
+
+        boolean totalTrips(int[] time, long duration) {
+            long trips = 0;
+            for (int n : time) {
+                trips += duration / n;
+                if (trips >= target) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
 }
