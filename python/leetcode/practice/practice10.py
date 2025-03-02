@@ -409,41 +409,408 @@ class Solution:
                     cnt += table[left] * (table[left] - 1)
         return cnt
 
+    # 2467. Most Profitable Path in a Tree
     def mostProfitablePath(
         self, edges: List[List[int]], bob: int, amount: List[int]
     ) -> int:
         adj = defaultdict(list)
         for s, e in edges:
             adj[s].append(e)
+            adj[e].append(s)
 
-        def dfs(a, b, bvisited, avisited):
-            if a not in adj:
-                return amount[a]
+        parent = {0: None}
+        queue = deque([0])
+        while queue:
+            cur = queue.popleft()
+            for nei in adj[cur]:
+                if nei not in parent:
+                    parent[nei] = cur
+                    queue.append(nei)
+
+        def dfs(a, b, avisited):
             if a == b:
-                ap = amount[a] // 2
+                if amount[a] != 0:
+                    ap = amount[a] // 2
+                else:
+                    ap = 0
             else:
                 ap = amount[a]
             prev_a, prev_b = amount[a], amount[b]
             amount[a] = 0
             amount[b] = 0
-            best = 0
+            best = -inf
+            is_leaf = True
             for adest in adj[a]:
                 if adest not in avisited:
                     avisited.add(adest)
+                    is_leaf = False
                     if b != 0:
-                        for bdest in adj[b]:
-                            if bdest not in bvisited:
-                                bvisited.add(bdest)
-                                best = max(best, dfs(adest, bdest, bvisited, avisited))
-                                bvisited.remove(bdest)
+                        best = max(best, dfs(adest, parent[b], avisited))
                     else:
-                        best = max(best, dfs(adest, 0, bvisited, avisited))
+                        best = max(best, dfs(adest, b, avisited))
                     avisited.remove(adest)
             amount[a] = prev_a
             amount[b] = prev_b
+            if is_leaf:
+                return ap
             return best + ap
 
-        return dfs(0, bob, set([bob]), set([0]))
+        return dfs(0, bob, set([0]))
+
+    # 1524. Number of Sub-arrays With Odd Sum
+    def numOfSubarrays(self, arr: List[int]) -> int:
+        MOD = 10**9 + 7
+        evens = 1
+        odds = 0
+        ans = total = 0
+        for i, n in enumerate(arr):
+            total += n
+            if total % 2 == 0:
+                ans += odds
+                evens += 1
+            else:
+                ans += evens
+                odds += 1
+            ans %= MOD
+        return ans
+
+    def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:
+        self.ans = None
+
+        def dfs(node, cnt):
+            if self.ans:
+                return 0
+            if not node:
+                return cnt
+            cnt = dfs(node.left, cnt)
+            cnt += 1
+            if cnt == k:
+                self.ans = node
+            cnt = dfs(node.right, cnt)
+
+        dfs(root, 0)
+        return self.ans
+
+    def maxAbsoluteSum(self, nums: List[int]) -> int:
+        min_sum = 0
+        max_sum = 0
+        total = 0
+        for n in nums:
+            total += n
+            min_sum = min(min_sum, total)
+            max_sum = max(max_sum, total)
+        return max_sum - min_sum
+
+    # 2460. Apply Operations to an Array
+    def applyOperations(self, nums: List[int]) -> List[int]:
+        N = len(nums)
+        for i in range(N - 1):
+            n1 = nums[i]
+            n2 = nums[i + 1]
+            if n1 == n2:
+                nums[i] = n1 * 2
+                nums[i + 1] = 0
+
+        idx = 0
+        for i in range(N):
+            if nums[i] != 0:
+                nums[idx] = nums[i]
+                idx += 1
+
+        for i in range(idx, N):
+            nums[i] = 0
+        return nums
+
+    # 3467. Transform Array by Parity
+    def transformArray(self, nums: List[int]) -> List[int]:
+        evens = 0
+        for n in nums:
+            if n % 2 == 0:
+                evens += 1
+
+        for i in range(len(nums)):
+            if evens > 0:
+                nums[i] = 0
+                evens -= 1
+            else:
+                nums[i] = 1
+        return nums
+
+    # 3468. Find the Number of Copy Arrays
+    def countArrays(self, original: List[int], bounds: List[List[int]]) -> int:
+        N = len(original)
+        s, e = bounds[0][0], bounds[0][1]
+        cnt = e - s + 1
+
+        prev = s
+        for i in range(1, N):
+            diff = original[i] - original[i - 1]
+            prev = diff + prev
+            if prev < bounds[i][0]:
+                cnt -= bounds[i] - prev
+                prev = bounds[i]
+            if not (bounds[i][0] <= prev <= bounds[i][1]):
+                return 0
+            cnt = min(cnt, bounds[i][1] - prev + 1)
+        if cnt < 0:
+            return 0
+        return cnt
+
+    # 3469. Find Minimum Cost to Remove Array Elements
+    def minCost(self, nums: List[int]) -> int:
+        N = len(nums)
+
+        @cache
+        def dp(idx, rem):
+            if idx == N - 1:
+                return max(nums[idx], rem)
+            if idx == N - 2:
+                return min(min(nums[idx:]), rem) + max(max(nums[idx:]), rem)
+            if idx == N:
+                return rem
+            n1 = nums[idx]
+            n2 = nums[idx + 1]
+            tmp = sorted([n1, n2, rem])
+            res = dp(idx + 2, tmp[0]) + tmp[-1]
+            res = min(dp(idx + 2, tmp[-1]) + tmp[1], res)
+            return res
+
+        return dp(1, nums[0])
+
+    # 3470. Permutations IV
+    def permute(self, n: int, k: int) -> List[int]:
+        pos = math.factorial(n)
+        if k > pos:
+            return []
+        ans = []
+        self.cnt = 0
+        nums = [i for i in range(1, n + 1)]
+
+        def backtrack(arr, nums):
+            if self.cnt == k:
+                return
+            if len(arr) == n:
+                self.cnt += 1
+                if self.cnt == k:
+                    ans.append(tuple(arr[:]))
+                return
+            size = len(nums)
+            for i in range(size):
+                val = nums[i]
+                if val == -1:
+                    continue
+                if not arr or (val % 2 == 0) != (arr[-1] % 2 == 0):
+                    nums[i] = -1
+                    arr.append(val)
+                    backtrack(arr, nums)
+                    arr.pop()
+                    nums[i] = val
+
+        backtrack([], nums)
+        if self.cnt == k:
+            return ans[0]
+        return []
+
+    # 867. Transpose Matrix
+    def transpose(self, matrix: List[List[int]]) -> List[List[int]]:
+        R = len(matrix)
+        C = len(matrix[0])
+        tmat = [[0] * R for _ in range(C)]
+
+        for r in range(C):
+            for c in range(R):
+                tmat[r][c] = matrix[c][r]
+        for row in tmat:
+            row.reverse()
+        return tmat
+
+    # 286. Walls and Gates
+    def wallsAndGates(self, rooms: List[List[int]]) -> None:
+        """
+        Do not return anything, modify rooms in-place instead.
+        """
+        R = len(rooms)
+        C = len(rooms[0])
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        dq = deque()
+
+        for r in range(R):
+            for c in range(C):
+                if rooms[r][c] == 0 and (r, c):
+                    dq.append((0, r, c))
+        while dq:
+            dist, rr, cc = dq.popleft()
+            for dr, dc in directions:
+                nr = dr + rr
+                nc = dc + cc
+                if 0 <= nr < R and 0 <= nc < C:
+                    val = rooms[nr][nc]
+                    if val != -1:
+                        if val > dist + 1:
+                            rooms[nr][nc] = dist + 1
+                            dq.append((dist + 1, nr, nc))
+
+    # 803. Bricks Falling When Hit
+    def hitBricks(
+        self, grid: List[List[int]], hits: List[List[int]]
+    ) -> List[int]:  # TLE
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        R = len(grid)
+        C = len(grid[0])
+        ans = []
+
+        def dfs(r, c, visited):
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1:
+                    pos = (nr, nc)
+                    if pos not in visited:
+                        visited.add(pos)
+                        dfs(nr, nc, visited)
+
+        visited = set()
+        for r in range(R):
+            for c in range(C):
+                pos = (r, c)
+                if pos not in visited:
+                    visited.add(pos)
+                    dfs(r, c, visited)
+        del visited
+
+        def check(r, c, paths):
+            if r == 0:
+                return True
+            for dr, dc in directions:
+                nr = r + dr
+                nc = c + dc
+                if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1:
+                    pos = (nr, nc)
+                    if pos not in paths:
+                        paths.add(pos)
+                        res = check(nr, nc, paths)
+                        if res:
+                            return True
+            return False
+
+        for r, c in hits:
+            cnt = 0
+            if grid[r][c] == 1:
+                grid[r][c] = 0
+                for dr, dc in directions:
+                    nr = r + dr
+                    nc = c + dc
+                    if 0 <= nr < R and 0 <= nc < C and grid[nr][nc] == 1:
+                        if nr == 0:
+                            continue
+                        paths = set([(nr, nc)])
+                        res = check(nr, nc, paths)
+                        if not res:
+                            cnt += len(paths)
+                            for rr, cc in paths:
+                                grid[rr][cc] = 0
+            ans.append(cnt)
+        return ans
+
+    def plusOne(self, digits: List[int]) -> List[int]:
+        N = len(digits)
+        last = digits[-1] + 1
+        if last >= 10:
+            digits[-1] = 0
+            carry = 1
+            for i in range(N - 2, -1, -1):
+                n = digits[i] + carry
+                if n >= 10:
+                    carry = 1
+                    digits[i] = 0
+                else:
+                    digits[i] = n
+                    carry = 0
+                    break
+            if carry == 1:
+                digits.insert(0, 1)
+        else:
+            digits[-1] = last
+        return digits
+
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        intervals.sort()
+        ans = [intervals[0]]
+        for s, e in intervals[1:]:
+            end = ans[-1][1]
+            if s <= end:
+                ans[-1][1] = max(end, e)
+            else:
+                ans.append([s, e])
+        return ans
+
+    # 833. Find And Replace in String
+    def findReplaceString(
+        self, s: str, indices: List[int], sources: List[str], targets: List[str]
+    ) -> str:
+        N = len(s)
+        K = len(indices)
+        arr = []
+        idx = 0
+        ops = []
+
+        for k in range(K):
+            i = indices[k]
+            w = sources[k]
+            ops.append((i, w, targets[k]))
+
+        ops.sort(reverse=True)
+        while idx < N:
+            found = False
+            while ops and ops[-1][0] == idx:
+                _, w, nw = ops.pop()
+                n = len(w)
+                if s[idx : idx + n] == w:
+                    arr.append(nw)
+                    idx += n
+                    found = True
+                    break
+            if found:
+                continue
+            arr.append(s[idx])
+            idx += 1
+        return "".join(arr)
+
+    # 1254. Number of Closed Islands
+    def closedIsland(self, grid: List[List[int]]) -> int:
+        directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
+        R = len(grid)
+        C = len(grid[0])
+        ans = 0
+
+        def dfs(r, c):
+            grid[r][c] = 1
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < R and 0 <= nc < C:
+                    if grid[nr][nc] == 0:
+                        dfs(nr, nc)
+
+        for c in range(C):
+            if grid[0][c] == 0:
+                dfs(0, c)
+            if grid[-1][c] == 0:
+                dfs(R - 1, c)
+
+        for r in range(R):
+            if grid[r][0] == 0:
+                dfs(r, 0)
+            if grid[r][C - 1] == 0:
+                dfs(r, C - 1)
+
+        for r in range(1, R - 1):
+            for c in range(1, C - 1):
+                if grid[r][c] == 0:
+                    ans += 1
+                    dfs(r, c)
+
+        return ans
 
 
 def test_solution():
