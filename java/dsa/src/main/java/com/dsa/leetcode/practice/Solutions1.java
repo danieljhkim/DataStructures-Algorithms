@@ -1,7 +1,9 @@
 package com.dsa.leetcode.practice;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -168,6 +170,65 @@ public class Solutions1 {
                 }
             }
             return false;
+        }
+    }
+
+    // 2570. Merge Two 2D Arrays by Summing Values
+    class P2570 {
+
+        // static Random random = new Random();
+        Map<Integer, Integer> map = new HashMap<>();
+        int N;
+
+        public int[][] mergeArrays(int[][] nums1, int[][] nums2) {
+            for (int[] item : nums1) {
+                map.put(item[0], item[1]);
+            }
+            for (int[] item : nums2) {
+                map.put(item[0], map.getOrDefault(item[0], 0) + item[1]);
+            }
+            N = map.size();
+            int[][] ans = new int[N][2];
+            List<Integer> arr = new ArrayList<>();
+            arr.addAll(map.keySet());
+            arr = mergeSort(arr);
+            for (int i = 0; i < N; i++) {
+                int idx = arr.get(i);
+                ans[i][0] = idx;
+                ans[i][1] = map.get(idx);
+            }
+            return ans;
+        }
+
+        List<Integer> mergeSort(List<Integer> arr) {
+            int len = arr.size();
+            if (len <= 1) {
+                return arr;
+            }
+            List<Integer> left = mergeSort(new ArrayList<>(arr.subList(0, len / 2)));
+            List<Integer> right = mergeSort(new ArrayList<>(arr.subList(len / 2, len)));
+            int l = 0, r = 0, k = 0;
+            while (l < left.size() && r < right.size()) {
+                if (left.get(l) < right.get(r)) {
+                    arr.set(k, left.get(l));
+                    l++;
+                } else {
+                    arr.set(k, right.get(r));
+                    r++;
+                }
+                k++;
+            }
+            while (l < left.size()) {
+                arr.set(k, left.get(l));
+                l++;
+                k++;
+            }
+            while (r < right.size()) {
+                arr.set(k, right.get(r));
+                r++;
+                k++;
+            }
+            return arr;
         }
     }
 
