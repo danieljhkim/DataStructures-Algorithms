@@ -1,16 +1,10 @@
 package com.dsa.leetcode.practice;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 import com.dsa.leetcode.practice.Solutions1.TreeNode;
 
-@SuppressWarnings({ "ReplaceStringBufferByString", "unused" })
+@SuppressWarnings({"ReplaceStringBufferByString", "unused"})
 public class Solutions1 {
 
     int MAX_VAL = Integer.MAX_VALUE;
@@ -232,4 +226,44 @@ public class Solutions1 {
         }
     }
 
+    // 1657. Determine if Two Strings Are Close
+    class P1657 {
+
+        public boolean closeStrings(String word1, String word2) {
+            int N1 = word1.length();
+            int N2 = word2.length();
+            if (N1 != N2)
+                return false;
+            Set<Character> set1 = new HashSet<>();
+            Set<Character> set2 = new HashSet<>();
+            for (char c : word1.toCharArray()) {
+                set1.add(c);
+            }
+            for (char c : word2.toCharArray()) {
+                set2.add(c);
+            }
+            if (!set1.equals(set2)) {
+                return false;
+            }
+            int[] count1 = new int[26];
+            int[] count2 = new int[26];
+
+            for (int i = 0; i < N1; i++) {
+                int idx1 = word1.codePointAt(i) - 'a';
+                int idx2 = word2.codePointAt(i) - 'a';
+                count1[idx1] += 1;
+                count2[idx2] += 1;
+            }
+            Arrays.sort(count1);
+            Arrays.sort(count2);
+            for (int i = 0; i < 26; i++) {
+                int cnt1 = count1[i];
+                int cnt2 = count2[i];
+                if (cnt1 != cnt2) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 }

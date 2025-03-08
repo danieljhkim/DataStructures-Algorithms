@@ -812,6 +812,569 @@ class Solution:
 
         return ans
 
+    # 1151. Minimum Swaps to Group All 1's Together
+    def minSwaps(self, data: List[int]) -> int:
+        total = sum(data)
+        left = 0
+        right = total
+        cur_total = sum(data[:right])
+        best = total - cur_total
+
+        while right < len(data):
+            cur_total -= data[left]
+            cur_total += data[right]
+            best = min(total - cur_total, best)
+            left += 1
+            right += 1
+
+        return best
+
+    def evaluateTree(self, root: Optional[TreeNode]) -> bool:
+        # 2 = OR, 3 = AND
+        if not root:
+            return False
+        val = root.val
+        if val == 0:
+            return False
+        if val == 1:
+            return True
+        left = self.evaluateTree(root.left)
+        right = self.evaluateTree(root.right)
+        if val == 2:
+            return left or right
+        return left and right
+
+    # 2161. Partition Array According to Given Pivot
+    def pivotArray(self, nums: List[int], pivot: int) -> List[int]:
+        left = cnt = 0
+        N = len(nums)
+
+        for i in range(N):
+            n = nums[i]
+            if n < pivot:
+                nums[left] = n
+                left += 1
+            elif n > pivot:
+                nums.append(n)
+            else:
+                cnt += 1
+
+        for i in range(left, left + cnt):
+            nums[i] = pivot
+
+        return nums[: left + cnt] + nums[N:]
+
+    # 1209. Remove All Adjacent Duplicates in String II
+    def removeDuplicates(self, s: str, k: int) -> str:
+        cnt = 1
+        prev = s[0]
+        stack = [prev]
+        for w in s[1:]:
+            stack.append(w)
+            if w == prev:
+                cnt += 1
+                if cnt == k:
+                    for _ in range(k):
+                        stack.pop()
+                    cnt = 0
+                    if stack:
+                        cnt = 1
+                        prev = stack[-1]
+                        idx = len(stack) - 1
+                        while idx > 0 and stack[idx] == stack[idx - 1]:
+                            # instead, one can store freq in the stack
+                            idx -= 1
+                            cnt += 1
+            else:
+                prev = w
+                cnt = 1
+        return "".join(stack)
+
+    # 1780. Check if Number is a Sum of Powers of Three
+    def checkPowersOfThree(self, n: int) -> bool:
+        while n > 0:
+            if n % 3 == 2:
+                return False
+            n //= 3
+        return True
+
+    # 214. Shortest Palindrome
+    def shortestPalindrome(self, s: str) -> str:
+        rev = s[::-1]
+        if rev == s:
+            return s
+        N = len(s)
+        if N <= 1:
+            return s
+        max_val = N
+        is_even = True
+        if N % 2 == 1:
+            max_val -= 1
+            is_even = False
+
+        @cache
+        def dp(start, end):
+            if start == -1:
+                return N - (end)
+            if s[start] != s[end]:
+                return max_val
+            if start == 0:
+                return N - (end) - 1
+            res = min(
+                dp(start - 1, end + 1), dp(start - 1, end - 1), dp(start - 1, end)
+            )
+            return res
+
+        mid = N // 2
+        if is_even:
+            res = dp(mid - 1, mid - 1)
+        else:
+            res = dp(mid, mid)
+        dp.cache_clear()
+
+        if res == 0:
+            return s
+        return rev[: N - res] + s
+
+    # 2579. Count Total Number of Colored Cells
+    def coloredCells(self, n: int) -> int:
+        # 0 4 8 12
+        # 1 2 3 4
+        cur = 0
+        total = 1
+        for _ in range(n - 1):
+            cur += 4
+            total += cur
+        return total
+
+    def uniqueOccurrences(self, arr: List[int]) -> bool:
+        cnt = Counter(arr)
+        nset = set()
+        for k, v in cnt.items():
+            if v in nset:
+                return False
+            nset.add(v)
+        return True
+
+    # 1769. Minimum Number of Operations to Move All Balls to Each Box
+    def minOperations(self, boxes: str) -> List[int]:
+        N = len(boxes)
+        ans = []
+        ball = total = 0
+
+        for n in boxes:
+            total += ball
+            ans.append(total)
+            if n == "1":
+                ball += 1
+
+        ball = total = 0
+        idx = N - 1
+        for n in boxes[::-1]:
+            total += ball
+            ans[idx] += total
+            if n == "1":
+                ball += 1
+
+        return ans
+
+    # 2965. Find Missing and Repeated Values
+    def findMissingAndRepeatedValues(self, grid: List[List[int]]) -> List[int]:
+        N = len(grid)
+        n2 = N * N
+        total = n2 * (n2 + 1) // 2
+        seen = set()
+        missing = 0
+        for r in range(N):
+            for c in range(N):
+                val = grid[r][c]
+                if missing == 0:
+                    if val in seen:
+                        missing = val
+                        continue
+                    else:
+                        seen.add(val)
+                total -= val
+        return [missing, total]
+
+    # 289. Game of Life
+    def gameOfLife(self, board: List[List[int]]) -> None:
+        """
+        Do not return anything, modify board in-place instead.
+        """
+        directions = (
+            (0, 1),
+            (1, 0),
+            (-1, 0),
+            (0, -1),
+            (1, 1),
+            (1, -1),
+            (-1, 1),
+            (-1, -1),
+        )
+        R = len(board)
+        C = len(board[0])
+        changes = []
+
+        def check(r, c, cur):
+            total = 0
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < R and 0 <= nc < C:
+                    total += board[nr][nc]
+                    if total > 3:
+                        return 0
+            if cur == 0:
+                if total == 3:
+                    return 1
+                return 0
+            if total < 2:
+                return 0
+            return 1
+
+        for r in range(R):
+            for c in range(C):
+                val = board[r][c]
+                res = check(r, c, val)
+                if res != val:
+                    changes.append((r, c, res))
+
+        for r, c, val in changes:
+            board[r][c] = val
+
+    # 1506. Find Root of N-Ary Tree
+    def findRoot(self, tree: List["Node"]) -> "Node":
+        visited = set()
+
+        def dfs(node):
+            for ch in node.children:
+                if ch.val not in visited:
+                    visited.add(ch.val)
+                    dfs(ch)
+
+        for node in tree:
+            if node not in visited:
+                dfs(node)
+
+        for node in tree:
+            if node.val not in visited:
+                return node
+
+    # 224. Basic Calculator
+    def calculate(self, s: str) -> int:
+
+        def find(i):
+            idx = i
+            total = 0
+            tsign = 1
+            while idx < N and s[idx] != ")":
+
+                while idx < N and s[idx] == " ":
+                    idx += 1
+                if idx == N:
+                    return total
+
+                if s[idx] == "-":
+                    tsign = -1
+                    idx += 1
+                    continue
+                elif s[idx] == "+":
+                    idx += 1
+                    tsign = 1
+                    continue
+
+                if s[idx] == "(":
+                    ttotal, nidx = find(idx + 1)
+                    idx = nidx
+                    total += ttotal * tsign
+                else:
+                    num = []
+                    while idx < N and s[idx].isdigit():
+                        num.append(s[idx])
+                        idx += 1
+                    if num:
+                        n = int("".join(num)) * tsign
+                        total += n
+            return total, idx + 1
+
+        N = len(s)
+        total = idx = 0
+        sign = 1
+        while idx < N:
+
+            while idx < N and s[idx] == " ":
+                idx += 1
+            if idx == N:
+                return total
+
+            if s[idx] == "-":
+                sign = -1
+                idx += 1
+                continue
+            elif s[idx] == "+":
+                idx += 1
+                sign = 1
+                continue
+
+            if s[idx] == "(":
+                ntotal, nidx = find(idx + 1)
+                total += ntotal * sign
+                idx = nidx
+            else:
+                num = []
+                while idx < N and s[idx].isdigit():
+                    num.append(s[idx])
+                    idx += 1
+                if num:
+                    n = int("".join(num)) * sign
+                    total += n
+        return total
+
+    # 2523. Closest Prime Numbers in Range
+    def closestPrimes(self, left: int, right: int) -> List[int]:
+
+        def get_all_primes(n):
+            primes = [True] * (n + 1)
+            primes[0] = primes[1] = False
+            p = 2
+            while p * p <= n:
+                if primes[p]:
+                    for i in range(p * p, n + 1, p):
+                        primes[i] = False
+                p += 1
+            return [i for i, is_prime in enumerate(primes) if is_prime]
+
+        primes = get_all_primes(right)
+        start = bisect.bisect_left(left)
+        small, ans = inf, (-1, -1)
+        for idx in range(start, len(primes) - 1):
+            l = primes[idx]
+            r = primes[idx + 1]
+            if (r - l) < small:
+                ans = (l, r)
+                small = r - l
+        return list(ans)
+
+    # 852. Peak Index in a Mountain Array
+    def peakIndexInMountainArray(self, arr: List[int]) -> int:
+        N = len(arr)
+        low, high = 0, N - 1
+        while low <= high:
+            mid = (low + high) // 2
+            if arr[mid] < arr[mid + 1]:
+                low = mid + 1
+            else:
+                high = mid - 1
+        return low
+
+    # 1095. Find in Mountain Array
+    def findInMountainArray(self, target: int, mountainArr: "MountainArray") -> int:
+        N = mountainArr.length()
+        low, high = 0, N - 1
+        while low <= high:
+            mid = (low + high) // 2
+            if mountainArr.get(mid) < mountainArr.get(mid + 1):
+                low = mid + 1
+            else:
+                high = mid - 1
+        peak = low
+
+        big = mountainArr.get(peak)
+        if big < target:
+            return -1
+        elif big == target:
+            return peak
+
+        def bsearch(low, high, sign):
+            while low <= high:
+                mid = (low + high) // 2
+                val = mountainArr.get(mid) * sign
+                if val < target * sign:
+                    low = mid + 1
+                elif val > target * sign:
+                    high = mid - 1
+                else:
+                    return mid
+            return -1
+
+        left = bsearch(0, peak, 1)
+        if left != -1:
+            return left
+        return bsearch(peak, N - 1, -1)
+
+    # 1110. Delete Nodes And Return Forest
+    def delNodes(
+        self, root: Optional[TreeNode], to_delete: List[int]
+    ) -> List[TreeNode]:
+        ans = []
+        nset = set(to_delete)
+
+        def dfs(node, is_del, parent):
+            if not node:
+                return
+            if node.val in nset:
+                nset.remove(node.val)
+                dfs(node.left, True, node)
+                dfs(node.right, True, node)
+                if parent is None:
+                    return
+                elif parent.left is node:
+                    parent.left = None
+                elif parent.right is node:
+                    parent.right = None
+            else:
+                if is_del:
+                    ans.append(node)
+                dfs(node.left, False, node)
+                dfs(node.right, False, node)
+
+        dfs(root, True, None)
+        return ans
+
+    # 354. Russian Doll Envelopes
+    def maxEnvelopes(self, envelopes: List[List[int]]) -> int:
+        envelopes.sort()
+        N = len(envelopes)
+
+        @cache
+        def dp(idx):
+            if idx == N:
+                return 0
+            cur_w = envelopes[idx][0]
+            small_h = envelopes[idx][1]
+            nidx = i = idx
+            while i + 1 < N and envelopes[i + 1][0] == cur_w:
+                i += 1
+                if envelopes[i][1] < small_h:
+                    small_h = envelopes[i][1]
+                    nidx = i
+            res = 0
+            nidx = i + 1
+            for j in range(nidx, N):
+                nh = envelopes[j][1]
+                if nh > small_h:
+                    res = max(dp(j), res)
+            return res + 1
+
+        return dp(0)
+
+    # 2379. Minimum Recolors to Get K Consecutive Black Blocks
+    def minimumRecolors(self, blocks: str, k: int) -> int:
+        counts = Counter(blocks[:k])
+        left = 0
+        res = counts["W"]
+        if res == 0:
+            return 0
+        for right in range(k, len(blocks)):
+            counts[blocks[left]] -= 1
+            counts[blocks[right]] += 1
+            res = min(counts["W"], res)
+            left += 1
+        return res
+
+    # 1100. Find K-Length Substrings With No Repeated Characters
+    def numKLenSubstrNoRepeats(self, s: str, k: int) -> int:
+        ans = right = left = 0
+        wset = set()
+        N = len(s)
+        while right < N:
+            cur = s[right]
+            while cur in wset:
+                wset.remove(s[left])
+                left += 1
+            wset.add(cur)
+            if right - left + 1 == k:
+                ans += 1
+                wset.remove(s[left])
+                left += 1
+            right += 1
+        return ans
+
+    def calculateTime(self, keyboard: str, word: str) -> int:
+        time = 0
+        idx = 0
+        for i, w in enumerate(word):
+            nxt = keyboard.index(w)
+            time += abs(idx - nxt)
+            idx = nxt
+        return time
+
+    def maxLevelSum(self, root: Optional[TreeNode]) -> int:
+        queue = deque([root])
+        max_sum = root.val
+        level = max_level = 1
+
+        while queue:
+            size = len(queue)
+            cur_sum = 0
+            for _ in range(size):
+                cur = queue.popleft()
+                cur_sum += cur.val
+                if cur.left:
+                    queue.append(cur.left)
+                if cur.right:
+                    queue.append(cur.right)
+            if cur_sum > max_sum:
+                max_level = level
+                max_sum = cur_sum
+            level += 1
+        return max_level
+
+    def oddEvenJumps(self, arr: List[int]) -> int:
+        """ "
+        odd -> idx with smallest to the right
+        even -> idx with biggest to the left
+        """
+        N = len(arr)
+        next_odd = [-1] * N
+        next_even = [-1] * N
+
+        indices = sorted(range(N), key=lambda x: (arr[x], x))
+        stack = []
+        for i in indices:
+            while stack and stack[-1] < i:
+                next_odd[stack.pop()] = i
+            stack.append(i)
+
+        indices = sorted(range(N), key=lambda x: (-arr[x], x))
+        stack = []
+        for i in indices:
+            while stack and stack[-1] < i:
+                next_even[stack.pop()] = i
+            stack.append(i)
+
+        @cache
+        def find_odd(idx):
+            return next_odd[idx]
+
+        @cache
+        def find_even(idx):
+            return next_even[idx]
+
+        @cache
+        def recursion(idx, is_even):
+            if idx == N - 1:
+                return 1
+            if is_even:
+                nidx = find_even(idx)
+                if nidx == -inf or nidx == inf or nidx == -1:
+                    return 0
+                return recursion(nidx, False)
+            else:
+                nidx = find_odd(idx)
+                if nidx == -inf or nidx == inf or nidx == -1:
+                    return 0
+                return recursion(nidx, True)
+
+        ans = 0
+        for i in range(N):
+            ans += recursion(i, False)
+        recursion.cache_clear()
+        find_even.cache_clear()
+        find_odd.cache_clear()
+        return ans
+
 
 def test_solution():
     s = Solution()

@@ -36,7 +36,7 @@ class ListNode:
 class Solution:
 
     # 1092. Shortest Common Supersequence
-    def shortestCommonSupersequence(self, str1: str, str2: str) -> str:
+    def shortestCommonSupersequence(self, str1: str, str2: str) -> str:  # TLE
         N1, N2 = len(str1), len(str2)
 
         @lru_cache(maxsize=None)
@@ -80,7 +80,7 @@ class Solution:
         return ans
 
     # 1092. Shortest Common Supersequence
-    def shortestCommonSupersequence(self, str1: str, str2: str) -> str:
+    def shortestCommonSupersequence(self, str1: str, str2: str) -> str:  # MLE
         N1, N2 = len(str1), len(str2)
 
         @cache
@@ -99,7 +99,7 @@ class Solution:
         return dp(0, 0)
 
     # 1092. Shortest Common Supersequence
-    def shortestCommonSupersequence(self, str1: str, str2: str) -> str:
+    def shortestCommonSupersequence(self, str1: str, str2: str) -> str:  # PASS
         N1, N2 = len(str1), len(str2)
 
         @cache
@@ -128,3 +128,60 @@ class Solution:
                     return str2[j] + rec(i, j + 1)
 
         return rec(0, 0)
+
+    # 3473. Sum of K Subarrays With Length at Least M
+    def maxSum(self, nums: List[int], k: int, m: int) -> int:
+        prefix = [0]
+        for n in nums:
+            prefix.append(prefix[-1] + n)
+        N = len(nums)
+
+        @cache
+        def dp(idx, cnt, extend):
+            if N - idx < cnt * m:
+                return -inf
+            if idx == N:
+                if cnt == 0:
+                    return 0
+                return -inf
+            res = dp(idx + 1, cnt, False)
+            if extend:
+                res = max(res, dp(idx + 1, cnt, True) + nums[idx])
+            if cnt > 0 and (idx + (cnt * m)) <= N:
+                res = max(
+                    res, dp(idx + m, cnt - 1, True) + prefix[idx + m] - prefix[idx]
+                )
+            return res
+
+        res = dp(0, k, False)
+        dp.cache_clear()
+        return res
+
+    # 410. Split Array Largest Sum
+    def splitArray(self, nums: List[int], k: int) -> int:
+        N = len(nums)
+        prefix = [0]
+        for n in nums:
+            prefix.append(prefix[-1] + n)
+
+        @cache
+        def dp(start, cnt):
+            if start == N:
+                if cnt > 0:
+                    return inf
+                return 0
+            if cnt == 0:
+                return inf
+            if cnt == 1:
+                return prefix[-1] - prefix[start]
+
+            for j in range(start, N - cnt + 1):
+                curr_sum = prefix[j + 1] - prefix[start]
+                next_max = dp(j + 1, cnt - 1)
+                if next_max != inf:
+                    res = min(res, max(curr_sum, next_max))
+            return res
+
+        res = dp(0, k)
+        dp.cache_clear()
+        return res
