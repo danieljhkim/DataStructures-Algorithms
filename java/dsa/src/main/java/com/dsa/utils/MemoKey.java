@@ -12,10 +12,8 @@ public class MemoKey {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof MemoKey))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof MemoKey)) return false;
         MemoKey key = (MemoKey) o;
         return r == key.r && c == key.c;
     }

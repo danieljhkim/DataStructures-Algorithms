@@ -1,8 +1,8 @@
 package com.dsa.leetcode.practice;
 
-import java.util.*;
-
 import com.dsa.leetcode.practice.Solutions1.TreeNode;
+
+import java.util.*;
 
 @SuppressWarnings({"ReplaceStringBufferByString", "unused"})
 public class Solutions1 {
@@ -14,8 +14,7 @@ public class Solutions1 {
         TreeNode left;
         TreeNode right;
 
-        TreeNode() {
-        }
+        TreeNode() {}
 
         TreeNode(int val) {
             this.val = val;
@@ -232,8 +231,7 @@ public class Solutions1 {
         public boolean closeStrings(String word1, String word2) {
             int N1 = word1.length();
             int N2 = word2.length();
-            if (N1 != N2)
-                return false;
+            if (N1 != N2) return false;
             Set<Character> set1 = new HashSet<>();
             Set<Character> set2 = new HashSet<>();
             for (char c : word1.toCharArray()) {

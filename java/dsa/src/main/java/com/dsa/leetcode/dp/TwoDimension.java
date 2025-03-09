@@ -57,12 +57,10 @@ public class TwoDimension {
         }
 
         int dp(int idx1, int idx2) {
-            if (idx1 == N1)
-                return 0;
-            if (idx2 == N2)
-                return 0;
+            if (idx1 == N1) return 0;
+            if (idx2 == N2) return 0;
             if (memo[idx1][idx2] != null) {
-              return memo[idx1][idx2];
+                return memo[idx1][idx2];
             }
             char w1 = W1.charAt(idx1);
             char w2 = W2.charAt(idx2);

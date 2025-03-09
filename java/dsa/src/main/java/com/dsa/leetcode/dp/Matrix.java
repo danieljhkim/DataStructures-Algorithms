@@ -13,7 +13,7 @@ public class Matrix {
 
         int N;
         Map<String, Integer> memo = new HashMap<>();
-        int[][] directions = { { 1, 0 }, { 1, 1 }, { 1, -1 } };
+        int[][] directions = {{1, 0}, {1, 1}, {1, -1}};
 
         public int minFallingPathSum(int[][] matrix) {
             this.N = matrix.length;
@@ -49,17 +49,19 @@ public class Matrix {
     // 3459. Length of Longest V-Shaped Diagonal Segment
     public class P3459 {
 
+        static final Map<Integer, int[]> dirs = new HashMap<>();
+        static Integer[][][][][] memo;
+
+        static {
+            dirs.put(-99, new int[] {1, 1});
+            dirs.put(99, new int[] {-1, -1});
+            dirs.put(101, new int[] {1, -1});
+            dirs.put(-101, new int[] {-1, 1});
+        }
+
         int R;
         int C;
         int[][] grid;
-        static Integer[][][][][] memo;
-        static final Map<Integer, int[]> dirs = new HashMap<>();
-        static {
-            dirs.put(-99, new int[] { 1, 1 });
-            dirs.put(99, new int[] { -1, -1 });
-            dirs.put(101, new int[] { 1, -1 });
-            dirs.put(-101, new int[] { -1, 1 });
-        }
 
         public int lenOfVDiagonal(int[][] grid1) {
             R = grid1.length;
@@ -102,5 +104,4 @@ public class Matrix {
             return res + 1;
         }
     }
-
 }

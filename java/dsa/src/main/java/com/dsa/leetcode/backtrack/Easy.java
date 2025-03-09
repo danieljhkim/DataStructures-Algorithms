@@ -6,11 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 public class Easy {
 
-    public static void main( String[] args ) {
-        System.out.println( "Hello World!" );
+    public static void main(String[] args) {
+        System.out.println("Hello World!");
     }
 
     // 1980. Find Unique Binary String
@@ -62,7 +61,7 @@ public class Easy {
             if (ans.size() >= k) {
                 return;
             }
-            for (int i=0; i < 3; i++) {
+            for (int i = 0; i < 3; i++) {
                 String w = String.valueOf(options.charAt(i));
                 if (arr.isEmpty() || (!arr.isEmpty() && !arr.get(arr.size() - 1).equals(w))) {
                     arr.add(w);

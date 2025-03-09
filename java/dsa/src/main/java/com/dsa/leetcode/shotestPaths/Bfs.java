@@ -3,15 +3,15 @@ package com.dsa.leetcode.shotestPaths;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-
 public class Bfs {
 
     // 1197. Minimum Knight Moves
     public class P1197 {
 
         public int minKnightMoves(int x, int y) {
-            int[][] moves =
-                    {{2, 1}, {1, 2}, {-2, 1}, {-1, 2}, {-2, -1}, {-1, -2}, {2, -1}, {1, -2}};
+            int[][] moves = {
+                {2, 1}, {1, 2}, {-2, 1}, {-1, 2}, {-2, -1}, {-1, -2}, {2, -1}, {1, -2}
+            };
             boolean[][] visited = new boolean[607][607];
             Deque<int[]> queue = new ArrayDeque<>();
             queue.addLast(new int[] {0, 0, 0});

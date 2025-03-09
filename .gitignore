@@ -321,3 +321,4 @@ bin/
 .project
 .classpath
 notes
+.vscode

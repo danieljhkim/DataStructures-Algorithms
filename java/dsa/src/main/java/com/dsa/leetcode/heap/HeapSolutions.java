@@ -12,12 +12,14 @@ public class HeapSolutions {
     class P2462 {
         public long totalCost(int[] costs, int k, int candidates) {
             int N = costs.length;
-            PriorityQueue<int[]> heap = new PriorityQueue<>((a, b) -> {
-                if (a[0] == b[0]) {
-                    return a[1] - b[1];
-                }
-                return a[0] - b[0];
-            });
+            PriorityQueue<int[]> heap =
+                    new PriorityQueue<>(
+                            (a, b) -> {
+                                if (a[0] == b[0]) {
+                                    return a[1] - b[1];
+                                }
+                                return a[0] - b[0];
+                            });
             for (int i = 0; i < candidates; i++) {
                 heap.offer(new int[] {costs[i], 0});
             }
@@ -33,10 +35,10 @@ public class HeapSolutions {
                 ans += out[0];
                 if (left <= right) {
                     if (out[1] == 0) {
-                        heap.offer(new int[]{costs[left], 0});
+                        heap.offer(new int[] {costs[left], 0});
                         left += 1;
                     } else {
-                        heap.offer(new int[]{costs[right], 1});
+                        heap.offer(new int[] {costs[right], 1});
                         right -= 1;
                     }
                 }
