@@ -322,3 +322,4 @@ bin/
 .classpath
 notes
 .vscode
+.DS_Store

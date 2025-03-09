@@ -48,6 +48,7 @@ This repository contains implementations of various data structures and algorith
 - [Tree](./python/dataStructures/tree/)
   - [Binary Tree](./python/dataStructures/tree/binaryTree/)
   - [Trie](./python/dataStructures/tree/trie/)
+  - [Segment Tree](./python/dataStructures/tree/segmentTree/)
 - [Graph](./python/dataStructures/graph/)
 - [Hash Table](./python/dataStructures/hashmap/)
 - [Inverted Index](./python/dataStructures/invertedIndex/)
