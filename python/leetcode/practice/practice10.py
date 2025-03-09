@@ -1375,6 +1375,25 @@ class Solution:
         find_odd.cache_clear()
         return ans
 
+    # 3208. Alternating Groups II
+    def numberOfAlternatingGroups(self, colors: List[int], k: int) -> int:
+        N = len(colors)
+        arr = colors + colors[:k]
+        left = cnt = 0
+        prev = arr[0]
+        for right in range(1, N + k):
+            if prev != arr[right]:
+                diff = right - left + 1
+                if diff == k:
+                    cnt += 1
+                    left += 1
+            else:
+                left = right
+            if left == N:
+                break
+            prev = arr[right]
+        return cnt
+
 
 def test_solution():
     s = Solution()
