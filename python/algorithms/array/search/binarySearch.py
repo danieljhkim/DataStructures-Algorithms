@@ -1,37 +1,76 @@
 """
-    low < high or low <= high
-        - if you discard mid (i.e. low = mid+1 or high = mid-1) then (low <= high).
-        - if you keep mid (i.e. low = mid or high = mid) then (llow < high)
-        
-    math.ceil(n)
-        - low + (high - low + 1) // 2
+low < high or low <= high
+    - if you discard mid (i.e. low = mid+1 or high = mid-1) then (low <= high).
+    - if you keep mid (i.e. low = mid or high = mid) then (llow < high)
+
+math.ceil(n)
+    - low + (high - low + 1) // 2
 """
 
 
 class BinarySearch:
 
-    def binary_search(self, arr, target):
-        low = 0
-        high = len(arr) - 1
-        while low <= high:
-            mid = (high - low) // 2 + low
-            if target < arr[mid]:
-                high = mid - 1
-            elif target > arr[mid]:
-                low = mid + 1
-            else:
-                return mid
+    def binary_search(self, arr, target, low=0, high=None, *, key=None):
+        if high is None:
+            high = len(arr) - 1
+        if key is None:
+            while low <= high:
+                mid = (high - low) // 2 + low
+                if target < arr[mid]:
+                    high = mid - 1
+                elif target > arr[mid]:
+                    low = mid + 1
+                else:
+                    return mid
+        else:
+            while low <= high:
+                mid = (high - low) // 2 + low
+                if target < key(arr[mid]):
+                    high = mid - 1
+                elif target > key(arr[mid]):
+                    low = mid + 1
+                else:
+                    return mid
         return -1
 
-    def find_first_occurrence(self, nums, target):
-        low, high = 0, len(nums) - 1
-        while low < high:
-            mid = low + (high - low) // 2
-            if nums[mid] < target:
-                low = mid + 1
-            else:
-                high = mid
-        return low if low < len(nums) and nums[low] == target else -1
+    def bisect_left(self, arr, target, low=0, high=None, *, key=None):
+        if high is None:
+            high = len(arr) - 1
+        if key is None:
+            while low <= high:
+                mid = (low + high) // 2
+                if arr[mid] < target:
+                    low = mid + 1
+                else:
+                    high = mid - 1
+        else:
+            while low <= high:
+                mid = (low + high) // 2
+                if key(arr[mid]) < target:
+                    low = mid + 1
+                else:
+                    high = mid - 1
+        return low
+
+    def bisect_right(self, arr, target, low=0, high=None, *, key=None):
+        """returns right most insertion point"""
+        if high is None:
+            high = len(arr) - 1
+        if key is None:
+            while low <= high:
+                mid = (low + high) // 2
+                if arr[mid] > target:
+                    high = mid - 1
+                else:
+                    low = mid + 1
+        else:
+            while low <= high:
+                mid = (low + high) // 2
+                if key(arr[mid]) > target:
+                    high = mid - 1
+                else:
+                    low = mid + 1
+        return low
 
     def find_largest_less_than_or_equal(self, nums, target):
         low, high = 0, len(nums) - 1
@@ -67,17 +106,6 @@ class BinarySearch:
         # also could return high + 1
         # high would be the largest element less than the target
         return low if low < len(nums) and nums[low] >= target else -1
-
-    def binary_search_insert_position(self, arr, target):
-        # useful for when inserting
-        low, high = 0, len(arr)
-        while low < high:
-            mid = (low + high) // 2
-            if arr[mid] < target:
-                low = mid + 1
-            else:
-                high = mid
-        return low
 
     def recursive_search(self, arr, target, low, high):
         if low <= high:

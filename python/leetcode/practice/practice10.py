@@ -1394,6 +1394,438 @@ class Solution:
             prev = arr[right]
         return cnt
 
+    def mergeAlternately(self, word1: str, word2: str) -> str:
+        words = []
+        i2 = i1 = 0
+        N1, N2 = len(word1), len(word2)
+
+        while i2 < N2 and i1 < N1:
+            words.append(word1[i1])
+            words.append(word2[i2])
+        if i1 < N1:
+            words.append(word1[i1:])
+        if i2 < N2:
+            words.append(word2[i2:])
+        return "".join(words)
+
+    # 15. 3Sum
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        nums.sort()
+        N = len(nums)
+        ans = []
+
+        for i in range(N - 2):
+            if i == 0 or nums[i] != nums[i - 1]:
+                one = nums[i]
+                left = i + 1
+                right = N - 1
+                while left < right:
+                    two = nums[left]
+                    three = nums[right]
+                    total = one + two + three
+                    if total > 0:
+                        right -= 1
+                    elif total < 0:
+                        left += 1
+                    else:
+                        ans.append(one, two, three)
+                        while left < right and nums[left] == two:
+                            left += 1
+        return ans
+
+    # 199. Binary Tree Right Side View
+    def rightSideView(self, root: Optional[TreeNode]) -> List[int]:
+        if not root:
+            return []
+        dq = deque([root])
+        ans = []
+        while dq:
+            size = len(dq)
+            for i in range(size):
+                cur = dq.popleft()
+                if i == size - 1:
+                    ans.append(cur.val)
+                if cur.left:
+                    dq.append(cur.left)
+                if cur.right:
+                    dq.append(cur.right)
+        return ans
+
+    # 54. Spiral Matrix
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        R = len(matrix)
+        C = len(matrix)
+        ans = []
+        top = left = 0
+        right = C - 1
+        bottom = R - 1
+        while len(ans) < R * C:
+
+            for c in range(left, right + 1):
+                ans.append(matrix[top][c])
+            top += 1
+
+            for r in range(top, bottom + 1):
+                ans.append(matrix[r][right])
+            right -= 1
+
+            if len(ans) == R * C:
+                break
+            for c in range(right, left - 1, -1):
+                ans.append(matrix[bottom][c])
+            bottom -= 1
+
+            if len(ans) == R * C:
+                break
+            for r in range(bottom, top - 1, -1):
+                ans.append(matrix[r][left])
+            left += 1
+        return ans
+
+    # 1366. Rank Teams by Votes
+    def rankTeams(self, votes: List[str]) -> str:
+        ranks = [[1, i] for i in range(26)]
+        points = 10**95
+        for vote in zip(*votes):
+            for v in vote:
+                ranks[ord(v) - ord("A")][0] -= points
+            points = points // 1001
+        ranks.sort(reverse=False)
+        res = []
+        for k, v in ranks:
+            if k < 1:
+                res.append(chr(v + ord("A")))
+        return "".join(res)
+
+    def maximumCount(self, nums: List[int]) -> int:
+        N = len(nums)
+        left = 0
+        right = N - 1
+        while left <= right:
+            mid = (left + right) // 2
+            if nums[mid] < 0:
+                left = mid + 1
+            else:
+                right = mid - 1
+
+        rleft = left
+        right = N - 1
+        while rleft <= right:
+            mid = (rleft + right) // 2
+            if nums[mid] > 0:
+                right = mid - 1
+            else:
+                rleft = mid + 1
+        return max((N - rleft), (left))
+
+    def numIslands(self, grid: List[List[str]]) -> int:
+        R = len(grid)
+        C = len(grid)
+        directions = ((0, 1), (1, 0), (-1, 0), (0, -1))
+        ans = 0
+
+        def dfs(r, c):
+            grid[r][c] = "0"
+            for dr, dc in directions:
+                nr = r + dr
+                nc = c + dc
+                if 0 <= nr < R and 0 <= nc < C:
+                    if grid[nr][nc] == "1":
+                        dfs(nr, nc)
+
+        for r in range(R):
+            for c in range(C):
+                if grid[r][c] == "1":
+                    ans += 1
+                    dfs(r, c)
+        return ans
+
+    # 49. Group Anagrams
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        table = defaultdict(list)
+        for word in strs:
+            key = [0] * 26
+            for w in word:
+                key[ord(w) - ord("a")] += 1
+            table[tuple(key)].append(word)
+        ans = []
+        for val in table.values():
+            ans.append(val)
+        return ans
+
+    # 3. Longest Substring Without Repeating Characters
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        N = len(s)
+        ans = left = 0
+        wset = set()
+        for right in range(N):
+            w = s[right]
+            while w in wset:
+                wset.remove(s[left])
+                left += 1
+            wset.add(w)
+            ans = max(ans, right - left + 1)
+        return ans
+
+    # 5. Longest Palindromic Substring
+    def longestPalindrome(self, s: str) -> str:
+        N = len(s)
+        ans = 0
+        ans_l, ans_r = 0, 0
+
+        def expand(left, right):
+            while left >= 0 and right < N:
+                if s[left] != s[right]:
+                    break
+                left -= 1
+                right += 1
+            return right - 1, left + 1
+
+        for i in range(N):
+            if i + 1 < N and s[i] == s[i + 1]:
+                rr, rl = expand(i, i + 1)
+                if rr - rl + 1 > ans:
+                    ans = rr - rl + 1
+                    ans_l = rl
+                    ans_r = rr
+            rr, rl = expand(i, i)
+            if rr - rl + 1 > ans:
+                ans = rr - rl + 1
+                ans_l = rl
+                ans_r = rr
+        return s[ans_l : ans_r + 1]
+
+    # 7. Reverse Integer
+    def reverse(self, x: int) -> int:
+        MAX = 2**31 - 1
+        sign = -1 if x < 0 else 1
+        idx = 0
+        stack = []
+        x = abs(x)
+
+        while x > 0:
+            first = x % 10
+            x //= 10
+            if first == 0:
+                if stack:
+                    stack.append(first)
+            else:
+                stack.append(first)
+            idx += 1
+
+        size, x = len(stack) - 1, 0
+        for i, n in enumerate(stack):
+            val = n * 10**size
+            if val + n >= MAX:
+                return 0
+            x += val
+            size -= 1
+        return x * sign
+
+    # 1464. Maximum Product of Two Elements in an Array
+    def maxProduct(self, nums: List[int]) -> int:
+        max1 = 0
+        max2 = 0
+        for n in nums:
+            if n > max1:
+                max2 = max1
+                max1 = n
+            elif n > max2:
+                max2 = n
+        return (max1 - 1) * (max2 - 1)
+
+    # 3386. Button with Longest Push Time
+    def buttonWithLongestTime(self, events: List[List[int]]) -> int:
+        prev = idx = res = 0
+        for i, time in events:
+            diff = time - prev
+            if diff > res:
+                idx = i
+                res = diff
+            elif diff == res:
+                idx = min(i, idx)
+            prev = time
+        return idx
+
+    # 2038. Remove Colored Pieces if Both Neighbors are the Same Color
+    def winnerOfGame(self, colors: str) -> bool:
+        N = len(colors)
+        colors = list(colors)
+
+        def check(idx, who):
+            right = idx + 1
+            left = idx - 1
+            while left >= 0 and colors[left] == 0:
+                left -= 1
+            if left < 0:
+                return False
+            while right < N and colors[right] == 0:
+                right += 1
+            if right == N or colors[left] != who or colors[right] != who:
+                return False
+            return True
+
+        def recurs(who):
+            for i in range(N):
+                if colors[i] == who:
+                    if check(i, who):
+                        colors[i] = 0
+                        res = recurs("A" if who == "B" else "B")
+                        if res:
+                            return True
+                        colors[i] = who
+            if who == "A":
+                return False
+            return True
+
+        return recurs("A")
+
+    # 2560. House Robber IV
+    def minCapability(self, nums: List[int], k: int) -> int:
+        low = 1
+        high = max(nums)
+        N = len(nums)
+
+        while low <= high:
+            mid = (low + high) // 2
+            cnt = idx = 0
+            while idx < N:
+                if nums[idx] <= mid:
+                    cnt += 1
+                    idx += 2
+                else:
+                    idx += 1
+            if cnt >= k:
+                high = mid - 1
+            else:
+                low = mid + 1
+        return low
+
+    # 454. 4Sum II
+    def fourSumCount(
+        self, nums1: List[int], nums2: List[int], nums3: List[int], nums4: List[int]
+    ) -> int:
+        counts = Counter(int)
+        for n1 in nums1:
+            for n2 in nums2:
+                counts[n1 + n2] += 1
+        ans = 0
+        for n3 in nums3:
+            for n4 in nums4:
+                if -(n3 + n4) in counts:
+                    ans += counts[-(n3 + n4)]
+        return ans
+
+    # 3483. Unique 3-Digit Even Numbers
+    def totalNumbers(self, digits: List[int]) -> int:
+        ans = set()
+
+        def backtrack(used, arr):
+            if len(arr) == 3:
+                ans.add("".join(arr))
+                return
+            for i, n in enumerate(digits):
+                if i not in used:
+                    if (n == 0 and not arr) or (len(arr) == 2 and n % 2 == 1):
+                        continue
+                    used.add(i)
+                    arr.append(str(n))
+                    backtrack(used, arr)
+                    arr.pop()
+                    used.remove(i)
+
+        backtrack(set(), [])
+        return len(ans)
+
+    # 3486. Longest Special Path II
+    def longestSpecialPath(self, edges: List[List[int]], nums: List[int]) -> List[int]:
+        # invalid solution
+        adj = defaultdict(list)
+        queue = deque()
+        paths = [[] for _ in range(len(nums))]
+
+        for u, v, d in edges:
+            adj[u].append((d, v))
+            adj[v].append((d, u))
+
+        dq = deque([(0, set([0]))])
+        while dq:
+            cur, eset = dq.popleft()
+            for d, nei in adj[cur]:
+                if nei not in eset:
+                    paths[cur].append((d, nei))
+                    cset = eset.copy()
+                    cset.add(nei)
+                    dq.append((nei, cset))
+
+        queue.append((0, 0, {nums[0]}, ["0"], {0}, -1))
+        longp = -1
+        min_nodes = inf
+        scores = defaultdict(int)
+
+        def update_score(what, tpaths, val, nei, ndist):
+            npath, prev, found, visited2 = [], [], False, set()
+            nset = set()
+            for n in tpaths:
+                if not found:
+                    if prev and nums[int(prev[-1])] == nums[what]:
+                        found = True
+                        nset.add(nums[int(n)])
+                        visited2.add(int(n))
+                        npath.append(n)
+                    prev.append(n)
+                elif found:
+                    nset.add(nums[int(n)])
+                    npath.append(n)
+                    visited2.add(int(n))
+            tp = "-".join(prev)
+            p = "-".join(npath)
+            scores[p] = ndist - scores[tp]
+            queue.append((ndist - scores[tp], nei, nset, npath, visited2, val))
+            return ndist - scores[tp], npath
+
+        while queue:
+            cur = queue.popleft()
+            if cur[0] > longp:
+                longp = cur[0]
+                min_nodes = len(cur[-2])
+            elif cur[0] == longp:
+                cnt = len(cur[-2])
+                if min_nodes > cnt:
+                    min_nodes = cnt
+            for dist, nei in paths[cur[1]]:
+                last = cur[-1]
+                if nei in cur[-2]:
+                    continue
+                ndist = cur[0] + dist
+                if nums[nei] in cur[2]:
+                    if last == -1:
+                        nset, visited = cur[2].copy(), cur[-2].copy()
+                        visited.add(nei)
+                        tpaths = cur[-3][:]
+                        tpaths.append(str(nei))
+                        p = "-".join(tpaths)
+                        scores[p] = ndist
+                        queue.append((ndist, nei, nset, tpaths, visited, nei))
+                        update_score(nei, tpaths, -1, nei, ndist)
+                    else:
+                        tpaths = cur[-3][:]
+                        tpaths.append(str(nei))
+                        distn, nnptah = update_score(
+                            last, tpaths, nums[nei], nei, ndist
+                        )
+                        update_score(nei, nnptah[:], -1, nei, distn)
+                else:
+                    nset, visited, npath = cur[2].copy(), cur[-2].copy(), cur[-3].copy()
+                    npath.append(str(nei))
+                    visited.add(nei)
+                    nset.add(nums[nei])
+                    p = "-".join(npath)
+                    scores[p] = ndist
+                    queue.append((ndist, nei, nset, npath, visited, last))
+
+        return [longp, min_nodes]
+
 
 def test_solution():
     s = Solution()

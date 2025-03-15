@@ -264,4 +264,52 @@ public class Solutions1 {
             return true;
         }
     }
+
+    class P2226 {
+
+        public int maximumCandies(int[] candies, long k) {
+            int low = 1;
+            int high = (int) Math.pow(10, 7);
+
+            while (low <= high) {
+                int mid = (high + low) / 2;
+                if (isEnough(mid, k, candies)) {
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            }
+            return high;
+        }
+
+        boolean isEnough(int amount, long k, int[] candies) {
+            long num = 0;
+            for (int c : candies) {
+                if (c >= amount) {
+                    num += c / amount;
+                    if (num >= k) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

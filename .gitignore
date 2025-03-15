@@ -323,3 +323,4 @@ bin/
 notes
 .vscode
 .DS_Store
+ignore/
