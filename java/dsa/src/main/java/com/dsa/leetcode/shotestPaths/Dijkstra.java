@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+@SuppressWarnings({"ReplaceStringBufferByString", "unused"})
 public class Dijkstra {
 
     // 505. The Maze II

@@ -9,7 +9,7 @@ public class Solutions1 {
 
     int MAX_VAL = Integer.MAX_VALUE;
 
-    public class TreeNode {
+    public static class TreeNode {
         int val;
         TreeNode left;
         TreeNode right;
@@ -296,20 +296,126 @@ public class Solutions1 {
         }
     }
 
+    // 2594. Minimum Time to Repair Cars
+    class P2594 {
+
+        public long repairCars(int[] ranks, int cars) {
+            // time = r * n^2
+            // n^2 = time / r
+            long low = 1;
+            long high = (long) 100 * cars * cars;
+            while (low <= high) {
+                long mid = (low + high) / 2;
+                if (enough(mid, cars, ranks)) {
+                    high = mid - 1;
+                } else {
+                    low = mid + 1;
+                }
+            }
+            return low;
+        }
+
+        boolean enough(long time, int cars, int[] ranks) {
+            long cnt = 0;
+            for (int r : ranks) {
+                cnt += (long) Math.floor(Math.sqrt((time / (long) r)));
+            }
+            return cnt >= cars;
+        }
+    }
+
+    // 266. Palindrome Permutation
+    class P266 {
+        public boolean canPermutePalindrome(String s) {
+            int[] counts = new int[26];
+            int N = s.length();
+            for (int i = 0; i < s.length(); i++) {
+                counts[s.codePointAt(i) - 'a']++;
+            }
+            boolean isEven = N % 2 == 0;
+            for (int c : counts) {
+                if (c % 2 == 1) {
+                    if (!isEven) {
+                        isEven = true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    // 2206. Divide Array Into Equal Pairs
+    class P2206 {
+
+        public boolean divideArray(int[] nums) {
+            Set<Integer> nset = new HashSet<>();
+            for (int i = 0; i < nums.length; i++) {
+                if (nset.contains(nums[i])) {
+                    nset.remove(nums[i]);
+                } else {
+                    nset.add(nums[i]);
+                }
+            }
+            return nset.size() == 0;
+        }
+    }
+
+    // 543. Diameter of Binary Tree
+    class P543 {
+        public int diameterOfBinaryTree(TreeNode root) {
+            if (root == null) {
+                return 0;
+            }
+            int[] ans = dfs(root);
+            return Math.max(ans[0], ans[1]) - 1;
+        }
+
+        int[] dfs(TreeNode node) {
+            if (node == null) {
+                return new int[] {0, 0};
+            }
+            int[] left = dfs(node.left);
+            int[] right = dfs(node.right);
+            int maxLen = Math.max(left[0], right[0]);
+            int maxInd = Math.max(left[1], right[1]);
+            maxInd = Math.max(maxInd, left[0] + right[0] + 1);
+            return new int[] {maxLen + 1, maxInd};
+        }
+    }
+    // 1249. Minimum Remove to Make Valid Parentheses
+    class P1249 {
+        public String minRemoveToMakeValid(String s) {
+            StringBuilder sb = new StringBuilder();
+            int left = 0;
+            for (int i = 0; i < s.length(); i++) {
+                if (s.charAt(i) == '(') {
+                    left++;
+                } else if (s.charAt(i) == ')') {
+                    if (left > 0) {
+                        left--;
+                    } else {
+                        continue;
+                    }
+                }
+                sb.append(s.charAt(i));
+            }
+
+            int idx = sb.length() - 1;
+            StringBuilder sb2 = new StringBuilder();
+            while (idx >= 0) {
+                if (sb.charAt(idx) == '(') {
+                    if (left > 0) {
+                        left--;
+                        idx--;
+                        continue;
+                    }
+                }
+                sb2.append(sb.charAt(idx));
+                idx--;
+            }
+            return sb2.reverse().toString();
+        }
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -3,6 +3,7 @@ package com.dsa.leetcode.shotestPaths;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+@SuppressWarnings({"ReplaceStringBufferByString", "unused"})
 public class Bfs {
 
     // 1197. Minimum Knight Moves

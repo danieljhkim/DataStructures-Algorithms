@@ -1826,6 +1826,155 @@ class Solution:
 
         return [longp, min_nodes]
 
+    # 124. Binary Tree Maximum Path Sum
+    def maxPathSum(self, root: Optional[TreeNode]) -> int:
+
+        def dfs(node):
+            if not node:
+                return -inf, -inf
+            ltval, ltotal = dfs(node.left)
+            rtval, rtotal = dfs(node.right)
+            bigger = max(ltval, rtval) + node.val
+            total = ltval + rtval + node.val
+            return max(bigger, node.val), max(ltotal, rtotal, total, ltval, rtval)
+
+        res1, res2 = dfs(root)
+        return max(res1, res2)
+
+    # 2401. Longest Nice Subarray
+    def longestNiceSubarray(self, nums: List[int]) -> int:
+        N = len(nums)
+        ans = left = cur_bit = 0
+        for right in range(N):
+            while cur_bit & nums[right] != 0:
+                cur_bit ^= nums[left]
+                left += 1
+            cur_bit |= nums[right]
+            ans = max(right - left + 1, ans)
+        return ans
+
+    # 3191. Minimum Operations to Make Binary Array Elements Equal to One I
+    def minOperations(self, nums: List[int]) -> int:
+        ans = 0
+        for i in range(2, len(nums)):
+            if nums[i - 2] == 0:
+                ans += 1
+                nums[i - 2] = 1
+                nums[i - 1] ^= 1
+                nums[i] ^= 1
+        if sum(nums) == len(nums):
+            return ans
+        return -1
+
+    # 3108. Minimum Cost Walk in Weighted Graph
+    def minimumCost(
+        self, n: int, edges: List[List[int]], query: List[List[int]]
+    ) -> List[int]:
+        adj = defaultdict(list)
+        for u, v, w in edges:
+            adj[v].append((w, u))
+            adj[u].append((w, v))
+
+        visited = [False] * n
+        groups = [0] * n
+        costs = []
+        idx = 0
+
+        def bfs(start, idx):
+            visited[start] = True
+            dq = deque([start])
+            cost = -1
+            while dq:
+                cur = dq.popleft()
+                groups[cur] = idx
+                for w, nei in adj[cur]:
+                    cost &= w
+                    if not visited[nei]:
+                        dq.append(nei)
+                        visited[nei] = True
+            return cost
+
+        for node in range(n):
+            if not visited[node]:
+                costs.append(bfs(node, idx))
+                idx += 1
+        ans = []
+        for s, e in query:
+            if groups[s] == groups[e]:
+                ans.append(costs[groups[s]])
+            else:
+                ans.append(-1)
+        return ans
+
+    # 2115. Find All Possible Recipes from Given Supplies
+    def findAllRecipes(
+        self, recipes: List[str], ingredients: List[List[str]], supplies: List[str]
+    ) -> List[str]:
+        dq = deque()
+        supplies = set(supplies)
+        adj = defaultdict(list)
+        indegrees = [0] * len(recipes)
+
+        for i in range(len(recipes)):
+            for r in ingredients[i]:
+                if r not in supplies:
+                    adj[r].append(i)
+                    indegrees[i] += 1
+
+        for i, n in enumerate(indegrees):
+            if n == 0:
+                dq.append(i)
+        res = []
+        while dq:
+            cur = dq.popleft()
+            res.append(recipes[cur])
+            for nei in adj[recipes[cur]]:
+                indegrees[nei] -= 1
+                if indegrees[nei] == 0:
+                    dq.append(nei)
+        return res
+
+    # 2685. Count the Number of Complete Components
+    def countCompleteComponents(self, n: int, edges: List[List[int]]) -> int:
+        parent = {}
+
+        def find(x):
+            if x not in parent:
+                parent[x] = x
+            else:
+                if parent[x] != x:
+                    parent[x] = find(parent[x])
+            return parent[x]
+
+        def union(x, y):
+            rootx = find(x)
+            rooty = find(y)
+            if rootx != rooty:
+                parent[rootx] = parent[rooty]
+            return parent[rootx]
+
+        adj = defaultdict(set)
+        groups = defaultdict(set)
+        for u, v in edges:
+            adj[u].add(v)
+            adj[u].add(u)
+            adj[v].add(u)
+            adj[v].add(v)
+            root = union(u, v)
+            groups[root].add(u)
+            groups[root].add(v)
+
+        ans = n - len(adj)
+        for root, nodes in groups.items():
+            good = True
+            for node in nodes:
+                if len(adj[node]) != len(nodes) or not nodes.issuperset(adj[node]):
+                    good = False
+                    break
+            if good:
+                ans += 1
+        return ans
+
 
 def test_solution():
     s = Solution()

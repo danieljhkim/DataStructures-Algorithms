@@ -1,10 +1,10 @@
 directions = ((0, 1), (1, 0), (-1, 0), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1))
+
 directions = ((0, 1), (1, 0), (-1, 0), (0, -1))
 R = len(grid)
 C = len(grid[0])
-memo = [[0] * C for _ in range(R)]
 
-alpha = "abcdefghijklmnopqrstuvwxyz"
+memo = [[0] * C for _ in range(R)]
 
 0 <= nr < R and 0 <= nc < C
 
@@ -27,4 +27,6 @@ def union(x, y):
     if rootx != rooty:
         parent[rootx] = parent[rooty]
 
- dp.cache_clear()
+dp.cache_clear()
+
+alpha = "abcdefghijklmnopqrstuvwxyz"
