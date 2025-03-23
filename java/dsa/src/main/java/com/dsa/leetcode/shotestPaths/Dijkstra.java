@@ -1,8 +1,6 @@
 package com.dsa.leetcode.shotestPaths;
 
-import java.util.Arrays;
-import java.util.PriorityQueue;
-import java.util.Queue;
+import java.util.*;
 
 @SuppressWarnings({"ReplaceStringBufferByString", "unused"})
 public class Dijkstra {
@@ -43,6 +41,49 @@ public class Dijkstra {
                     if (distance[nr][nc] > newDist) {
                         distance[nr][nc] = newDist;
                         queue.offer(new int[] {nr, nc, newDist});
+                    }
+                }
+            }
+            return -1;
+        }
+    }
+
+    // 2737. Find the Closest Marked Node
+    class P2737 {
+
+        public int minimumDistance(int n, List<List<Integer>> edges, int s, int[] marked) {
+            Map<Integer, List<int[]>> adj = new HashMap<>();
+            for (List<Integer> edge : edges) {
+                int u = edge.get(0);
+                int v = edge.get(1);
+                int w = edge.get(2);
+                List<int[]> entry = adj.getOrDefault(u, new ArrayList<>());
+                entry.add(new int[] {w, v});
+                adj.put(u, entry);
+            }
+
+            Set<Integer> nset = new HashSet<>();
+            for (int d : marked) {
+                nset.add(d);
+            }
+            int[] distances = new int[n];
+            Arrays.fill(distances, Integer.MAX_VALUE);
+            distances[s] = 0;
+            PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[0] - b[0]);
+            pq.offer(new int[] {0, s});
+            while (!pq.isEmpty()) {
+                int[] cur = pq.poll();
+                if (nset.contains(cur[1])) {
+                    return cur[0];
+                }
+                List<int[]> nxt = adj.get(cur[1]);
+                if (nxt != null && !nxt.isEmpty()) {
+                    for (int[] nei : nxt) {
+                        int ndist = nei[0] + cur[0];
+                        if (distances[nei[1]] > ndist) {
+                            distances[nei[1]] = ndist;
+                            pq.offer(new int[] {ndist, nei[1]});
+                        }
                     }
                 }
             }
