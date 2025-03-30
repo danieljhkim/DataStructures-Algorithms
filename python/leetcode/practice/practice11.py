@@ -176,6 +176,7 @@ class Solution:
 
     # 2818. Apply Operations to Maximize Score
     def maximumScore(self, nums: List[int], k: int) -> int:
+        # WRONG - dont get it
         MOD = 10**9 + 7
         N = len(nums)
         top = max(nums)
@@ -225,6 +226,62 @@ class Solution:
             k -= cnt
 
         return ans % MOD
+
+    # 1055. Shortest Way to Form String
+    def shortestWay(self, source: str, target: str) -> int:
+        S, T = len(source), len(target)
+        tidx, sidx, cnt = 0, 0, 1
+        while tidx < T:
+            w = target[tidx]
+            if source[sidx] == w:
+                sidx += 1
+                tidx += 1
+                if sidx == S:
+                    sidx = 0
+                    cnt += 1
+                continue
+            start = sidx
+            while sidx < S and source[sidx] != w:
+                sidx += 1
+            if sidx == S:
+                if start == 0:
+                    return -1
+                sidx = 0
+                cnt += 1
+                continue
+            tidx += 1
+        return cnt
+
+    # 763. Partition Labels
+    def partitionLabels(self, s: str) -> List[int]:
+        counts, hset = Counter(s), set()
+        res = []
+        left = 0
+        for right, w in enumerate(s):
+            counts[w] -= 1
+            if counts[w] >= 1:
+                hset.add(w)
+            elif counts[w] == 0:
+                hset.discard(w)
+            if len(hset) == 0:
+                res.append(right - left + 1)
+                left = right + 1
+        return res
+
+    # 3503. Longest Palindrome After Substring Concatenation I
+    def longestPalindrome(self, s: str, t: str) -> int:
+        S, T = len(s), len(t)
+        ans = 1
+        for sl in range(S - 1):
+            for sr in range(sl, S):
+                w = s[sl : sr + 1]
+                for tl in range(T - 1):
+                    for tr in range(tl, T):
+                        w2 = t[tl : tr + 1]
+                        word = w + w2
+                        if word == word[::-1]:
+                            ans = max(len(word), ans)
+        return ans
 
 
 def test_solution():

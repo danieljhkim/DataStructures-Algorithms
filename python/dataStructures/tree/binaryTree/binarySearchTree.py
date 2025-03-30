@@ -28,31 +28,50 @@ class TreeNode(object):
 
 @dataclass
 class BinarySearchTree:
+
     root: TreeNode | None = None
 
-    def __init__(self):
-        self.root = None
+    def __init__(self, values: list):
+        self.root = self.build(values)
 
-    def create(self, val):
-        if self.root == None:
-            self.root = TreeNode(val)
-        else:
-            current = self.root
-            while True:
-                if val < current.val:
-                    if current.left:
-                        current = current.left
-                    else:
-                        current.left = TreeNode(val)
-                        break
-                elif val > current.val:
-                    if current.right:
-                        current = current.right
-                    else:
-                        current.right = TreeNode(val)
-                        break
-                else:
+    def build(self, values: list):
+        # values must be sorted to be balanced
+        N = len(values)
+        if N == 0:
+            return None
+        mid = N // 2
+        root = TreeNode(mid)
+        root.left = self.build(values[:mid])
+        root.right = self.build(values[mid + 1 :])
+        return root
+
+    def iterative_insert(self, root, val):
+        if root == None:
+            root = TreeNode(val)
+        current = root
+        while True:
+            if val < current.val:
+                if not current.left:
+                    current.left = TreeNode(val)
                     break
+                current = current.left
+            elif val > current.val:
+                if not current.right:
+                    current.right = TreeNode(val)
+                    break
+                current = current.right
+            else:
+                break
+        return root
+
+    def insert(self, root, val):
+        if root is None:
+            return TreeNode(val)
+        if val < root.val:
+            root.left = self.insert(root.left, val)
+        elif val > root.val:
+            root.right = self.insert(root.right, val)
+        return root
 
     def get_min_node(self, node: TreeNode):
         cur = node
@@ -129,24 +148,6 @@ def print_tree(root):
         print(stuff)
 
 
-def insert_into_bst(root, val):
-    if root is None:
-        return TreeNode(val)
-    if val < root.val:
-        root.left = insert_into_bst(root.left, val)
-    else:
-        root.right = insert_into_bst(root.right, val)
-    return root
-
-
-def create_bst():
-    root = None
-    values = [4, 2, 6, 1, 3, 5, 7]
-    for val in values:
-        root = insert_into_bst(root, val)
-    return root
-
-
 def pathSum(root: Optional[TreeNode], targetSum: int) -> List[List[int]]:
     result = []
 
@@ -166,8 +167,6 @@ def pathSum(root: Optional[TreeNode], targetSum: int) -> List[List[int]]:
     return result
 
 
-# Test case
 if __name__ == "__main__":
-    root = create_bst()
-    # inorder_stack(root)
     # print_tree(root)
+    pass
