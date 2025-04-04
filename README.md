@@ -58,3 +58,22 @@ This repository contains implementations of various data structures and algorith
 ## Java
 
 coming soon...
+
+---
+
+## Setup
+
+#### Git Hook Setup
+```bash
+chmod +x scripts/hooks/commit-msg
+```
+
+```bash
+chmod +x scripts/install-git-hooks.sh
+```
+
+```bash
+./scripts/install-git-hooks.sh
+```
+
+---
