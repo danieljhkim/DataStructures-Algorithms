@@ -65,7 +65,7 @@ coming soon...
 
 #### Git Hook Setup
 ```bash
-chmod +x scripts/hooks/commit-msg
+chmod +x scripts/hooks/commit-msg.sh
 ```
 
 ```bash

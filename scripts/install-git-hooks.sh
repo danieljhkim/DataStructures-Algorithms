@@ -1,7 +1,7 @@
 #!/bin/bash
 
 HOOK_NAME="commit-msg"
-SOURCE_FILE="./scripts/hooks/$HOOK_NAME"
+SOURCE_FILE="./scripts/hooks/$HOOK_NAME.sh"
 DEST_FILE=".git/hooks/$HOOK_NAME"
 
 if [ ! -f "$SOURCE_FILE" ]; then
