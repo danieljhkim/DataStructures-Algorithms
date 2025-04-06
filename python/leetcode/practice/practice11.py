@@ -283,6 +283,129 @@ class Solution:
                             ans = max(len(word), ans)
         return ans
 
+    # 2551. Put Marbles in Bags
+    def putMarbles(self, weights: List[int], k: int) -> int:
+        n = len(weights)
+        if k == 1:
+            return 0
+
+        diffs = [weights[i - 1] + weights[i] for i in range(1, n)]
+        diffs.sort()
+
+        base = weights[0] + weights[-1]
+        min_cost = base + sum(diffs[: k - 1])
+        max_cost = base + sum(diffs[-(k - 1) :])
+        return max_cost - min_cost
+
+    # 2140. Solving Questions With Brainpower
+    def mostPoints(self, questions: List[List[int]]) -> int:
+        N = len(questions)
+
+        @cache
+        def dp(idx):
+            if idx >= N:
+                return 0
+            point, skip = questions[idx]
+            res = dp(idx + 1 + skip) + point
+            res = max(res, dp(idx + 1))
+            return res
+
+        return dp(0)
+
+    # 2873. Maximum Value of an Ordered Triplet I
+    def maximumTripletValue(self, nums: List[int]) -> int:
+        N = len(nums)
+        ans = 0
+        for i in range(N - 2):
+            for j in range(i + 1, N - 1):
+                for k in range(j + 1, N):
+                    ans = max(ans, (nums[i] - nums[j]) * nums[k])
+        return ans
+
+    # 2874. Maximum Value of an Ordered Triplet II
+    def maximumTripletValue(self, nums: List[int]) -> int:
+        N = len(nums)
+        left = [0] * N
+        right = [0] * N
+        for i in range(1, N):
+            left[i] = max(left[i - 1], nums[i - 1])
+            right[N - 1 - i] = max(right[N - i], nums[N - i])
+        ans = 0
+        for i in range(1, N - 1):
+            ans = max(ans, (left[i] - nums[i] * right[i]))
+        return ans
+
+    def lcaDeepestLeaves(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        if not root:
+            return root
+
+        def dfs(node, level):
+            if not node:
+                return 0
+            if not node.left and not node.right:
+                return node, level
+
+            left, left_lvl = dfs(node.left, level + 1)
+            right, right_lvl = dfs(node.right, level + 1)
+            if left_lvl > right_lvl:
+                return left, left_lvl
+            if left_lvl < right_lvl:
+                return right, right_lvl
+            return node, right_lvl
+
+        return dfs(root, 0)
+
+    def getMoneyAmount(self, n: int) -> int:
+
+        @cache
+        def dp(low, high):
+            if low >= high:
+                return 0
+            res = float("inf")
+
+            for x in range(low, high + 1):
+                cost = x + max(dp(low, x - 1), dp(x + 1, high))
+                res = min(res, cost)
+            return res
+
+        return dp(1, n)
+
+    # 1863. Sum of All Subset XOR Totals
+    def subsetXORSum(self, nums: List[int]) -> int:
+        self.total = 0
+        N = len(nums)
+
+        def backtrack(arr, idx):
+            xors = 0
+            for n in arr:
+                xors ^= n
+            self.total += xors
+            if idx == N:
+                return
+            for i in range(idx, N):
+                arr.append(nums[i])
+                backtrack(arr, i + 1)
+                arr.pop()
+
+        backtrack([], 0)
+        return self.total
+
+    # 368. Largest Divisible Subset
+    def largestDivisibleSubset(self, nums: List[int]) -> List[int]:
+        if not nums:
+            return []
+
+        nums.sort()
+        n = len(nums)
+        dp = [[num] for num in nums]
+
+        for i in range(n):
+            for j in range(i):
+                if nums[i] % nums[j] == 0 and len(dp[j]) + 1 > len(dp[i]):
+                    dp[i] = dp[j] + [nums[i]]
+
+        return max(dp, key=len)
+
 
 def test_solution():
     s = Solution()
