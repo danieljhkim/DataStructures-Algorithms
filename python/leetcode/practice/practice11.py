@@ -406,6 +406,99 @@ class Solution:
 
         return max(dp, key=len)
 
+    def countSymmetricIntegers(self, low: int, high: int) -> int:
+        res = 0
+        n = low
+        while n <= high:
+            while len(str(n)) % 2 == 1:
+                n += 1
+            if n <= high:
+                st = str(n)
+                size = len(st)
+                s, e = 0, size - 1
+                total = 0
+                while s < e:
+                    total += int(st[s]) - int(st[e])
+                    s += 1
+                    e -= 1
+                if total == 0:
+                    res += 1
+            n += 1
+        return res
+
+    # 3272. Find the Count of Good Integers
+    def countGoodIntegers(self, n: int, k: int) -> int:  # TLE
+        start = 10 ** (n - 1)
+        end = start * 10
+        table = defaultdict(int)
+        pset = set()
+
+        def get_key(snum):
+            return "".join(sorted(snum))
+
+        def is_palin(snum):
+            left, right = 0, len(snum) - 1
+            while left < right:
+                if snum[left] != snum[right]:
+                    return False
+                left += 1
+                right -= 1
+            return True
+
+        cnt = 0
+        for i in range(start, end):
+            snum = str(i)
+            key = get_key(snum)
+            if i % k == 0:
+                if key in pset or is_palin(snum):
+                    pset.add(key)
+                    cnt += 1
+                else:
+                    table[key] += 1
+            else:
+                table[key] += 1
+
+        for key in pset:
+            cnt += table[key]
+        return cnt
+
+    # 3272. Find the Count of Good Integers
+    def countGoodIntegers(self, n: int, k: int) -> int:  # TLE
+        start = 10 ** (n - 1)
+        end = start * 10
+        table = []
+        pset = set()
+
+        def get_key(snum):
+            return "".join(sorted(snum))
+
+        def is_palin(snum):
+            left, right = 0, len(snum) - 1
+            while left < right:
+                if snum[left] != snum[right]:
+                    return False
+                left += 1
+                right -= 1
+            return True
+
+        cnt = 0
+        for i in range(start, end):
+            snum = str(i)
+            key = get_key(snum)
+            if i % k == 0:
+                if key in pset or is_palin(snum):
+                    pset.add(key)
+                    cnt += 1
+                else:
+                    table.append(key)
+            else:
+                table.append(key)
+
+        for key in table:
+            if key in pset:
+                cnt += 1
+        return cnt
+
 
 def test_solution():
     s = Solution()
