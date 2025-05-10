@@ -499,6 +499,43 @@ class Solution:
                 cnt += 1
         return cnt
 
+    # 3522. Calculate Score After Performing Instructions
+    def calculateScore(self, instructions: List[str], values: List[int]) -> int:
+        visited = set()
+        idx, N, score = 0, len(instructions), 0
+        while 0 <= idx < N and idx not in visited:
+            visited.add(idx)
+            if instructions[idx] == "add":
+                score += values[idx]
+                idx += 1
+            else:
+                idx += values[idx]
+        return score
+
+    # 3523. Make Array Non-decreasing
+    def maximumPossibleSize(self, nums: List[int]) -> int:
+        stack = []
+        for num in nums:
+            if stack and num < stack[-1]:
+                current_max = stack.pop()
+                stack.append(current_max)
+            else:
+                stack.append(num)
+        return len(stack)
+
+    # 3527. Find the Most Common Response
+    def findCommonResponse(self, responses: List[List[str]]) -> str:
+        table = defaultdict(int)
+
+        for i in range(len(responses)):
+            rset = set(responses[i])
+            for n in rset:
+                table[n] += 1
+
+        arr = [(-cnt, res) for res, cnt in table.items()]
+        arr.sort()
+        return arr[0][1]
+
 
 def test_solution():
     s = Solution()
