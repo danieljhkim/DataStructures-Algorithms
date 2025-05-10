@@ -615,6 +615,81 @@ class Solution:
                 stack.append(n)
         return cnt
 
+    # 3543. Maximum Weighted K-Edge Path
+    def maxWeight(self, n: int, edges: List[List[int]], k: int, t: int) -> int:  # MLE
+        if not edges and k == 0:
+            return 0
+        adj = defaultdict(list)
+        for u, v, w in edges:
+            adj[str(u)].append((w, str(v)))
+        res, visited = [-1], set()
+
+        def dfs(cur, path, total):
+            if len(path) - 1 == k and total < t:
+                res[0] = max(res[0], total)
+            for w, nei in adj[cur]:
+                if total + w < t and len(path) - 1 < k:
+                    path.append(nei)
+                    spath = "-".join(path)
+                    if spath not in visited:
+                        visited.add(spath)
+                        dfs(nei, path, total + w)
+                    path.pop()
+                if k >= 1 and w < t:
+                    npath = f"{cur}-{nei}"
+                    if npath not in visited:
+                        visited.add(npath)
+                        dfs(nei, [cur, nei], w)
+                if nei not in visited:
+                    visited.add(nei)
+                    dfs(nei, [nei], 0)
+
+        for u, v, w in edges:
+            u = str(u)
+            if u not in visited:
+                visited.add(u)
+                dfs(u, [u], 0)
+        return res[0]
+
+    # 3543. Maximum Weighted K-Edge Path
+    def maxWeight(self, n: int, edges: List[List[int]], k: int, t: int) -> int:  # pass
+        if not edges and k == 0:
+            return 0
+        adj = defaultdict(list)
+        indeg = [0] * n
+        for u, v, w in edges:
+            adj[u].append((w, v))
+            indeg[v] += 1
+
+        dq = deque()
+        for i, n in enumerate(indeg):
+            if n == 0:
+                dq.append(i)
+        torder = []
+        while dq:
+            cur = dq.popleft()
+            torder.append(cur)
+            for w, nei in adj[cur]:
+                indeg[nei] -= 1
+                if indeg[nei] == 0:
+                    dq.append(nei)
+
+        res = -1
+
+        @cache
+        def dfs(cur, total, cnt):
+            if total < t and cnt == k:
+                nonlocal res
+                res = max(res, total)
+            if total >= t or cnt > k:
+                return
+            for w, nei in adj[cur]:
+                dfs(nei, w + total, cnt + 1)
+
+        for start in torder:
+            dfs(start, 0, 0)
+        return res
+
 
 def test_solution():
     s = Solution()
