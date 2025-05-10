@@ -536,6 +536,85 @@ class Solution:
         arr.sort()
         return arr[0][1]
 
+    # 2918. Minimum Equal Sum of Two Arrays After Replacing Zeros
+    def minSum(self, nums1: List[int], nums2: List[int]) -> int:
+        sum1, sum2 = sum(nums1), sum(nums2)
+        zero1, zero2 = nums1.count(0), nums2.count(0)
+        if sum1 > sum2:
+            big_s, small_s = sum1, sum2
+            big_z, small_z = zero1, zero2
+        elif sum2 > sum1:
+            big_s, small_s = sum2, sum1
+            big_z, small_z = zero2, zero1
+        else:
+            if zero1 != zero2 and (zero1 == 0 or zero2 == 0):
+                return -1
+            return sum1 + max(zero1, zero2)
+        if small_z == 0:
+            return -1
+        if big_z == 0 and small_z + small_s > big_s:
+            return -1
+
+        return max(big_s + big_z, small_s + small_z)
+
+    # 3541. Find Most Frequent Vowel and Consonant
+    def maxFreqSum(self, s: str) -> int:
+        v = {"a", "e", "i", "o", "u"}
+        vfreq = [0] * 26
+        cfreq = [0] * 26
+        for w in s:
+            if w in v:
+                vfreq[ord("a") - ord(w)] += 1
+            else:
+                cfreq[ord("a") - ord(w)] += 1
+        return max(cfreq) + max(vfreq)
+
+    # 3542. Minimum Operations to Convert All Elements to Zero
+    def minOperations(self, nums: List[int]) -> int:  # TLE
+        cnt, N = 0, len(nums)
+        used = set()
+        snums = [(n, i) for i, n in enumerate(nums)]
+        snums.sort()
+        if snums[-1][0] == 0:
+            return 0
+        left = 0
+        for n, i in snums:
+            if n == 0:
+                used.add(i)
+            else:
+                break
+            left += 1
+        while left < N:
+            right = left + 1
+            n, idx = snums[left][0], snums[left][1]
+            used.add(idx)
+            while right < N and snums[right][0] == n:
+                ridx = snums[right][1]
+                rleft, rright = idx + 1, ridx - 1
+                while rleft <= rright:
+                    if rleft in used or rright in used:
+                        cnt += 1
+                        break
+                    rleft += 1
+                    rright -= 1
+                idx = ridx
+                used.add(ridx)
+                right += 1
+            cnt += 1
+            left = right
+        return cnt
+
+    # 3542. Minimum Operations to Convert All Elements to Zero
+    def minOperations(self, nums: List[int]) -> int:
+        cnt, stack = 0, []
+        for n in nums:
+            while stack and stack[-1] > n:
+                stack.pop()
+            if n > 0 and (not stack or stack[-1] < n):
+                cnt += 1
+                stack.append(n)
+        return cnt
+
 
 def test_solution():
     s = Solution()
