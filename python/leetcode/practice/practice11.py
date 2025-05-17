@@ -690,6 +690,154 @@ class Solution:
             dfs(start, 0, 0)
         return res
 
+    # 3545. Minimum Deletions for At Most K Distinct Characters
+    def minDeletion(self, s: str, k: int) -> int:
+        counts = Counter(s)
+        size, cnt = len(counts), 0
+        sarr = [n for n in counts.values()]
+        sarr.sort(reverse=True)
+        while size > k:
+            cnt += sarr.pop()
+            size -= 1
+        return cnt
+
+    # 3546. Equal Sum Grid Partition I
+    def canPartitionGrid(self, grid: List[List[int]]) -> bool:
+        R, C = len(grid), len(grid[0])
+        total = rtotal = ctotal = 0
+        for r in grid:
+            total += sum(r)
+        cols = [0] * C
+        for r in range(R):
+            if total - rtotal == rtotal:
+                return True
+            for c in range(C):
+                rtotal += grid[r][c]
+                cols[c] += grid[r][c]
+
+        for i, c in enumerate(cols):
+            if total - ctotal == ctotal:
+                return True
+            ctotal += c
+        return False
+
+    # 75. Sort Colors
+    def sortColors(self, nums: List[int]) -> None:
+        red = white = 0
+        for n in nums:
+            if n == 0:
+                red += 1
+            elif n == 1:
+                white += 1
+        for i in range(len(nums)):
+            color = 2
+            if red:
+                color = 0
+                red -= 1
+            elif white:
+                color = 1
+                white -= 1
+            nums[i] = color
+        return nums
+
+    # 1004. Max Consecutive Ones III
+    def longestOnes(self, nums: List[int], k: int) -> int:
+        best = zeros = left = 0
+        N = len(nums)
+        for right in range(N):
+            if nums[right] == 0:
+                zeros += 1
+                while left < N and zeros > k:
+                    if nums[left] == 0:
+                        zeros -= 1
+                    left += 1
+            if zeros <= k:
+                best = max(right - left + 1, best)
+        return best
+
+    # 198. House Robber
+    def rob(self, nums: List[int]) -> int:
+        N = len(nums)
+
+        @cache
+        def dp(idx, robbed):
+            if idx >= N:
+                return 0
+            if robbed:
+                res = dp(idx + 1, False)
+            else:
+                res = max(dp(idx + 1, True) + nums[idx], dp(idx + 1, False))
+            return res
+
+        return dp(0, False)
+
+    # 844. Backspace String Compare
+    def backspaceCompare(self, s: str, t: str) -> bool:
+        sstack, tstack = [], []
+        for w in s:
+            if w == "#":
+                if sstack:
+                    sstack.pop()
+            else:
+                sstack.append(w)
+        for w in t:
+            if w == "#":
+                if tstack:
+                    tstack.pop()
+            else:
+                tstack.append(w)
+        return "".join(sstack) == "".join(tstack)
+
+    # 222. Count Complete Tree Nodes
+    def countNodes(self, root: Optional[TreeNode]) -> int:
+        if not root:
+            return 0
+        dq = deque([root])
+        cnt = 1
+        while dq:
+            cur = dq.popleft()
+            if cur.left:
+                cnt += 1
+                dq.append(cur.left)
+            if cur.right:
+                cnt += 1
+                dq.append(cur.right)
+        return cnt
+
+    # 562. Longest Line of Consecutive One in Matrix
+    def longestLine(self, mat: List[List[int]]) -> int:
+        R, C = len(mat), len(mat[0])
+        directions = (
+            (0, 1),
+            (1, 0),
+            (-1, 0),
+            (0, -1),
+            (1, 1),
+            (1, -1),
+            (-1, 1),
+            (-1, -1),
+        )
+
+        @cache
+        def dfs(r, c, d):
+            dir = directions[d]
+            res = 1
+            nr = dir[0] + r
+            nc = dir[1] + c
+            if 0 <= nr < R and 0 <= nc < C:
+                if mat[nr][nc] == 1:
+                    res += dfs(nr, nc, d)
+            return res
+
+        res = 0
+
+        for r in range(R):
+            for c in range(C):
+                if mat[r][c] == 1:
+                    for i in range(len(directions)):
+                        res = max(dfs(r, c, i), res)
+        return res
+
 
 def test_solution():
     s = Solution()
