@@ -418,4 +418,56 @@ public class Solutions1 {
             return sb2.reverse().toString();
         }
     }
+
+    // 1004. Max Consecutive Ones III
+    class P1004 {
+        public int longestOnes(int[] nums, int k) {
+            int left = 0, right = 0, zeros = 0, N = nums.length;
+            while (right < N) {
+                if (nums[right] == 0) {
+                    zeros++;
+                }
+                if (zeros > k) {
+                    if (nums[left] == 0) {
+                        zeros--;
+                    }
+                    left++;
+                }
+                right++;
+            }
+            return right - left;
+        }
+    }
+
+    // 198. House Robber
+    class P198 {
+
+        int N;
+        int[] nums;
+        Integer[][] memo;
+
+        public int rob(int[] nums) {
+            this.N = nums.length;
+            this.nums = nums;
+            this.memo = new Integer[2][N];
+            return dp(0, 0);
+        }
+
+        public int dp(int idx, int robbed) {
+            if (idx >= N) {
+                return 0;
+            }
+            if (memo[robbed][idx] != null) {
+                return memo[robbed][idx];
+            }
+            int res = 0;
+            if (robbed == 1) {
+                res = dp(idx + 1, 0);
+            } else {
+                res = Math.max(dp(idx + 1, 0), dp(idx + 1, 1) + nums[idx]);
+            }
+            memo[robbed][idx] = res;
+            return res;
+        }
+    }
 }
