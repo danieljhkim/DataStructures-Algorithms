@@ -1,8 +1,9 @@
 directions = ((0, 1), (1, 0), (-1, 0), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1))
 
 directions = ((0, 1), (1, 0), (-1, 0), (0, -1))
-R = len(grid)
-C = len(grid[0])
+
+R, C = len(grid), len(grid[0])
+R, C = len(matrix), len(matrix[0])
 
 memo = [[0] * C for _ in range(R)]
 

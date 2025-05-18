@@ -838,6 +838,47 @@ class Solution:
                         res = max(dfs(r, c, i), res)
         return res
 
+    # 3552. Grid Teleportation Traversal
+    def minMoves(self, matrix: List[str]) -> int:
+        # tried bfs, but got TLE - not sure why
+        directions = ((0, 1), (1, 0), (-1, 0), (0, -1))
+        R, C = len(matrix), len(matrix[0])
+        table = defaultdict(list)
+        used = [False] * 26
+        distances = [[inf] * C for _ in range(R)]
+
+        for r in range(R):
+            for c in range(C):
+                w = matrix[r][c]
+                if w.isalpha():
+                    table[w].append((r, c))
+
+        heap = [(0, 0, 0, [False] * 26)]
+        while heap:
+            dist, r, c, used = heapq.heappop(heap)
+            if r == R - 1 and c == C - 1:
+                return dist
+            val = matrix[r][c]
+            if val.isalpha():
+                idx = ord(val) - ord("A")
+                if not used[idx]:
+                    cused = used.copy()
+                    cused[idx] = True
+                    for tr, tc in table[val]:
+                        if not (r == tr and c == tc):
+                            if distances[tr][tc] > dist:
+                                distances[tr][tc] = dist
+                                heapq.heappush(heap, (dist, tr, tc, cused))
+            for dr, dc in directions:
+                nr = dr + r
+                nc = dc + c
+                if 0 <= nr < R and 0 <= nc < C:
+                    val = matrix[nr][nc]
+                    if val != "#" and distances[nr][nc] > dist + 1:
+                        distances[nr][nc] = dist + 1
+                        heapq.heappush(heap, (dist + 1, nr, nc, used))
+        return -1
+
 
 def test_solution():
     s = Solution()
