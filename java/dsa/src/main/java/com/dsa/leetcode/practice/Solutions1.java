@@ -470,4 +470,21 @@ public class Solutions1 {
             return res;
         }
     }
+
+    // 2942. Find Words Containing Character
+    class P2942 {
+
+        public List<Integer> findWordsContaining(String[] words, char x) {
+            List<Integer> res = new ArrayList<>();
+            String target = x + "";
+            for (int i=0; i < words.length; i++) {
+                if (words[i].contains(target)) {
+                    res.add(i);
+                }
+            }
+            return res;
+        }
+    }
+
+
 }

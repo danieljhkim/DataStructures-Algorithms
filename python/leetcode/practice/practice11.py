@@ -879,6 +879,82 @@ class Solution:
                         heapq.heappush(heap, (dist + 1, nr, nc, used))
         return -1
 
+    # 3556. Sum of Largest Prime Substrings
+    def sumOfLargestPrimes(self, s: str) -> int:
+        def is_prime(n):
+            if n <= 1:
+                return False
+            if n <= 3:
+                return True
+            if n % 2 == 0 or n % 3 == 0:
+                return False
+            i = 5
+            while i * i <= n:
+                if n % i == 0 or n % (i + 2) == 0:
+                    return False
+                i += 6
+            return True
+
+        primes = set()
+        N = len(s)
+        for i in range(N):
+            if s[i] == "0":
+                continue
+            for j in range(i, N):
+                num = int(s[i : j + 1])
+                if is_prime(num):
+                    primes.add(num)
+        primes = list(primes)
+        primes.sort(reverse=True)
+        return sum(primes[:3])
+
+    # 3557. Find Maximum Number of Non Intersecting Substrings
+    def maxSubstrings(self, word: str) -> int:
+        N = len(word)
+
+        @cache
+        def dp(idx):
+            if idx >= N:
+                return 0
+            cur = word[idx]
+            res = dp(idx + 1)
+            for j in range(idx + 3, N):
+                if word[j] == cur:
+                    res = max(dp(j + 1) + 1, res)
+                    break
+            return res
+
+        return dp(0)
+
+    # 3558. Number of Ways to Assign Edge Weights I
+    def assignEdgeWeights(self, edges: List[List[int]]) -> int:
+        MOD = 10**9 + 7
+        adj = defaultdict(list)
+        for u, v in edges:
+            adj[u].append(v)
+            adj[v].append(u)
+        visited = set([1])
+        dq = deque([(1, 0)])
+        path = 0
+        while dq:
+            cur, dist = dq.popleft()
+            path = max(dist, path)
+            for nei in adj[cur]:
+                if nei not in visited:
+                    visited.add(nei)
+                    dq.append((nei, dist + 1))
+
+        @cache
+        def dp(idx, is_even):
+            if idx == path:
+                if not is_even:
+                    return 1
+                return 0
+            res = dp(idx + 1, not is_even) + dp(idx + 1, is_even)
+            return res % MOD
+
+        return (dp(1, True) + dp(1, False)) % MOD
+
 
 def test_solution():
     s = Solution()
