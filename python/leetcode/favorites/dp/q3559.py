@@ -20,7 +20,7 @@ class Solution:
         self, edges: List[List[int]], queries: List[List[int]]
     ) -> List[int]:
 
-        N, MOD = len(queries), 10**9 + 7
+        MOD = 10**9 + 7
         adj, ans = defaultdict(list), []
         for u, v in edges:
             adj[u].append(v)
@@ -37,7 +37,7 @@ class Solution:
                     dq.append((nei, dist + 1))
 
         @cache
-        def dp(idx, is_even):
+        def dp(idx, is_even): # equivalent to: idx**2
             if idx == 0:
                 if not is_even:
                     return 1
@@ -49,6 +49,8 @@ class Solution:
 
         for u, v in queries:
             dist = 0
+            
+            # finding LCA 
             while index[u] > index[v]:
                 u = parent[u]
                 dist += 1
@@ -59,5 +61,6 @@ class Solution:
                 v = parent[v]
                 u = parent[u]
                 dist += 2
+            # (dist - 1)**2
             ans.append((dp(dist - 1, False) + dp(dist - 1, True)) % MOD)
         return ans

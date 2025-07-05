@@ -955,6 +955,391 @@ class Solution:
 
         return (dp(1, True) + dp(1, False)) % MOD
 
+    # 2131. Longest Palindrome by Concatenating Two Letter Words
+    def longestPalindrome(self, words: List[str]) -> int:
+        sames, opps = False, 0
+        counts = Counter(words)
+        for w, cnt in counts.items():
+            if cnt == 0:
+                continue
+            rev = w[::-1]
+            if rev == w:
+                opps += (cnt // 2) * 4
+                if cnt % 2 == 1:
+                    sames = True
+            else:
+                if rev in counts and counts[rev] > 0:
+                    rcnt = min(cnt, counts[rev])
+                    counts[rev] -= rcnt
+                    counts[w] -= rcnt
+                    opps += (rcnt * 2) * 2
+        if sames:
+            opps += 2
+        return opps
+
+    # 2131. Longest Palindrome by Concatenating Two Letter Words
+    def longestPalindrome(self, words: List[str]) -> int:
+        counts = defaultdict(int)
+        cnt = 0
+        for w in words:
+            rev = w[::-1]
+            if rev in counts and counts[rev] > 0:
+                cnt += 4
+                counts[rev] -= 1
+            else:
+                counts[w] += 1
+        for w, v in counts.items():
+            if v > 0 and w[0] == w[1]:
+                cnt += 2
+                break
+        return cnt
+
+    def minCuttingCost(self, n: int, m: int, k: int) -> int:
+        big = max(n, m)
+        if big <= k:
+            return 0
+        return (big - k) * k
+
+    def resultingString(self, s: str) -> str:
+        res = []
+        for i in range(len(s)):
+            ch1 = ord(s[i])
+            if res:
+                prev = ord(res[-1])
+                diff = abs(prev - ch1)
+                if diff == 1 or diff == 25:
+                    res.pop()
+                else:
+                    res.append(s[i])
+            else:
+                res.append(s[i])
+        return "".join(res)
+
+    # 909. Snakes and Ladders
+    def snakesAndLadders(self, board: List[List[int]]) -> int:  # tricky
+        """board
+        6 5 4
+        1 2 3
+        """
+        R, C = len(board), len(board[0])
+        target = R * C
+        table, idx, opps = {}, 1, True
+        for r in range(R - 1, -1, -1):
+            if opps:
+                for c in range(C):
+                    table[idx] = (r, c)
+                    idx += 1
+            else:
+                for c in range(C - 1, -1, -1):
+                    table[idx] = (r, c)
+                    idx += 1
+            opps = not opps
+
+        dq = deque([(0, 1)])
+        visited = set([1])
+        while dq:
+            cnt, pos = dq.popleft()
+            r, c = table[pos]
+            val = board[r][c]
+            if val != -1:
+                pos = val
+            if pos == target:
+                return cnt
+            nxt = pos
+            for i in range(6):
+                nxt += 1
+                if nxt <= target:
+                    if nxt not in visited:
+                        dq.append((cnt + 1, nxt))
+                        visited.add(nxt)
+                else:
+                    break
+        return -1
+
+    # 3572. Maximize Y‑Sum by Picking a Triplet of Distinct X‑Values
+    def maxSumDistinctTriplet(
+        self, x: List[int], y: List[int]
+    ) -> int:  # O(NlogN) - 303ms
+        arr = [(n, i) for i, n in enumerate(y)]
+        arr.sort(reverse=True)  # O(NlogN)
+        N = len(x)
+        a = 0
+        while a <= N - 2:  # O(3N)
+            b = a + 1
+            while b < N and x[arr[a][1]] == x[arr[b][1]]:
+                b += 1
+            c = b + 1
+            while c < N and (
+                x[arr[b][1]] == x[arr[c][1]] or x[arr[c][1]] == x[arr[a][1]]
+            ):
+                c += 1
+            if c < N:
+                return arr[a][0] + arr[b][0] + arr[c][0]
+            a = b + 1
+        return -1
+
+    # 3572. Maximize Y‑Sum by Picking a Triplet of Distinct X‑Values
+    def maxSumDistinctTriplet(
+        self, x: List[int], y: List[int]
+    ) -> int:  # O(NlogN) - 94ms
+        nmap = defaultdict(int)
+        for i, n in enumerate(x):
+            if n not in nmap or nmap[n] < y[i]:
+                nmap[n] = y[i]
+        arr = sorted([val for val in nmap.values()], reverse=True)
+        if len(arr) < 3:
+            return -1
+        return sum(arr[:3])
+
+    # 3572. Maximize Y‑Sum by Picking a Triplet of Distinct X‑Values
+    def maxSumDistinctTriplet(
+        self, x: List[int], y: List[int]
+    ) -> int:  # O(N + klogk) - 87ms
+        nmap = defaultdict(int)
+        for i, n in enumerate(x):
+            if n not in nmap or nmap[n] < y[i]:
+                nmap[n] = y[i]
+        heap = [-val for val in nmap.values()]
+        if len(heap) < 3:
+            return -1
+        heapq.heapify(heap)
+        res = 0
+        for i in range(3):
+            res -= heapq.heappop(heap)
+        return res
+
+    # 3572. Maximize Y‑Sum by Picking a Triplet of Distinct X‑Values
+    def maxSumDistinctTriplet(self, x: List[int], y: List[int]) -> int:  # O(N) - 152ms
+        nmap = defaultdict(int)
+        for i, n in enumerate(x):
+            nmap[n] = max(nmap[n], y[i])
+        if len(nmap) < 3:
+            return -1
+        a = b = c = -1
+        for n in nmap.values():
+            if n > a:
+                c = b
+                b = a
+                a = n
+            elif n > b:
+                c = b
+                b = n
+            elif n > c:
+                c = n
+        return a + b + c
+
+    # 347. Top K Frequent Elements
+    def topKFrequent(self, nums, k):  # O(N * k) - new approach, good for small k
+        counts = Counter(nums)
+        cands = [(-inf, -1) for _ in range(k)]
+        for key, n in counts.items():
+            for i, c in enumerate(cands):
+                if n > c[0]:
+                    idx = k - 1
+                    while idx > i:
+                        cands[idx], cands[idx - 1] = cands[idx - 1], cands[idx]
+                        idx -= 1
+                    cands[i] = (n, key)
+                    break
+        res = [c[1] for c in cands]
+        return res
+
+    # 3588. Find Maximum Area of a Triangle
+    def maxArea(self, coords: List[List[int]]) -> int:
+        N = len(coords)
+        xtable, ytable = defaultdict(list), defaultdict(list)
+        xcoords, ycoords = sorted(coords), sorted([(y, x) for x, y in coords])
+
+        for x, y in coords:
+            xtable[x].append(y)
+            ytable[y].append(x)
+
+        def find(table, coord):
+            best = 0
+            for x, ylist in table.items():
+                sy, by = min(ylist), max(ylist)
+                base = by - sy
+                i = 0
+                x1 = coord[i][0]
+
+                while i < N - 1 and x1 == x:
+                    i += 1
+                    x1 = coord[i][0]
+                height = abs(x1 - x)
+                best = max(base * height, best)
+
+                i = N - 1
+                x2 = coord[-1][0]
+                while i > 0 and x2 == x:
+                    i -= 1
+                    x2 = coord[i][0]
+                height = abs(x2 - x)
+                best = max(base * height, best)
+            return best
+
+        res = max(find(xtable, xcoords, 0), find(ytable, ycoords, 1))
+        if res == 0:
+            return -1
+        return res
+
+    # 3481. Apply Substitutions
+    def applySubstitutions(self, replacements: List[List[str]], text: str) -> str:
+        dq, wmap = deque(replacements), {}
+        while dq:
+            key, val = dq.popleft()
+            words = val.split("%")
+            good = True
+            for i in range(len(words)):
+                if len(words[i]) == 1 and words[i].isupper():
+                    if words[i] in wmap:
+                        words[i] = wmap[words[i]]
+                    else:
+                        good = False
+                        words[i] = f"%{words[i]}%"
+            if not good:
+                dq.append((key, "".join(words)))
+            else:
+                wmap[key] = "".join(words)
+
+        tsplits, res = text.split("%"), []
+        for val in tsplits:
+            if val in wmap:
+                res.append(wmap[val])
+            else:
+                res.append(val)
+        return "".join(res)
+
+    # 3597. Partition String
+    def partitionString(self, s: str) -> List[str]:
+        seen, cur, res = set(), "", []
+        for i in range(len(s)):
+            cur += s[i]
+            if cur not in seen:
+                res.add(cur)
+                seen.add(cur)
+                cur = ""
+        return res
+
+    # 3598. Longest Common Prefix Between Adjacent Strings After Removals
+    def longestCommonPrefix(self, words: List[str]) -> List[int]:
+        if len(words) == 1:
+            return [0]
+
+        memo = {}
+
+        def prefix_len(str1, str2):
+            w1 = str1 if str1 > str2 else str2
+            w2 = str1 if str1 <= str2 else str2
+            if (w1, w2) in memo:
+                return memo[(w1, w2)]
+            idx = 0
+            while idx < len(w1) and idx < len(w2) and w1[idx] == w2[idx]:
+                idx += 1
+            memo[(w1, w2)] = idx
+            return idx
+
+        N = len(words)
+        sizes, res = [], []
+        for i in range(N - 1):
+            size = prefix_len(words[i], words[i + 1])
+            sizes.append((size, i, i + 1))
+            if i == N - 2:
+                sizes.append((size, i + 1, i))
+
+        sizes.sort(reverse=True)
+        best = 0
+        for size, idx1, idx2 in sizes:
+            if 0 != idx1 and 0 != idx2:
+                best = size
+                break
+        res.append(best)
+
+        for i in range(1, N - 1):
+            best = prefix_len(words[i - 1], words[i + 1])
+            if best >= sizes[0][0]:
+                res.append(best)
+            else:
+                for size, idx1, idx2 in sizes:
+                    if i != idx1 and i != idx2:
+                        best = max(best, size)
+                        break
+                res.append(best)
+        best = 0
+        for size, idx1, idx2 in sizes:
+            if N - 1 != idx1 and N - 1 != idx2:
+                best = size
+                break
+        res.append(best)
+        return res
+
+    # 3603. Minimum Cost Path with Alternating Directions II
+    def minCost(self, m: int, n: int, waitCost: List[List[int]]) -> int:  # dijkstra
+        R, C = m, n
+        directions = ((0, 1), (1, 0))
+        costs = defaultdict(lambda: float("inf"))
+        heap = [(1, 1, 0, 0)]
+
+        while heap:
+            cost, s, r, c = heapq.heappop(heap)
+            if r == R - 1 and c == C - 1:
+                return cost
+            if s % 2 == 1:
+                for dr, dc in directions:
+                    nr, nc = dr + r, dc + c
+                    if nr < R and nc < C:
+                        ncost = cost + (nr + 1) * (nc + 1)
+                        if costs[(nr, nc)] > ncost:
+                            costs[(nr, nc)] = ncost
+                            heapq.heappush(heap, (ncost, s + 1, nr, nc))
+            else:
+                ncost = cost + waitCost[r][c]
+                heapq.heappush(heap, (ncost, s + 1, r, c))
+        return -1
+
+    # 3603. Minimum Cost Path with Alternating Directions II
+    def minCost(self, m: int, n: int, waitCost: List[List[int]]) -> int:  # dp
+        R, C = m, n
+
+        @cache
+        def dp(r, c, s):
+            if r == R - 1 and c == C - 1:
+                return 0
+            res, cost = inf, 0
+            if s % 2 == 0:
+                cost = waitCost[r][c]
+                s += 1
+            if r + 1 < R:
+                res = dp(r + 1, c, s + 1) + (r + 2) * (c + 1)
+            if c + 1 < C:
+                res = min(dp(r, c + 1, s + 1) + (r + 1) * (c + 2), res)
+            return res + cost
+
+        return dp(0, 0, 1) + 1
+
+    # 3604. Minimum Time to Reach Destination in Directed Graph
+    def minTime(self, n: int, edges: List[List[int]]) -> int:
+        if not edges and n == 1:
+            return 0
+        adj = defaultdict(list)
+        for u, v, s, e in edges:
+            adj[u].append((v, s, e))
+
+        times = defaultdict(lambda: inf)
+        heap = [(0, 0)]
+        while heap:
+            t, cur = heapq.heappop(heap)
+            if cur == n - 1:
+                return t
+            for nei, s, e in adj[cur]:
+                if s > t and times[nei] > s:
+                    times[nei] = s
+                    heapq.heappush(heap, (s, nei))
+                elif s <= t <= e and times[nei] > t + 1:
+                    times[nei] = t + 1
+                    heapq.heappush(heap, (t + 1, nei))
+
+        return -1
+
 
 def test_solution():
     s = Solution()
