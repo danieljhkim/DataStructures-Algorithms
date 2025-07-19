@@ -1340,6 +1340,64 @@ class Solution:
 
         return -1
 
+    # 3592. Inverse Coin Change
+    def findCoins(self, numWays: List[int]) -> List[int]:
+        coins = []
+        N = len(numWays)
+
+        @cache
+        def check(amount, idx):
+            if amount == 0:
+                return 1
+            if idx == -1 or amount < 0:
+                return 0
+            res = 0
+            while amount >= 0:
+                res += check(amount, idx - 1)
+                amount -= coins[idx]
+            return res
+
+        for i in range(1, N + 1):
+            cnt = numWays[i - 1]
+            res = check(i, len(coins) - 1)
+            if res + 1 == cnt:
+                coins.append(i)
+            elif res > cnt or res < cnt:
+                return []
+
+        return coins
+
+    # 3612. Process String with Special Operations I
+    def processStr(self, s: str) -> str:
+        res = []
+        for w in s:
+            if w == "*":
+                if res:
+                    res.pop()
+            elif w == "#":
+                res.extend(res[::])
+            elif w == "%":
+                res.reverse()
+            else:
+                res.append(w)
+        return "".join(res)
+
+    def matchPlayersAndTrainers(self, players: List[int], trainers: List[int]) -> int:
+        players.sort()
+        trainers.sort()
+        P, T = len(players), len(trainers)
+        idxp = idxt = cnt = 0
+
+        while idxp < P and idxt < T:
+            if players[idxp] <= trainers[idxt]:
+                cnt += 1
+                idxp += 1
+                idxt += 1
+            else:
+                idxt += 1
+
+        return cnt
+
 
 def test_solution():
     s = Solution()
