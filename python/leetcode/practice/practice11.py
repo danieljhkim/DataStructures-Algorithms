@@ -1398,6 +1398,217 @@ class Solution:
 
         return cnt
 
+    """
+    # Definition for a QuadTree node.
+    class Node:
+        def __init__(self, val, isLeaf, topLeft, topRight, bottomLeft, bottomRight):
+            self.val = val
+            self.isLeaf = isLeaf
+            self.topLeft = topLeft
+            self.topRight = topRight
+            self.bottomLeft = bottomLeft
+            self.bottomRight = bottomRight
+    """
+
+    # 427. Construct Quad Tree
+    def construct(self, grid: List[List[int]]) -> "Node":
+
+        def leafify(r, c, b):
+            tl, tr, bl, br = b[r][c], b[r][c + 1], b[r + 1][c], b[r + 1][c + 1]
+            val = sum((tl, tr, bl, br))
+            if val == 0 or val == 4:
+                return Node(val=1 if val else 0, isLeaf=True)
+            return Node(
+                val=1,
+                isLeaf=False,
+                topLeft=Node(val=tl, isLeaf=True),
+                topRight=Node(val=tr, isLeaf=True),
+                bottomLeft=Node(val=bl, isLeaf=True),
+                bottomRight=Node(val=br, isLeaf=True),
+            )
+
+        def leafify2(r, c, b):
+            nodes = (b[r][c], b[r][c + 1], b[r + 1][c], b[r + 1][c + 1])
+            is_leaf, total = True, 0
+            for c in nodes:
+                if not c.isLeaf:
+                    is_leaf = False
+                    break
+                total += c.val
+            if is_leaf and (total == 0 or total == 4):
+                return Node(val=nodes[0].val, isLeaf=True)
+            return Node(
+                val=1,
+                isLeaf=False,
+                topLeft=nodes[0],
+                topRight=nodes[1],
+                bottomLeft=nodes[2],
+                bottomRight=nodes[3],
+            )
+
+        n = len(grid)
+        if n == 1:
+            return Node(val=grid[0][0], isLeaf=True)
+        blocks = []
+        for r in range(0, n, 2):
+            blocks.append([])
+            for c in range(0, n, 2):
+                blocks[-1].append(leafify(r, c, grid))
+
+        while len(blocks) > 1:
+            n = len(blocks)
+            nblocks = []
+            for r in range(0, n, 2):
+                nblocks.append([])
+                for c in range(0, n, 2):
+                    nblocks[-1].append(leafify2(r, c, blocks))
+            blocks = nblocks
+
+        return blocks[0][0]
+
+    # 3623. Count Number of Trapezoids I
+    def countTrapezoids(self, points: List[List[int]]) -> int:
+        MOD = 10**9 + 7
+        table = defaultdict(set)
+        for x, y in points:
+            table[y].add(x)
+
+        rows = []
+        for row in table.values():
+            n = len(row)
+            if n > 1:
+                rows.append(n * (n - 1) // 2)
+
+        if len(rows) < 2:
+            return 0
+
+        total = ans = 0
+        for r in rows:
+            ans = (ans + total * r) % MOD
+            total = (total + r) % MOD
+        return ans
+
+    # Q1. Smallest Even Multiple
+    def smallestEvenMultiple(self, n: int) -> int:
+        if n % 2 == 0:
+            return n
+        return n * 2
+
+    # Q2. Length of the Longest Alphabetical Continuous Substring
+    def longestContinuousSubstring(self, s: str) -> int:
+        best = 1
+        left = right = 0
+        N = len(s)
+        while left < N:
+            while right < N + 1 and ord(s[right + 1]) - ord(s[right]) == 1:
+                right += 1
+            best = max(best, right - left + 1)
+            right += 1
+            left = right
+        return best
+
+    # Q3. Reverse Odd Levels of Binary Tree
+    def reverseOddLevels(self, root: Optional[TreeNode]) -> Optional[TreeNode]:
+        dq = deque([root])
+        table = defaultdict(list)
+        lvl = 0
+        while dq:
+            n = len(dq)
+            for _ in range(n):
+                cur = dq.popleft()
+                table[lvl].append(cur)
+                if cur.left:
+                    dq.append(cur.left)
+                if cur.right:
+                    dq.append(cur.right)
+            lvl += 1
+
+        for i in range(1, lvl):
+            if i % 2 == 1:
+                table[i].reverse()
+            idx = 0
+            for p in table[i - 1]:
+                p.left = table[i][idx]
+                p.right = table[i][idx + 1]
+                idx += 2
+        return root
+
+    # Q4. Sum of Prefix Scores of Strings
+    def sumPrefixScores(self, words: List[str]) -> List[int]:
+        root = {}
+        res = []
+        for word in words:
+            cur = root
+            for w in word:
+                if w not in cur:
+                    cur[w] = {"cnt": 0}
+                cur[w]["cnt"] += 1
+                cur = cur[w]
+
+        for word in words:
+            cur, cnt = root, 0
+            for w in word:
+                cnt += cur[w]
+                cur = cur[w]
+            res.append(cnt)
+        return res
+
+    # 3629. Minimum Jumps to Reach End via Prime Teleportation
+    def minJumps(self, nums: List[int]) -> int:  # TLE
+
+        def get_all_primes(n):
+            primes = [True] * (n + 1)
+            primes[0] = primes[1] = False
+            p = 2
+            while p * p <= n:
+                if primes[p]:
+                    for i in range(p * p, n + 1, p):
+                        primes[i] = False
+                p += 1
+            return [i for i, is_prime in enumerate(primes) if is_prime]
+
+        @cache
+        def return_match(p):  # point of TLE failure
+            match = []
+            for n, i in ntable.items():
+                if n % p == 0:
+                    match.extend(i)
+            return match
+
+        nprimes = set(get_all_primes(max(nums)))
+        primes = []
+        ntable = defaultdict(list)
+        for i, n in enumerate(nums):
+            if n in nprimes:
+                primes.append(i)
+            ntable[n].append(i)
+
+        adj = {}
+        for p in primes:
+            adj[p] = return_match(nums[p])
+
+        dq, visited = deque([(0, 0)]), {0}
+        N = len(nums)
+        while dq:
+            cur, dist = dq.popleft()
+            if cur == N - 1:
+                return dist
+            idx_l, idx_r = cur - 1, cur + 1
+            if idx_l >= 0 and idx_l not in visited:
+                visited.add(idx_l)
+                dq.append((idx_l, dist + 1))
+            if idx_r < N and idx_r not in visited:
+                visited.add(idx_r)
+                dq.append((idx_r, dist + 1))
+
+            if cur in adj:
+                while adj[cur]:
+                    nei = adj[cur].pop()
+                    if nei not in visited:
+                        visited.add(nei)
+                        dq.append((nei, dist + 1))
+        return -1
+
 
 def test_solution():
     s = Solution()

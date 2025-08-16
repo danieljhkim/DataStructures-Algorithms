@@ -384,6 +384,7 @@ public class Solutions1 {
             return new int[] {maxLen + 1, maxInd};
         }
     }
+
     // 1249. Minimum Remove to Make Valid Parentheses
     class P1249 {
         public String minRemoveToMakeValid(String s) {
@@ -477,10 +478,66 @@ public class Solutions1 {
         public List<Integer> findWordsContaining(String[] words, char x) {
             List<Integer> res = new ArrayList<>();
             String target = x + "";
-            for (int i=0; i < words.length; i++) {
+            for (int i = 0; i < words.length; i++) {
                 if (words[i].contains(target)) {
                     res.add(i);
                 }
+            }
+            return res;
+        }
+    }
+
+    // 3619. Count Islands With Total Value Divisible by K
+    class P3619 {
+
+        int R;
+        int C;
+        int[][] dirs = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+        int[][] grid;
+
+        public int countIslands(int[][] grid, int k) {
+            R = grid.length;
+            C = grid[0].length;
+            this.grid = grid;
+            int res = 0;
+
+            for (int r = 0; r < R; r++) {
+                for (int c = 0; c < C; c++) {
+                    if (grid[r][c] > 0) {
+                        int val = dfs(r, c);
+                        if (val % k == 0) {
+                            res += 1;
+                        }
+                    }
+                }
+            }
+            return res;
+        }
+
+        int dfs(int r, int c) {
+            int val = grid[r][c];
+            grid[r][c] = 0;
+            for (int[] d : dirs) {
+                int nr = d[0] + r;
+                int nc = d[1] + c;
+                if (0 <= nr && nr < R && 0 <= nc && nc < C && grid[nr][nc] > 0) {
+                    val += dfs(nr, nc);
+                }
+            }
+            return val;
+        }
+    }
+
+    // 3627. Maximum Median Sum of Subsequences of Size 3
+    class P3627 {
+        public long maximumMedianSum(int[] nums) {
+            Arrays.sort(nums);
+            int cnt = nums.length / 3, idx = nums.length - 2;
+            long res = 0;
+            while (cnt > 0) {
+                res += nums[idx];
+                idx -= 2;
+                cnt--;
             }
             return res;
         }
