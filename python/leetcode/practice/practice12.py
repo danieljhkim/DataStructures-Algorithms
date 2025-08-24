@@ -237,6 +237,118 @@ class Solution:
                     heapq.heappush(heap, (dist + w, dest))
         return -1
 
+    # 3652. Best Time to Buy and Sell Stock using Strategy
+    def maxProfit(self, prices: List[int], strategy: List[int], k: int) -> int:
+        """
+        - time: O(n)
+        - dp + prefix_sum
+        """
+        N = len(prices)
+        kh = k // 2
+        prefix = [0]
+        for p in prices:
+            prefix.append(p + prefix[-1])
+
+        @cache
+        def dp(idx, used):
+            if idx == N:
+                return 0
+            res = dp(idx + 1, used) + prices[idx] * strategy[idx]
+            if not used and N - idx >= k:
+                tprof = dp(idx + k, True) + prefix[idx + k] - prefix[idx + kh]
+                res = max(tprof, res)
+            return res
+
+        return dp(0, False)
+
+    # 3652. Best Time to Buy and Sell Stock using Strategy
+    def maxProfit(self, prices: List[int], strategy: List[int], k: int) -> int:
+        """
+        - time: O(n)
+        - sliding-window
+        """
+
+        def calc_right(i):
+            res = 0
+            if strategy[i] == 0:
+                res += prices[i]
+            elif strategy[i] == -1:
+                res += prices[i] * 2
+            return res
+
+        N = len(prices)
+        kh = k // 2
+        prof = left = right = 0
+
+        for i in range(kh):
+            left += -strategy[i] * prices[i]
+            prof += strategy[i] * prices[i]
+        for i in range(kh, k):
+            right += calc_right(i)
+            prof += strategy[i] * prices[i]
+
+        best, lidx, ridx = left + right, 0, kh
+
+        for i in range(k, N):
+            prof += strategy[i] * prices[i]
+            left += (
+                strategy[lidx] * prices[lidx] - strategy[lidx + kh] * prices[lidx + kh]
+            )
+            right += calc_right(i) - calc_right(ridx)
+            best = max(best, left + right)
+            lidx += 1
+            ridx += 1
+
+        if best > 0:
+            return best + prof
+        return prof
+
+    # 3653. XOR After Range Multiplication Queries I
+    def xorAfterQueries(self, nums: List[int], queries: List[List[int]]) -> int:
+        MOD = 10**9 + 7
+
+        for l, r, k, v in queries:
+            idx = l
+            while idx <= r:
+                nums[idx] = (nums[idx] * v) % MOD
+                idx += k
+        res = 0
+        for n in nums:
+            res ^= n
+        return res
+
+    def assignBikes(
+        self, workers: List[List[int]], bikes: List[List[int]]
+    ) -> int:  # TLE
+        distances = []
+        N = len(workers)
+
+        for w in workers:
+            dists = []
+            for b in bikes:
+                dist = abs(w[0] - b[0]) + abs(w[1] - b[1])
+                dists.append(dist)
+            distances.append(dists)
+
+        self.ans = inf
+
+        def backtrack(w, b, total):
+            if len(w) == N:
+                self.ans = min(total, self.ans)
+                return
+            for i in range(N):
+                if i not in w:
+                    w.add(i)
+                    for j in range(N):
+                        if j not in b:
+                            b.add(j)
+                            backtrack(w, b, total + distances[i][j])
+                            b.remove(j)
+                    w.remove(i)
+
+        backtrack(set(), set(), 0)
+        return self.ans
+
 
 def test_solution():
     s = Solution()

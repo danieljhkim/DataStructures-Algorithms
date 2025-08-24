@@ -543,5 +543,61 @@ public class Solutions1 {
         }
     }
 
+    // 1181. Before and After Puzzle
+    class P1181 {
 
+        Map<String, List<Integer>> endMap = new HashMap<>();
+        Map<String, List<Integer>> startMap = new HashMap<>();
+        Set<String> res = new HashSet<>();
+        String[] slist;
+        String[] elist;
+
+        public List<String> beforeAndAfterPuzzles(String[] phrases) {
+            int N = phrases.length;
+            slist = new String[N];
+            elist = new String[N];
+            buildMaps(phrases);
+            for (String end : endMap.keySet()) {
+                for (int e : endMap.get(end)) {
+                    if (startMap.containsKey(end)) {
+                        for (int s : startMap.get(end)) {
+                            if (e == s) continue;
+                            String word = end;
+                            if (elist[e] != null) {
+                                word = elist[e] + " " + end;
+                            }
+                            if (slist[s] != null) {
+                                word += " " + slist[s];
+                            }
+                            res.add(word);
+                        }
+                    }
+                }
+            }
+            List<String> ans = new ArrayList<>(res);
+            Collections.sort(ans);
+            return ans;
+        }
+
+        void buildMaps(String[] phrases) {
+            for(int i = 0; i < phrases.length; i++) {
+                String s = phrases[i];
+                int sidx = s.indexOf(" ");
+                String sw = s;
+                if (sidx > 0) {
+                    sw = s.substring(0, sidx);
+                    slist[i] = s.substring(sidx + 1);
+                }
+                startMap.computeIfAbsent(sw, k -> new ArrayList<>()).add(i);
+
+                String ew = s;
+                int eidx = s.lastIndexOf(" ");
+                if (eidx > 0) {
+                    ew = s.substring(eidx + 1);
+                    elist[i] = s.substring(0, eidx);
+                }
+                endMap.computeIfAbsent(ew, k -> new ArrayList<>()).add(i);
+            }
+        }
+    }
 }

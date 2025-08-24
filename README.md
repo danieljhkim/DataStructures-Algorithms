@@ -5,14 +5,8 @@
 This repository contains implementations of various data structures and algorithms in Python and Java, as well as solutions to hundreds of leetcode problems. 
 
 > “In programming, as in life, algorithms often teach us that the journey is just as important as the destination.” 
-     - Anonymous
-
-> “Mastering data structures and algorithms is not about knowing every tool but knowing which one to use when it matters most.”
-    - Anonymous
-
 
 > “To understand algorithms is to understand the language of efficiency, the grammar of problem-solving.”
-    - Anonymous
 
 > “A leetcode a day keeps unemployment away.”
 
@@ -58,22 +52,5 @@ This repository contains implementations of various data structures and algorith
 ## Java
 
 coming soon...
-
----
-
-## Setup
-
-#### Git Hook Setup
-```bash
-chmod +x scripts/hooks/commit-msg.sh
-```
-
-```bash
-chmod +x scripts/install-git-hooks.sh
-```
-
-```bash
-./scripts/install-git-hooks.sh
-```
 
 ---
