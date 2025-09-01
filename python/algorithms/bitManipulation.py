@@ -1,23 +1,23 @@
 """
-    Converting integer to binary. 
-        - python: bin() 
-        - Java: Integer.parseInt(binary.toString(), 2);
-    
-    Converting binary to integer
-        - Python: just use int(binary, 2)
-        - Java: Integer.toBinaryString(b)
-        
-    Even or Odd
-        - odd when last bit is 1, event when 0
-        
-    Left Shift <<
-        - shift bits to left, same as: num * 2^n
-        - i.e. result = binary << 2 -> num * 2^2
-    
-    Right Shift >>
-        - shift bigs to right, same as: num * 2^-n
-        2
-        
+Converting integer to binary.
+    - python: bin()
+    - Java: Integer.parseInt(binary.toString(), 2);
+
+Converting binary to integer
+    - Python: just use int(binary, 2)
+    - Java: Integer.toBinaryString(b)
+
+Even or Odd
+    - odd when last bit is 1, event when 0
+
+Left Shift <<
+    - shift bits to left, same as: num * 2^n
+    - i.e. result = binary << 2 -> num * 2^2
+
+Right Shift >>
+    - shift bigs to right, same as: num * 2^-n
+    2
+
 """
 
 
@@ -108,4 +108,4 @@ def differ_by_one_bit(bin1: str, bin2: str) -> bool:
     num1 = int(bin1, 2)
     num2 = int(bin2, 2)
     xor_result = num1 ^ num2
-    return xor_result != 0 and (xor_result & (xor_result - 1)) == 0
+    return xor_result != 0 and (xor_result & (xor_result)) == 0

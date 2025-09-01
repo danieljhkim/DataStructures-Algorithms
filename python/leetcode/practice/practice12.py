@@ -317,37 +317,102 @@ class Solution:
             res ^= n
         return res
 
-    def assignBikes(
-        self, workers: List[List[int]], bikes: List[List[int]]
-    ) -> int:  # TLE
-        distances = []
-        N = len(workers)
+    # 3663. Find The Least Frequent Digit
+    def getLeastFrequentDigit(self, n: int) -> int:
+        digits = [0] * 10
+        while n > 0:
+            rem = n % 10
+            n //= 10
+            digits[rem] += 1
 
-        for w in workers:
-            dists = []
-            for b in bikes:
-                dist = abs(w[0] - b[0]) + abs(w[1] - b[1])
-                dists.append(dist)
-            distances.append(dists)
+        res, cnt = inf, inf
+        for i, c in enumerate(digits):
+            if c > 0 and c < cnt:
+                cnt = c
+                res = i
+        return res
 
-        self.ans = inf
+    # 3665. Twisted Mirror Path Count
+    def uniquePaths(self, grid: List[List[int]]) -> int:
+        R, C = len(grid), len(grid[0])
+        MOD = 10**9 + 7
 
-        def backtrack(w, b, total):
-            if len(w) == N:
-                self.ans = min(total, self.ans)
-                return
-            for i in range(N):
-                if i not in w:
-                    w.add(i)
-                    for j in range(N):
-                        if j not in b:
-                            b.add(j)
-                            backtrack(w, b, total + distances[i][j])
-                            b.remove(j)
-                    w.remove(i)
+        @cache
+        def dfs(r, c, isRight):
+            if r == R - 1 and c == C - 1:
+                return 1
+            if r >= R or c >= C:
+                return 0
+            val = grid[r][c]
+            res = 0
+            if val == 1:
+                if isRight:
+                    res = dfs(r + 1, c, False)
+                else:
+                    res = dfs(r, c + 1, True)
+            else:
+                res += dfs(r + 1, c, False)
+                res += dfs(r, c + 1, True)
+            return res % MOD
 
-        backtrack(set(), set(), 0)
-        return self.ans
+        return dfs(0, 0, False)
+
+    # 1182. Shortest Distance to Target Color
+    def shortestDistanceColor(
+        self, colors: List[int], queries: List[List[int]]
+    ) -> List[int]:
+        N = len(colors)
+        table = {1: [0] * N, 2: [0] * N, 3: [0] * N}
+        for i in range(1, 4):
+            idx = -1
+            try:
+                idx = colors.index(i)
+            except Exception:
+                pass
+            if idx == -1:
+                table[i] = [-1] * N
+                continue
+            for j in range(idx, -1, -1):
+                table[i][j] = idx - j
+            dist = 0
+            for j in range(idx + 1, N):
+                if colors[j] == i:
+                    cdx = j - 1
+                    dist2 = 1
+                    while cdx > -1 and table[i][cdx] > dist2:
+                        table[i][cdx] = dist2
+                        dist2 += 1
+                        cdx -= 1
+                    dist = 0
+                else:
+                    dist += 1
+                table[i][j] = dist
+        res = []
+        for i, c in queries:
+            res.append(table[c][i])
+        return res
+
+    # 464. Can I Win
+    def canIWin(self, mx: int, target: int) -> bool:
+        # bitmask dp
+        if mx * (mx + 1) // 2 < target:
+            return False
+
+        @cache
+        def dp(mask, total):
+            for i in range(mx, 0, -1):
+                if not (mask & (1 << (i - 1))):
+                    if total + i >= target:
+                        return True
+                    break
+            for i in range(1, mx + 1):
+                if not (mask & (1 << (i - 1))):
+                    if not dp(mask | (1 << (i - 1)), total + i):
+                        return True
+            return False
+
+        mask = 1 << (mx + 1)
+        return dp(mask, 0)
 
 
 def test_solution():
