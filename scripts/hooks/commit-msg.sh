@@ -1,6 +1,6 @@
 #!/bin/sh
 
-pattern='^(python|java|feat|fix|docs|style|refactor|perf|test|chore)(\([a-z0-9-]+\))?: .{1,50}$'
+pattern='^(python|java|feat|fix|docs|style|refactor|perf|test|chore|reflection)(\([a-z0-9-]+\))?: .{1,50}$'
 
 commit_msg=$(head -n1 "$1")
 
