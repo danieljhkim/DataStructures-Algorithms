@@ -324,3 +324,5 @@ notes
 .vscode
 .DS_Store
 ignore/
+database/
+roadmap/
