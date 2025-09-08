@@ -12,7 +12,6 @@ const MaxInt64 = 1<<63 - 1
 const MinInt64 = -1 << 63
 */
 
-
 func Min(a, b int) int {
 	if a < b {
 		return a
@@ -43,23 +42,23 @@ func sortArrayExample() {
 	// Descending order
 	sort.Sort(sort.Reverse(sort.IntSlice(nums)))
 
-    sort.Slice(nums, func(i, j int) bool {
-        return nums[i] > nums[j] // descending
-    })
+	sort.Slice(nums, func(i, j int) bool {
+		return nums[i] > nums[j] // descending
+	})
 }
 
 func sortStructExample() {
-    people := []struct {
-        Name string
-        Age  int
-    }{
-        {"Alice", 30},
-        {"Bob", 25},
-        {"Eve", 35},
-    }
-    
-    sort.Slice(people, func(i, j int) bool {
-        return people[i].Age < people[j].Age
-    })
-    
+	people := []struct {
+		Name string
+		Age  int
+	}{
+		{"Alice", 30},
+		{"Bob", 25},
+		{"Eve", 35},
+	}
+
+	sort.Slice(people, func(i, j int) bool {
+		return people[i].Age < people[j].Age
+	})
+
 }
