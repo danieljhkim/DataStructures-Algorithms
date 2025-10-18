@@ -580,7 +580,7 @@ public class Solutions1 {
         }
 
         void buildMaps(String[] phrases) {
-            for(int i = 0; i < phrases.length; i++) {
+            for (int i = 0; i < phrases.length; i++) {
                 String s = phrases[i];
                 int sidx = s.indexOf(" ");
                 String sw = s;
@@ -598,6 +598,74 @@ public class Solutions1 {
                 }
                 endMap.computeIfAbsent(ew, k -> new ArrayList<>()).add(i);
             }
+        }
+    }
+
+    // 3227. Vowels Game in a String
+    class P3227 {
+        public boolean doesAliceWin(String s) {
+            char[] vowels = {'a', 'e', 'i', 'o', 'u'};
+            for (char c : s.toCharArray()) {
+                for (char v : vowels) {
+                    if (v == c) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
+    // 11. Container With Most Water
+    class P11 {
+        public int maxArea(int[] height) {
+            int left = 0, right = height.length - 1, maxSize = 0;
+            while (left < right) {
+                int h = Math.min(height[left], height[right]);
+                int area = h * (right - left);
+                maxSize = Math.max(area, maxSize);
+                if (height[left] < height[right]) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+            return maxSize;
+        }
+    }
+
+    // 3397. Maximum Number of Distinct Elements After Operations
+    class P3397 {
+        /*
+            3 cases (after being sorted):
+                1. consecutive same numbers
+                2. current number is bigger by less than k
+                3. current number is bigger by more than k
+        */
+        public int maxDistinctElements(int[] nums, int k) {
+            if (k == 0) {
+                // no need for sorting
+                return (int) Arrays.stream(nums).distinct().count();
+            }
+            Arrays.sort(nums);
+            int cur = nums[0] - k, res = 1;
+            for (int i = 1; i < nums.length; i++) {
+                if (nums[i] == nums[i - 1]) { // case #1
+                    if (cur < nums[i] + k) {
+                        cur++;
+                        res++;
+                    }
+                } else {
+                    if (nums[i] - k > cur) { // case #3
+                        // new start since jump is bigger than what's allowed
+                        cur = nums[i] - k;
+                    } else { // case #2
+                        cur++;
+                    }
+                    res++;
+                }
+            }
+            return res;
         }
     }
 }
