@@ -3,7 +3,6 @@ from typing import List, Tuple, Optional
 
 
 class Permutation:
-
     def permutations(self, arr: list):
         result = []
 

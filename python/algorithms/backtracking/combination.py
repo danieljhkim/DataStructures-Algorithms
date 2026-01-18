@@ -3,7 +3,6 @@ from typing import List, Tuple, Optional
 
 
 class Combination:
-
     def all_combinations(start: int, end: int, size: int):
         result = []
 

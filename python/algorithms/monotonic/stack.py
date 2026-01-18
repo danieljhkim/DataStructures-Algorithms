@@ -1,5 +1,4 @@
 class MonotonicStack:
-
     def next_smaller_element(self, nums: list) -> list:
         stack = []
         ans = [-1] * len(nums)

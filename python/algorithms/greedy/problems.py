@@ -31,7 +31,6 @@ Algos
 
 
 class Solution:
-
     def max_occupancy(N: int, taken: list, gaps: int):
         """_summary_
         0 0 0 1 0 0 0 1 0 0

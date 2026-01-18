@@ -1,5 +1,4 @@
 class RadixSort:
-
     def redix_sort(self, arr):
         neg_numbers = [-num for num in arr if num < 0]
         pos_numbers = [num for num in arr if num >= 0]

@@ -2,7 +2,6 @@ from collections import deque
 
 
 class QuickSort:
-
     def _partition(self, arr, low, high):
         pivot = arr[high]
         i = low

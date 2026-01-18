@@ -3,7 +3,6 @@ import heapq
 
 
 class Intervals:
-
     def __init__(self):
         pass
 

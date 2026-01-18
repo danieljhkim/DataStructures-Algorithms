@@ -3,7 +3,6 @@ from collections import deque, defaultdict
 
 
 class Solution:
-
     # 2097
     def validArrangement(self, pairs: List[List[int]]) -> List[List[int]]:
         indegree = defaultdict(int)

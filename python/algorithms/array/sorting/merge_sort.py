@@ -1,5 +1,4 @@
 class MergeSort:
-
     def merge_sort(self, arr):
         if len(arr) < 2:
             return arr

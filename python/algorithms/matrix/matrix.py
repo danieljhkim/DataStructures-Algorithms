@@ -169,7 +169,6 @@ def spiralOrder(matrix: List[List[int]]) -> List[int]:
 
 
 def spiralOrder(matrix: List[List[int]]) -> List[int]:
-
     dirs = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     rows, cols = len(matrix), len(matrix[0])
 

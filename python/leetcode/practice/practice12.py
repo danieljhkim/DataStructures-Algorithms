@@ -1,14 +1,8 @@
 import heapq
-import random
-import math
-import bisect
 from typing import *
-from math import inf, factorial, gcd, lcm
-from functools import lru_cache, cache
-from heapq import heapify, heappush, heappop
-from itertools import accumulate, permutations, combinations
-from collections import Counter, deque, defaultdict, OrderedDict
-from sortedcontainers import SortedSet, SortedList, SortedDict
+from math import inf
+from functools import cache
+from collections import Counter, deque, defaultdict
 
 
 class TreeNode:
@@ -414,7 +408,28 @@ class Solution:
         mask = 1 << (mx + 1)
         return dp(mask, 0)
 
+    # 3788. Maximum Score of a Split
+    def maximumScore(self, nums: List[int]) -> int:
+        N = len(nums)
+        
+        suffix_min = [nums[-1]]
+        for i in range(N - 2, -1, -1):
+            n = min(suffix_min[-1], nums[i])
+            suffix_min.append(n)
 
+        suffix_min.reverse()
+        prefix = [nums[0]]
+        for i in range(1, N):
+            prefix.append(prefix[-1] + nums[i])
+        
+        res = -inf
+        for i in range(N - 1):
+            res = max(prefix[i] - suffix_min[i + 1], res)
+        return res
+    
+        
+        
+        
 def test_solution():
     s = Solution()
 
