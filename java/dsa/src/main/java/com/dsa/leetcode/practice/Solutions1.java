@@ -668,4 +668,37 @@ public class Solutions1 {
             return res;
         }
     }
+
+    // 207. Course Schedule
+    class P207 {
+        public boolean canFinish(int numCourses, int[][] prerequisites) {
+            Map<Integer, List<Integer>> adj = new HashMap<>();
+            int[] indegree = new int[numCourses];
+
+            for (int[] preq : prerequisites) {
+                indegree[preq[0]]++;
+                adj.computeIfAbsent(preq[1], k -> new ArrayList<>()).add(preq[0]);
+            }
+
+            ArrayDeque<Integer> dq = new ArrayDeque<>();
+            for (int i = 0; i < numCourses; i++) {
+                if (indegree[i] == 0) {
+                    dq.add(i);
+                }
+            }
+
+            while (!dq.isEmpty()) {
+                int cur = dq.poll();
+                if (!adj.containsKey(cur)) continue;
+                for (int nei : adj.get(cur)) {
+                    indegree[nei]--;
+                    if (indegree[nei] == 0) {
+                        dq.add(nei);
+                    }
+                }
+            }
+            return Arrays.stream(indegree).sum() <= 0;
+        }
+    }
 }
+
