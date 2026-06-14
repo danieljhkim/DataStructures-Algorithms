@@ -428,11 +428,66 @@ class Solution:
         return res
     
         
+    def simplifyPath(self, path: str) -> str:
+        paths = path.split("/")
+        stack = []
+        for p in paths:
+            if p == "..":
+                if stack:
+                    stack.pop()
+            elif p == "." or p == "":
+                continue
+            else:
+                stack.append(p)
+        if stack:
+            return "/" + "/".join(stack)
+        return "/"
+    
+    def maxSubArray(self, nums: List[int]) -> int:
+        best = nums[0]
+        cur = best
+        for n in nums[1:]:
+            cur += n
+            cur = max(n, cur)
+            best = max(cur, best)
+        return best
+    
+    def minimumTotal(self, triangle: List[List[int]]) -> int:
+        N = len(triangle)
         
+        @cache
+        def dp(r, c):
+            if r == N:
+                return 0
+            if c >= len(triangle[r]):
+                return -inf
+            res = max(dp(r + 1, c), dp(r + 1, c + 1))
+            return res + triangle[r][c]
         
+        return dp(0, 0)
+    
+    def createBinaryTree(self, descriptions: List[List[int]]) -> Optional[TreeNode]:
+        parents = {}
+        cseen, pseen = set(), set()
+        for p, c, isl in descriptions:
+            if p not in parents:
+                parents[p] = TreeNode(val=p)
+            if c not in parents[c]:
+                parents[c] = TreeNode(val=p)
+            pseen.add(p)
+            cseen.add(c)
+            if isl:
+                parents[p].left = parents[c]
+            else:
+                parents[p].right = parents[c]
+        parent = pseen.difference(cseen)
+        idx = parent.pop()
+        return parents[idx]
+
+
 def test_solution():
     s = Solution()
 
-
 if __name__ == "__main__":
     test_solution()
+    
