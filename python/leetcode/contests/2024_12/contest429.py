@@ -172,7 +172,6 @@ class Solution:
         return min(big, recurs(word, numOps, 0))
 
     def minLength(self, s: str, numOps: int) -> int:
-
         word = s
         N = len(word)
         lcache = {}

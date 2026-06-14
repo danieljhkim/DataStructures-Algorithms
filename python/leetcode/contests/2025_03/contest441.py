@@ -31,7 +31,6 @@ class ListNode:
 
 
 class Solution:
-
     def maxSum(self, nums: List[int]) -> int:
         wset = set()
         ans = 0

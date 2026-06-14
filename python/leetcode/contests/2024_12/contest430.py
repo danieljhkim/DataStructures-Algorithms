@@ -31,7 +31,6 @@ class ListNode:
 
 class Solution:
     def minimumOperations(self, grid: List[List[int]]) -> int:
-
         table = defaultdict(list)
         ROW = len(grid)
         COL = len(grid[0])

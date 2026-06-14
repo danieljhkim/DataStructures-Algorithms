@@ -31,7 +31,6 @@ class ListNode:
 
 
 class Solution:
-
     def hasSpecialSubstring(self, s: str, k: int) -> bool:
         N = len(s)
         if N == 1 and k == 1:
@@ -52,7 +51,6 @@ class Solution:
         return False
 
     def maxWeight(self, pizzas: List[int]) -> int:
-
         N = len(pizzas)
         D = N // 4
         evens = 0
@@ -94,7 +92,6 @@ class Solution:
         return ans
 
     def maxSubstringLength(self, s: str, k: int) -> bool:
-
         count = Counter(s)
 
         N = len(s)

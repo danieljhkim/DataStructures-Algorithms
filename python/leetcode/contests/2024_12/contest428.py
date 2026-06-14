@@ -29,7 +29,6 @@ class ListNode:
 
 
 class Solution:
-
     def buttonWithLongestTime(self, events: List[List[int]]) -> int:
         ans = defaultdict(list)
         mx = 0

@@ -29,7 +29,6 @@ class ListNode:
 
 
 class Solution:
-
     def constructTransformedArray(self, nums: List[int]) -> List[int]:
         """_summary_
         0, 1, 2, 3

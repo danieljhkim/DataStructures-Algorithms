@@ -30,7 +30,6 @@ class ListNode:
 
 
 class Solution:
-
     def maxLength(self, nums: List[int]) -> int:
         """ "
         lcm * gcd = prod(arr)

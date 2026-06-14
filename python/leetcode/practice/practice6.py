@@ -29,7 +29,6 @@ class ListNode:
 
 
 class Solution:
-
     def hasPath(
         self, maze: List[List[int]], start: List[int], destination: List[int]
     ) -> bool:
@@ -200,7 +199,6 @@ class Solution:
         for r in range(ROW):
             col = max(col, len(nums[r]))
             for c in range(len(nums[r])):
-
                 total = r + c
                 table[total].appendleft(nums[r][c])
         ans = []
@@ -455,7 +453,6 @@ class Solution:
         return True
 
     def longestPalindromeSubseq(self, s: str) -> int:
-
         memo = {}
 
         def dp(s):
@@ -481,7 +478,6 @@ class Solution:
         return dp(s)
 
     def isArraySpecial(self, nums: List[int], queries: List[List[int]]) -> List[bool]:
-
         def is_good_f(frm, to):
             if False in narr[frm:to]:
                 return False
@@ -754,7 +750,6 @@ class Solution:
         return ans
 
     def removeInvalidParentheses(self, s: str) -> List[str]:
-
         def check(arr):
             left = 0
             right = 0
@@ -830,7 +825,6 @@ class Solution:
         return "".join(ans)
 
     def trap(self, height: List[int]) -> int:
-
         def check_monotonic(height):
             up = True
             down = True
@@ -1033,7 +1027,6 @@ class Solution:
         return ans / k
 
     def countAndSay(self, n: int) -> str:
-
         def recurs(i, s):
             if i >= n:
                 return s
@@ -1255,7 +1248,6 @@ class Solution:
 
 
 class WordDictionary:
-
     def __init__(self):
         self.table = {}
 

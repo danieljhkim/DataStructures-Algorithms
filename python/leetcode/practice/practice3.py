@@ -28,7 +28,6 @@ class ListNode:
 
 
 class Solution:
-
     def restoreString(self, s: str, indices: List[int]) -> str:
         """_summary_
         "codeleet"
@@ -321,7 +320,6 @@ class Solution:
         return ans
 
     def kClosest(self, points: List[List[int]], k: int) -> List[List[int]]:
-
         def calc_dist(point):
             x = point[0]
             y = point[1]
@@ -398,7 +396,6 @@ class Solution:
         return total
 
     def findChampion(self, n: int, edges: List[List[int]]) -> int:
-
         indegree = [0] * n
         for a, b in edges:
             indegree[b] += 1
@@ -500,7 +497,6 @@ class Solution:
         pass
 
     def islandPerimeter(self, grid: List[List[int]]) -> int:
-
         directions = [(-1, 0), (1, 0), (0, 1), (0, -1)]
         ROW = len(grid)
         COL = len(grid[0])
@@ -563,7 +559,6 @@ class Solution:
 
 
 class RandomizedSet:
-
     def __init__(self):
         self.random = {}
         self.table = {}

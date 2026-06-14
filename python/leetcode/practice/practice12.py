@@ -25,7 +25,6 @@ class ListNode:
 
 
 class Solution:
-
     # 3634. Minimum Removals to Balance Array
     def minRemoval(self, nums: List[int], k: int) -> int:  # MLE
         nums.sort()
@@ -411,7 +410,7 @@ class Solution:
     # 3788. Maximum Score of a Split
     def maximumScore(self, nums: List[int]) -> int:
         N = len(nums)
-        
+
         suffix_min = [nums[-1]]
         for i in range(N - 2, -1, -1):
             n = min(suffix_min[-1], nums[i])
@@ -421,13 +420,12 @@ class Solution:
         prefix = [nums[0]]
         for i in range(1, N):
             prefix.append(prefix[-1] + nums[i])
-        
+
         res = -inf
         for i in range(N - 1):
             res = max(prefix[i] - suffix_min[i + 1], res)
         return res
-    
-        
+
     def simplifyPath(self, path: str) -> str:
         paths = path.split("/")
         stack = []
@@ -442,7 +440,7 @@ class Solution:
         if stack:
             return "/" + "/".join(stack)
         return "/"
-    
+
     def maxSubArray(self, nums: List[int]) -> int:
         best = nums[0]
         cur = best
@@ -451,10 +449,10 @@ class Solution:
             cur = max(n, cur)
             best = max(cur, best)
         return best
-    
+
     def minimumTotal(self, triangle: List[List[int]]) -> int:
         N = len(triangle)
-        
+
         @cache
         def dp(r, c):
             if r == N:
@@ -463,9 +461,9 @@ class Solution:
                 return -inf
             res = max(dp(r + 1, c), dp(r + 1, c + 1))
             return res + triangle[r][c]
-        
+
         return dp(0, 0)
-    
+
     def createBinaryTree(self, descriptions: List[List[int]]) -> Optional[TreeNode]:
         parents = {}
         cseen, pseen = set(), set()
@@ -488,6 +486,6 @@ class Solution:
 def test_solution():
     s = Solution()
 
+
 if __name__ == "__main__":
     test_solution()
-    

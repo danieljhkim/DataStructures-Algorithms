@@ -31,7 +31,6 @@ class ListNode:
 
 
 class Solution:
-
     def punishmentNumber(self, n: int) -> int:
         memo = {}
 
@@ -1063,13 +1062,11 @@ class Solution:
 
     # 224. Basic Calculator
     def calculate(self, s: str) -> int:
-
         def find(i):
             idx = i
             total = 0
             tsign = 1
             while idx < N and s[idx] != ")":
-
                 while idx < N and s[idx] == " ":
                     idx += 1
                 if idx == N:
@@ -1102,7 +1099,6 @@ class Solution:
         total = idx = 0
         sign = 1
         while idx < N:
-
             while idx < N and s[idx] == " ":
                 idx += 1
             if idx == N:
@@ -1133,7 +1129,6 @@ class Solution:
 
     # 2523. Closest Prime Numbers in Range
     def closestPrimes(self, left: int, right: int) -> List[int]:
-
         def get_all_primes(n):
             primes = [True] * (n + 1)
             primes[0] = primes[1] = False
@@ -1460,7 +1455,6 @@ class Solution:
         right = C - 1
         bottom = R - 1
         while len(ans) < R * C:
-
             for c in range(left, right + 1):
                 ans.append(matrix[top][c])
             top += 1
@@ -1828,7 +1822,6 @@ class Solution:
 
     # 124. Binary Tree Maximum Path Sum
     def maxPathSum(self, root: Optional[TreeNode]) -> int:
-
         def dfs(node):
             if not node:
                 return -inf, -inf

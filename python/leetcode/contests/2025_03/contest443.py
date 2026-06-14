@@ -12,7 +12,6 @@ from sortedcontainers import SortedSet, SortedList, SortedDict
 
 
 class Solution:
-
     def minCosts(self, cost: List[int]) -> List[int]:
         N = len(cost)
         res = cost.copy()
@@ -32,7 +31,6 @@ class Solution:
         return res
 
     def longestPalindrome(self, s: str, t: str) -> int:  # absolute FAIL
-
         @cache
         def palindrome(word, left, right):
             while left >= 0 and right < len(word):

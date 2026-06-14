@@ -12,7 +12,6 @@ from sortedcontainers import SortedSet, SortedList, SortedDict
 
 
 class Solution:
-
     def minimumPairRemoval(self, nums: List[int]) -> int:
         cnt = 0
         while True:
@@ -72,7 +71,6 @@ class Solution:
 
 
 class Router:
-
     def __init__(self, memoryLimit: int):
         self.limit = memoryLimit
         self.packets = deque()

@@ -31,7 +31,6 @@ class ListNode:
 
 
 class Solution:
-
     def largestInteger(self, nums: List[int], k: int) -> int:
         cand = defaultdict(int)
         table = Counter(nums[0:k])
@@ -68,7 +67,6 @@ class Solution:
                 return 0
             cnt = 0
             if s[left] == s[right]:
-
                 cnt = dp(left + 1, right - 1, n) + 2
             else:
                 cnt = max(dp(left + 1, right, n), dp(left, right - 1, n))

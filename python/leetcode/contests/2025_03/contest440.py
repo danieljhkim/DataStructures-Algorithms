@@ -31,7 +31,6 @@ class ListNode:
 
 
 class Solution:
-
     def numOfUnplacedFruits(self, fruits: List[int], baskets: List[int]) -> int:
         ans = 0
         N = len(fruits)

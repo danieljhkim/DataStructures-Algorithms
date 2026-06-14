@@ -31,7 +31,6 @@ class ListNode:
 
 
 class Solution:
-
     pass
 
 

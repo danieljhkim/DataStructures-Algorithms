@@ -30,7 +30,6 @@ class ListNode:
 
 
 class Solution:
-
     def maxDifference(self, s: str) -> int:
         # odd - even
         counts = Counter(s)

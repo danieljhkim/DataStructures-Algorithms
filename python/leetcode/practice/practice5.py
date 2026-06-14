@@ -28,7 +28,6 @@ class ListNode:
 
 
 class Solution:
-
     def sum_num(self, arr):
         """_summary_
         arr = [7,8,[3,4]]
@@ -254,7 +253,6 @@ class Solution:
     def lowestCommonAncestor(
         self, root: "TreeNode", p: "TreeNode", q: "TreeNode"
     ) -> "TreeNode":
-
         def dfs(node):
             if not node:
                 return node
@@ -698,7 +696,6 @@ class Solution:
     def trimBST(
         self, root: Optional[TreeNode], low: int, high: int
     ) -> Optional[TreeNode]:
-
         def dfs(node):
             if not node:
                 return None
@@ -725,7 +722,6 @@ class Solution:
     def addTwoNumbers(
         self, l1: Optional[ListNode], l2: Optional[ListNode]
     ) -> Optional[ListNode]:
-
         def reverse(node):
             cur = node
             prev = None
@@ -994,7 +990,6 @@ class Solution:
         return "".join(stack)
 
     def dayOfTheWeek(self, day: int, month: int, year: int) -> str:
-
         months = {
             1: 31,
             2: 28,  # 29 in a leap year
@@ -1100,7 +1095,6 @@ class Solution:
         return count
 
     def longestIncreasingPath(self, matrix: List[List[int]]) -> int:
-
         directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
         ROW = len(matrix)
         COL = len(matrix[0])
@@ -1384,7 +1378,6 @@ class Solution:
 
 
 class MyQueue:
-
     def __init__(self):
         self.stack1 = []
         self.stack2 = []

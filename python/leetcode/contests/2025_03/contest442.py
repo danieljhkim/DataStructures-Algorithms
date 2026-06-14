@@ -12,7 +12,6 @@ from sortedcontainers import SortedSet, SortedList, SortedDict
 
 
 class Solution:
-
     def maxContainers(self, n: int, w: int, maxWeight: int) -> int:
         ans = 0
         cur = 0

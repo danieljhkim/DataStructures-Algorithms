@@ -26,7 +26,6 @@ class ListNode:
 
 class Solution:
     def minEatingSpeed(self, piles: List[int], h: int) -> int:
-
         def helper(k):
             time = 0
             for pile in piles:
@@ -226,7 +225,6 @@ class Solution:
         return high
 
     def minimizedMaximum(self, n: int, quantities: List[int]) -> int:
-
         def canDistribute(amount):
             count = 0
             for q in quantities:
@@ -476,7 +474,6 @@ class Solution:
         for i, v in enumerate(order):
             diction[v] = i
         for i in range(1, len(words)):
-
             first = words[i - 1]
             second = words[i]
             if not is_sorted(first, second):
@@ -949,7 +946,6 @@ class Solution:
                 if n.isInteger():
                     table[level].append(n.getInteger())
                 else:
-
                     explore(n.getList(), level + 1)
 
         explore(nestedList, 1)
@@ -979,7 +975,6 @@ class Solution:
         return total
 
     def bulbSwitch(self, n: int) -> int:
-
         bulb = [True] * (n + 1)
         ans = 0
         for i in range(n, 0, -1):
@@ -998,7 +993,6 @@ class Solution:
 
 
 class NumMatrix:
-
     def __init__(self, matrix: List[List[int]]):
         self.ROW = len(matrix)
         self.COL = len(matrix[0])
@@ -1195,7 +1189,6 @@ class NumMatrix:
         p2 = 0
 
         while p1 < len(word1) or p2 < len(word2):
-
             if idx1 >= len(word1[p1]):
                 idx1 = 0
                 p1 += 1

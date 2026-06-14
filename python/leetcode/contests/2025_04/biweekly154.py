@@ -12,7 +12,6 @@ from sortedcontainers import SortedSet, SortedList, SortedDict
 
 
 class Solution:
-
     def minOperations(self, nums: List[int], k: int) -> int:
         total = sum(nums)
         diff = total % k

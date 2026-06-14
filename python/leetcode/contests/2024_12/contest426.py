@@ -28,9 +28,7 @@ class ListNode:
 
 
 class Solution:
-
     def smallestNumber(self, n: int) -> int:
-
         while True:
             binary = bin(n)[2:]
             if binary.count(0) > 0:

@@ -25,7 +25,6 @@ class ListNode:
 
 
 class Solution:
-
     # https://leetcode.com/problems/largest-number/description/
     def largestNumber(self, nums: List[int]) -> str:
         # Time complexity: O(n!)
@@ -363,7 +362,6 @@ class Solution:
 
 # 528
 class Solution:
-
     def __init__(self, w: List[int]):
         self.prefix_sum = []
         self.total = 0

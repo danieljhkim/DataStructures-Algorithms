@@ -26,7 +26,6 @@ class ListNode:
 
 
 class Solution:
-
     pass
 
     def quick_select(self, arr, k):
@@ -190,7 +189,6 @@ class Solution:
         return 0
 
     def sortArray(self, nums: List[int]) -> List[int]:
-
         def merge_sort(arr):
             if len(arr) < 2:
                 return arr
@@ -411,7 +409,6 @@ class Solution:
         prevs = s[0]
         matching = []
         while dqp and (dqs or matching):
-
             pw = dqp[0]
 
             if pw == "*":
@@ -451,7 +448,6 @@ class Solution:
 
 
 class Codec:
-
     def serialize(self, root):
         """Encodes a tree to a single string.
 
@@ -500,7 +496,6 @@ class Codec:
         root = TreeNode(int(dq.popleft()))
         queue = deque([root])
         while dq:
-
             left = dq.popleft()
             right = dq.popleft()
             if left == "none" and right == "none":

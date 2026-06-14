@@ -31,7 +31,6 @@ class ListNode:
 
 
 class Solution:
-
     def countGoodStrings(self, low: int, high: int, zero: int, one: int) -> int:
         mod = 10**9 + 7
         memo = {}
@@ -424,7 +423,6 @@ class Solution:
         return ans
 
     def sumEvenGrandparent(self, root: Optional[TreeNode]) -> int:
-
         def dfs(node, count):
             if not node:
                 return 0
@@ -750,7 +748,6 @@ class Solution:
         return dummy.next
 
     def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:
-
         def recursion(arr):
             if len(arr) == 1:
                 return TreeNode(arr[0])
@@ -1717,7 +1714,6 @@ class Solution:
         return self.myPow(x * x, n // 2)
 
     def largestRectangleArea(self, heights: List[int]) -> int:
-
         stack = []
         area = 0
         heights.append(0)
@@ -1883,7 +1879,6 @@ class Solution:
         return ans
 
     def generatePalindromes(self, s: str) -> List[str]:
-
         def check(word):
             left = 0
             right = len(word) - 1
@@ -1943,7 +1938,6 @@ class Solution:
         return ans
 
     def postorder(self, root: "Node") -> List[int]:
-
         if not root:
             return []
         res = []
@@ -2116,7 +2110,6 @@ class Solution:
     def successfulPairs(
         self, spells: List[int], potions: List[int], success: int
     ) -> List[int]:
-
         def bsearch(target):
             N = len(psum_arr)
             low = 0
@@ -2363,7 +2356,6 @@ class Solution:
         return dp(0, 0)
 
     def medianSlidingWindow(self, nums: List[int], k: int) -> List[float]:
-
         def left_bound(target):
             low = 0
             hi = len(window) - 1

@@ -31,7 +31,6 @@ class ListNode:
 
 
 class Solution:
-
     def hasSameDigits(self, s: str) -> bool:
         arr = []
         for n in s:

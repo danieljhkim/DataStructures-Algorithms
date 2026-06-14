@@ -31,7 +31,6 @@ class ListNode:
 
 
 class Solution:
-
     def findClosest(self, x: int, y: int, z: int) -> int:
         first = abs(z - x)
         second = abs(z - y)

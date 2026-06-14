@@ -28,11 +28,9 @@ class ListNode:
 
 
 class Solution:
-
     def shortestDistanceAfterQueries(
         self, n: int, queries: List[List[int]]
     ) -> List[int]:
-
         ans = []
         graph = defaultdict(list)
         for i in range(n - 1):
@@ -168,7 +166,6 @@ class Solution:
                     j += 1
 
     def subarraySum(self, nums: List[int], k: int) -> int:
-
         table = defaultdict(int)
         table[0] += 1
         ans = 0
@@ -310,7 +307,6 @@ class Solution:
     def getAllElements(
         self, root1: Optional[TreeNode], root2: Optional[TreeNode]
     ) -> List[int]:
-
         def dfs(node):
             if not node:
                 return []
@@ -677,5 +673,4 @@ def test_solution():
 
 
 if __name__ == "__main__":
-
     test_solution()

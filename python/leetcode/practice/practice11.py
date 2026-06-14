@@ -31,7 +31,6 @@ class ListNode:
 
 
 class Solution:
-
     # 2021. Brightest Position on Street
     def brightestPosition(self, lights: List[List[int]]) -> int:
         table = SortedDict()
@@ -356,7 +355,6 @@ class Solution:
         return dfs(root, 0)
 
     def getMoneyAmount(self, n: int) -> int:
-
         @cache
         def dp(low, high):
             if low >= high:
@@ -1412,7 +1410,6 @@ class Solution:
 
     # 427. Construct Quad Tree
     def construct(self, grid: List[List[int]]) -> "Node":
-
         def leafify(r, c, b):
             tl, tr, bl, br = b[r][c], b[r][c + 1], b[r + 1][c], b[r + 1][c + 1]
             val = sum((tl, tr, bl, br))
@@ -1555,7 +1552,6 @@ class Solution:
 
     # 3629. Minimum Jumps to Reach End via Prime Teleportation
     def minJumps(self, nums: List[int]) -> int:  # TLE
-
         def get_all_primes(n):
             primes = [True] * (n + 1)
             primes[0] = primes[1] = False

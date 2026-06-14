@@ -30,7 +30,6 @@ class ListNode:
 
 
 class Solution:
-
     def countPartitions(self, nums: List[int]) -> int:
         ans = 0
         prefix = [nums[0]]
@@ -100,7 +99,6 @@ class Solution:
         return mentions
 
     def maxFrequency(self, nums: List[int], k: int) -> int:
-
         N = len(nums)
         ans = 0
         freq_table = defaultdict(list)

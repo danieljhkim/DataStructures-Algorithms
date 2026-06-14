@@ -76,7 +76,6 @@ class Solution:
         return grid
 
     def assignElements(self, groups: List[int], elements: List[int]) -> List[int]:
-
         def is_prime(n):
             if n <= 1:
                 return False

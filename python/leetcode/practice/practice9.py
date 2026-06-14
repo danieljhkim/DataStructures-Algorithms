@@ -31,7 +31,6 @@ class ListNode:
 
 
 class Solution:
-
     def lexicographicallySmallestArray(self, nums: List[int], limit: int) -> List[int]:
         narr = sorted(nums, reverse=True)
         group = {narr[0]: 0}
@@ -1590,7 +1589,6 @@ class Solution:
         return res
 
     def permute(self, n: int) -> List[List[int]]:
-
         def is_good(n1, n2):
             return n2 % 2 != n1 % 2
 
@@ -2139,7 +2137,6 @@ class Solution:
             group_prev = tmp
 
     def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:
-
         def reverse(start, end, new_head):
             cur = start
             prev = end
@@ -2360,7 +2357,6 @@ class Solution:
         return cnt
 
     def findKthLargest(self, nums: List[int], k: int) -> int:
-
         def quick_select(arr, limit):
             if len(arr) == 1:
                 return arr[0]

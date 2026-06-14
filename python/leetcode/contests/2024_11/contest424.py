@@ -25,7 +25,6 @@ class ListNode:
 
 
 class Solution:
-
     def countValidSelections(self, nums: List[int]) -> int:
         cur = []
         for i, n in enumerate(nums):
@@ -120,7 +119,6 @@ class Solution:
     ################## passing solutions ###################
 
     def isZeroArray(self, nums: List[int], queries: List[List[int]]) -> bool:
-
         def create_prefix_sums():
             psums = [0] * len(nums)
             for l, r in queries:
@@ -139,7 +137,6 @@ class Solution:
         return True
 
     def minZeroArray(self, nums: List[int], queries: List[List[int]]) -> int:
-
         def create_prefix_sums(k):
             psums = [0] * len(nums)
             for l, r, v in queries[:k]:

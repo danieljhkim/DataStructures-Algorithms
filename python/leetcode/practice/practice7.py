@@ -29,7 +29,6 @@ class ListNode:
 
 
 class Solution:
-
     def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
         """ "
         1 2 3
@@ -209,7 +208,6 @@ class Solution:
         return ans
 
     def distributeCoins(self, root: Optional[TreeNode]) -> int:
-
         self.steps = 0
 
         def dfs(node):
@@ -422,7 +420,6 @@ class Solution:
                 pos += 1
 
     def getFinalState(self, nums: List[int], k: int, multiplier: int) -> List[int]:
-
         while k > 0:
             small = nums[0]
             chosen = 0
@@ -826,7 +823,6 @@ class Solution:
     def minimumDiameterAfterMerge(
         self, edges1: List[List[int]], edges2: List[List[int]]
     ) -> int:
-
         def bfs(adj, start):
             longest = 0
             ans = start
@@ -1113,7 +1109,6 @@ class Solution:
         return root
 
     def searchBST(self, root: Optional[TreeNode], val: int) -> Optional[TreeNode]:
-
         def dfs(node):
             if not node:
                 return node
@@ -1126,7 +1121,6 @@ class Solution:
         return dfs(root)
 
     def minimumSemesters(self, n: int, relations: List[List[int]]) -> int:
-
         indegree = [0] * (n + 1)
         adj = defaultdict(list)
         for prev, nxt in relations:
@@ -1160,7 +1154,6 @@ class Solution:
         return ans
 
     def topKFrequent(self, words: List[str], kk: int) -> List[str]:
-
         table = defaultdict(int)
         for w in words:
             table[w] += 1
@@ -1374,7 +1367,6 @@ class Solution:
         high = N
 
     def searchRange(self, nums: List[int], target: int) -> List[int]:
-
         left = bisect.bisect_left(nums, target)
         right = bisect.bisect_right(nums, target)
         if left < len(nums) and nums[left] == target:
@@ -1720,7 +1712,6 @@ class MyCalendarTwo:
         self.overlaps = []
 
     def book(self, start: int, end: int) -> bool:
-
         for s2, e2 in self.overlaps:
             if not (end <= s2 or start >= e2):
                 return False
@@ -1734,7 +1725,6 @@ class MyCalendarTwo:
 
 
 class Solution:
-
     def __init__(self, head: Optional[ListNode]):
         self.head = head
         self.arr = []
@@ -1750,7 +1740,6 @@ class Solution:
 
 
 class MinStack:
-
     def __init__(self):
         self.stack = []
         self.heap = []
@@ -1777,7 +1766,6 @@ class MinStack:
 
 
 class RobotRoomCleaner:
-
     def __init__(self):
         self.directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
         self.visited = set()
@@ -1810,7 +1798,6 @@ class RobotRoomCleaner:
 
 
 class MedianFinder:
-
     def __init__(self):
         self.low = []
         self.high = []
@@ -1828,7 +1815,6 @@ class MedianFinder:
 
 
 class MedianFinder:
-
     def __init__(self):
         self.data = []
 
@@ -1857,7 +1843,6 @@ class MedianFinder:
 
 
 class Bank:
-
     def __init__(self, balance: List[int]):
         self.balance = balance
         self.size = len(balance)

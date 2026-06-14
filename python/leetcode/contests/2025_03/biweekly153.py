@@ -12,7 +12,6 @@ from sortedcontainers import SortedSet, SortedList, SortedDict
 
 
 class Solution:
-
     def reverseDegree(self, s: str) -> int:
         total = 0
         for i, n in enumerate(s):
