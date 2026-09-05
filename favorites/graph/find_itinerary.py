@@ -19,6 +19,8 @@ Result:
 """
 
 from collections import defaultdict
+from collections import Counter, defaultdict
+from typing import List, Optional
 
 
 def find_itinerary(flights: list, start: str):
@@ -54,7 +56,7 @@ def find_itinerary(flights: list, start: str):
     return res
 
 
-def find_itinerary2(flights: list, start: str):
+def find_itinerary_wrong(flights: list, start: str):
     # could re-visit same city multiple times
     adj = defaultdict(list)
     outdegree = defaultdict(int)
@@ -116,19 +118,72 @@ def find_itinerary2(flights: list, start: str):
     return res
 
 
+"""
+The three fixes
+---------------
+1. `dfs(start, cities)` left `start` inside `remaining`, so `if not remaining`
+   could never fire unless a trip happened to lead back to the start. Gone
+   entirely -- see 3.
+ 
+2. `outdegree[nei] -= 1` charged the wrong city. Walking cur -> nei spends a
+   trip out of *cur*. As written you arrived at a city having just docked its
+   own budget and then failed your own `outdegree[cur] < 1` guard, so every
+   ordinary chain link rejected itself. The fix is to consume the specific
+   trip, not to decrement a city-wide counter.
+ 
+3. The stopping condition was "every city visited", but the task is "every trip
+   used" -- with [A->B, B->A, A->B] that halts at ['A','B'] having used one trip
+   of three. Now it counts trips.
+ 
+Why the counter had to go rather than be corrected: a per-city number cannot
+say *which* of several parallel trips was spent. Patch it into consistency and
+it still produces routes like ['A','B','C','B','C'] that reuse a trip. The
+remaining structure below is `src -> Counter(dst -> trips left)`, which spends
+one specific trip at a time and restores it on backtrack.
+ 
+Counting destinations rather than listing them also prunes: k identical trips
+A->B are one branch tried once, not k! orderings.
+"""
+
+
+def find_itinerary_fixed(flights: List[List[str]], start: str) -> Optional[List[str]]:
+    total = len(flights)
+    if total == 0:
+        return [start]
+
+    remaining = defaultdict(Counter)
+    for src, dst in flights:
+        remaining[src][dst] += 1
+
+    route = [start]
+
+    def dfs(cur: str, used: int) -> bool:
+        if used == total:
+            return True
+        outgoing = remaining.get(cur)
+        if not outgoing:
+            return False
+        for dst, left in list(outgoing.items()):
+            if left == 0:
+                continue
+            outgoing[dst] = left - 1  # spend this trip
+            route.append(dst)
+            if dfs(dst, used + 1):
+                return True
+            route.pop()
+            outgoing[dst] = left  # put it back
+
+        return False
+
+    return route if dfs(start, 0) else None
+
+
 if __name__ == "__main__":
     a = [
-        ["A", "B"],
-        ["A", "E"],
-        ["A", "G"],
-        ["B", "C"],
-        ["B", "Z"],
-        ["E", "C"],
-        ["G", "C"],
-        ["C", "A"],
-        ["Z", "Q"],
-        ["Z", "A"],
-        ["Q", "A"],
+        ["Amsterdam", "London"],
+        ["Berlin", "Amsterdam"],
+        ["Barcelona", "Berlin"],
+        ["London", "Milan"],
     ]
-    res = find_itinerary2(a, "A")
+    res = find_itinerary(a, "Barcelona")
     print(res)

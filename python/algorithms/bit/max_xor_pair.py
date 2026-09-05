@@ -7,22 +7,88 @@ Returns max(a ^ b) over all pairs in nums (nums: list of non-negative ints).
 import random, itertools, sys
 
 
+"""_summary_
+
+optimizations
+1. we don't need to check every cand, return the one with highest 1 and no other can offer higher
+
+1 0 1 0 0
+1 1 0 0 0
+1 0 0 1 0 x
+0 1 1 1 1
+
+1 1 1 1
+1 0 0 0
+0 1 1 0
+"""
+
+
+def max_xor_pair(nums):
+    if len(set(nums)) < 2:
+        return 0
+    W = max(nums).bit_length()
+    root = {}
+    for x in nums:  # your bucket-insert, but branching
+        node = root
+        for i in range(W - 1, -1, -1):
+            node = node.setdefault((x >> i) & 1, {})
+    best = 0
+    for c in nums:  # your candidate loop, but the partner set
+        node, cur = root, 0  # narrows at every bit instead of one break
+        for i in range(W - 1, -1, -1):
+            bit = (c >> i) & 1
+            nxt = 1 - bit if (1 - bit) in node else bit
+            cur |= (bit ^ nxt) << i
+            node = node[nxt]
+        best = max(best, cur)
+    return best
+
+
+def candidate2(nums):
+    if not nums:
+        return 0
+    bnum, snum = max(nums), min(nums)
+    nums = set(nums)
+    W = bnum.bit_length() if bnum else 1
+    buckets = [set() for _ in range(W)]
+    for n in nums:
+        b = bin(n)
+        for i in range(2, len(b)):
+            if b[i] == "1":
+                buckets[W - len(b) + i].add(n)
+    best = 0
+    cands = buckets[0]
+    seen = set()
+    for i in range(len(buckets)):
+        overlap = cands.intersection(buckets[i])
+        diff = buckets[i].difference(cands)
+        if len(overlap) >= 1:  # when cands match
+            if len(diff) == 0:
+                seen.update(cands - overlap)
+                cands = overlap
+        if len(diff) > 0:
+            pass
+
+    if snum == 0:
+        return max(bnum, best)
+    return best
+
+
 # ============================================================
 #  PASTE YOUR IMPLEMENTATION HERE
 # ============================================================
 def candidate(nums):
     if not nums:
         return 0
-    bnum, small = max(nums), min(nums)
-    big = len(bin(bnum)) - 2
-    buckets = [[] for _ in range(big)]
-    overlap_arr = []
+    bnum, snum = max(nums), min(nums)
+    W = bnum.bit_length() if bnum else 1
+    buckets = [[] for _ in range(W)]
     nums = list(set(nums))
     for n in nums:
         b = bin(n)
         for i in range(2, len(b)):
             if b[i] == "1":
-                buckets[big - len(b) + i].append(n)
+                buckets[W - len(b) + i].append(n)
     best = 0
     cands = buckets[0]
     cands = set(cands)
@@ -41,7 +107,7 @@ def candidate(nums):
             if found:
                 break
 
-    if small == 0:
+    if snum == 0:
         return max(bnum, best)
     return best
 
